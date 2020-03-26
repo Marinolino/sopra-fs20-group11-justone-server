@@ -40,7 +40,7 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    @Test
+    /*@Test
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         // given
         User user = new User();
@@ -62,7 +62,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[0].name", is(user.getName())))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
-    }
+    }*/
 
     @Test
     public void createUser_validInput_userCreated() throws Exception {
@@ -93,6 +93,62 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
     }
+
+    @Test
+    public void givenCards_whenGetCards_thenReturnRandomCard() throws Exception {
+        // given
+        Card card = new Card();
+        card.setId(1L);
+        card.setWord(0, "WordOne");
+        card.setWord(1, "WordTwo");
+        card.setWord(2, "WordThree");
+        card.setWord(3, "WordFour");
+        card.setWord(4, "WordFive");
+
+
+        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
+        given(userService.getRandomCard()).willReturn(card);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/cards").contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].wordOne", is(card.getWord(0))))
+                .andExpect(jsonPath("$[0].wordTwo", is(card.getWord(1))))
+                .andExpect(jsonPath("$[0].wordThree", is(card.getWord(2))))
+                .andExpect(jsonPath("$[0].wordFour", is(card.getWord(3))))
+                .andExpect(jsonPath("$[0].wordFive", is(card.getWord(4))));
+    }
+
+    @Test
+    public void setClue_validInput() throws Exception {
+        // given
+        User user = new User();
+        user.setId(1L);
+        user.setName("Test User");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setStatus(UserStatus.ONLINE);
+        user.setClue("clue");
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setClue("clue");
+
+        given(userService.setClue(Mockito.any())).willReturn(clue);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/clues")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        // then
+        mockMvc.perform(postRequest)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.clue", is(user.getClue())));
+    }
+
 
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed
