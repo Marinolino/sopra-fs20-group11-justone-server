@@ -152,7 +152,6 @@ public class UserControllerTest {
 
     @Test
     public void newTest(){
-    I am a test
     }
     */
 
