@@ -83,7 +83,7 @@ if (secretPropsFile.exists()) {
 
 sonarqube {
     properties {
-        property "sonar.projectKey", project.sonarProjectKey
+        property "sonar.projectKey", "SoPra-FS20-Group11_sopra-fs20-group11-justone-server"
         property "sonar.organization", project.sonarOrganization
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.login", project.sonarToken
