@@ -94,7 +94,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
     }
 
-    @Test
+    /*@Test
     public void givenCards_whenGetCards_thenReturnRandomCard() throws Exception {
         // given
         Card card = new Card();
@@ -149,7 +149,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.clue", is(user.getClue())));
     }
 
-    /*
+
     @Test
     public void newTest(){
     }
