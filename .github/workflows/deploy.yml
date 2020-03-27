@@ -27,7 +27,7 @@ jobs:
         java-version: 1.13
 
     - name: test the project and upload test report -> sonarqube
-      run: ./gradlew test jacocoTestReport sonarqube -PsonarToken=$SONAR_TOKEN -PsonarProjectKey=$SONAR_PROJECT_KEY -PsonarOrganization=$SONAR_ORG
+      run: ./gradlew test jacocoTestReport sonarqube PsonarProjectName="sopra-fs20-group11-justone-server" -PsonarToken=$SONAR_TOKEN -PsonarProjectKey=$SONAR_PROJECT_KEY -PsonarOrganization=$SONAR_ORG
 
     # https://devcenter.heroku.com/articles/authentication
     - name: create .netrc file for heroku authentication
