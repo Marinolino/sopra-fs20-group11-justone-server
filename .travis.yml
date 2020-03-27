@@ -5,16 +5,14 @@ rvm:
 
 env:
   global:
-    secure: WxNHVzC4PQ3g3BcPC6xAkNZlDguuUm5fBlJmeNhwtYPIa3vnmvNtfmS8MnDFnPe3H7sBRkH1ybJLcliIHAjE+gupt6CT7Eji4hUxkciCxfTiwstfJXuBZ0VQnrtDethSDu+wMhJWOgh5b2TpFzjymuslNjgnGCRmMSg+OrQDwwMWe64psmEyR6SuE5GQRni05Yjf/GCFWT0u1HBYqSx8cBkwvqa9/dhljEC9N2U3gmmW/pBtxLOcMXr5+Pd6eThYc3c6dYvHcqGuxStLEYPwYIR4bib21OBrq3MpgJpltKRASP5TPQ6Nhz4szfqonb16wT8fjRr1AagnyxGCc018IFwcaLD80nXp77byyxCBO1s3Ow6TVic6ITyalmWtX14oY/rGCFakClG8ad0qcrkCSIvBuEJgfcxTbck6w7iP8AoPoJWE6Nl7ISda50/E+0CzRl3aOZmj3cLPiDxkogtGUVw7I4UPyf/OwbrYreq2VS67Ic6uZONJUlYShs7c2+adOYAKAmktxmPuk4mas5rGgC47BbWkRBjIiewsAxndYdMKFnVkTOlvxVy4v7GStWi/32LGGNaImMW/F2ULmYunLnubL3/5LFG09jyoX5RItTHcwLXclgZrL1WoCrnpDiOXCoWCsKR6Mzb1hLI9kbxx3QLPO8VVUkLkhDFK+9sGMfI=
+  - secure: LHUfO03Up1Qr18th3UkVXrOr0gi646cYKrC0b19mO27Zt9gU31myi2TQ1CLjwpV6u0qObpxxrHn8LO9zo2KM2LMZLrqvzRhu+ZKZEVDSRI8KW0tafNlTfdKEPSOJEuIvxCoA9bp2z9dB4Sm6Nxak0tRGTOCjwx1Vc322H7/jmVLzb7jrXD78EyRABYUO5LrgvtZwUVJHwHbcgKytVqfqsrNW9QwK5MxWmKWvT7l5T+Tp21N/tXXIqV4jOzOOC3JXrTtW4B/3Scg1uuoX+wT1Aiu9EfVsxS0uGbK5KI43WJ5cfRVsGgdfB6t5ZOyF/8t76K77U8FCNctmBodxEPCgPq9Uq5eqtV+7SrFBdgV2DzEpo2yoIfs8dIMi0k75NJIECL13j6cEsIGWxnJddE+Z7soVC1ZrOJGLWUButljDiz8iFNNy73oXoEvUtYNfSvLW548PcNktPu/1WMoAPd2+kEM3OHv+Vg61KsBqUrIDwaEl/WIe8CtTmIgxszR5X8VWW3Tjm2XRQERuzdgZrOTspUbEB6fXWnMOYeNvzSDIIhC/e6uLyydx4XnE9F9EoH2YxbkC6Py8vRtVL6ubOiUXtw48bYkGPOfB3qs3HjfyUtMzvi9XwFF9UqCCkEWdLSlmc9840j2SjqgH303Nu6SbCRTZJ4jRCSTua3fL96oTQDI=
+
 
 addons:
   sonarcloud:
     organization: "sopra-fs20-group11"
     token:
       secure: "**************************" # encrypted value of your token
-
-script:
-  - ./gradlew sonarqube
 
 script:
   - ./gradlew sonarqube
