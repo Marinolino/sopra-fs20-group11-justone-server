@@ -9,10 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # uncomment tokens for assignment 2-4
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
       SONAR_ORG: ${{ secrets.SONAR_ORG }}
-      SONAR_PROJECT_NAME: ${{ secrets.SONAR_PROJECT_NAME }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # auto-generated
       HEROKU_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
@@ -27,8 +27,9 @@ jobs:
       with:
         java-version: 1.13
 
+    # uncomment for assignment 2-4
     - name: test the project and upload test report -> sonarqube
-      run: ./gradlew test jacocoTestReport sonarqube PsonarProjectName="sopra-fs20-group11-justone-server" -PsonarToken=$SONAR_TOKEN -PsonarProjectKey=$SONAR_PROJECT_KEY -PsonarOrganization=$SONAR_ORG
+      run: ./gradlew test jacocoTestReport sonarqube -PsonarToken=$SONAR_TOKEN -PsonarProjectKey=$SONAR_PROJECT_KEY -PsonarOrganization=$SONAR_ORG
 
     # https://devcenter.heroku.com/articles/authentication
     - name: create .netrc file for heroku authentication
@@ -41,7 +42,6 @@ jobs:
               login $HEROKU_EMAIL
               password $HEROKU_KEY
           EOF
-
     - name: login to heroku cli
       run: heroku login
 
