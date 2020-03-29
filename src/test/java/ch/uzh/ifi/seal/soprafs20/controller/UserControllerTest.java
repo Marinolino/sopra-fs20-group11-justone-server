@@ -4,9 +4,11 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,10 +43,11 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
+    private GameService gameService;
 
-    /*@Test
+    @Test
+    @Disabled
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
-        // given
         User user = new User();
         user.setName("Firstname Lastname");
         user.setUsername("firstname@lastname");
@@ -50,23 +55,19 @@ public class UserControllerTest {
 
         List<User> allUsers = Collections.singletonList(user);
 
-        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
         given(userService.getUsers()).willReturn(allUsers);
 
-        // when
         MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON);
 
-        // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].name", is(user.getName())))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
-    }*/
+    }
 
     @Test
     public void createUser_validInput_userCreated() throws Exception {
-        // given
         User user = new User();
         user.setId(1L);
         user.setName("Test User");
@@ -80,12 +81,10 @@ public class UserControllerTest {
 
         given(userService.createUser(Mockito.any())).willReturn(user);
 
-        // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(userPostDTO));
 
-        // then
         mockMvc.perform(postRequest)
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
@@ -94,66 +93,94 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
     }
 
-    /*@Test
-    public void givenCards_whenGetCards_thenReturnRandomCard() throws Exception {
-        // given
-        Card card = new Card();
-        card.setId(1L);
-        card.setWord(0, "WordOne");
-        card.setWord(1, "WordTwo");
-        card.setWord(2, "WordThree");
-        card.setWord(3, "WordFour");
-        card.setWord(4, "WordFive");
-
-
-        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(userService.getRandomCard()).willReturn(card);
-
-        // when
-        MockHttpServletRequestBuilder getRequest = get("/cards").contentType(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].wordOne", is(card.getWord(0))))
-                .andExpect(jsonPath("$[0].wordTwo", is(card.getWord(1))))
-                .andExpect(jsonPath("$[0].wordThree", is(card.getWord(2))))
-                .andExpect(jsonPath("$[0].wordFour", is(card.getWord(3))))
-                .andExpect(jsonPath("$[0].wordFive", is(card.getWord(4))));
-    }
-
     @Test
-    public void setClue_validInput() throws Exception {
-        // given
-        User user = new User();
-        user.setId(1L);
-        user.setName("Test User");
-        user.setUsername("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-        user.setClue("clue");
+    @Disabled
+    public void getNextCard_from_Deck_success() throws Exception {
+        List<String> mysteryWords = Arrays.asList("WordOne", "WordTwo", "WordThree", "WordFour", "WordFive");
+        Card card = new Card(mysteryWords);
+        GameGetDTO gameGetDTO = new GameGetDTO();
 
-        UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setClue("clue");
+        given(gameService.getNextCard()).willReturn(card);
 
-        given(userService.setClue(Mockito.any())).willReturn(clue);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/clues")
+        MockHttpServletRequestBuilder getRequest = get("/cards")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPostDTO));
+                .content(asJsonString(gameGetDTO));
 
-        // then
-        mockMvc.perform(postRequest)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
-                .andExpect(jsonPath("$.clue", is(user.getClue())));
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.worldList[0]", is(mysteryWords.get(0))))
+                .andExpect(jsonPath("$.worldList[1]", is(mysteryWords.get(1))))
+                .andExpect(jsonPath("$.worldList[2]", is(mysteryWords.get(2))))
+                .andExpect(jsonPath("$.worldList[3]", is(mysteryWords.get(3))))
+                .andExpect(jsonPath("$.worldList[4]", is(mysteryWords.get(4))));
     }
-
 
     @Test
-    public void newTest(){
+    @Disabled
+    public void setChosenWord() throws Exception {
+        List<String> mysteryWords = Arrays.asList("MysteryWord", "WordTwo", "WordThree", "WordFour", "WordFive");
+        Card card = new Card(mysteryWords);
+        GameService.deck.setActiveCard(card);
+        GamePutDTO gamePutDTO = new GamePutDTO();
+
+        MockHttpServletRequestBuilder putRequest = put("/cards/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePutDTO));
+
+        mockMvc.perform(putRequest).andExpect(status().isOk());
     }
-    */
+
+    @Test
+    @Disabled
+    public void getClues_success() throws Exception {
+        List<String> clues = Arrays.asList("clue1", "clue2", "clue3", "clue4");
+        GameGetDTO gameGetDTO = new GameGetDTO();
+
+        MockHttpServletRequestBuilder getRequest = get("/clues")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gameGetDTO));
+
+        given(GameService.getClues(Mockito.any()).willReturn(clues));
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.clues[0]", is(clues.get(0))))
+                .andExpect(jsonPath("$.clues[1]", is(clues.get(1))))
+                .andExpect(jsonPath("$.clues[2]", is(clues.get(2))))
+                .andExpect(jsonPath("$.clues[3]", is(clues.get(3))));
+    }
+
+    @Test
+    @Disabled
+    public void checkGuess_correctGuess() throws Exception {
+        String guess = "MyGuess";
+        GamePostDTO gamePostDTO = new GamePostDTO();
+        gamePostDTO.setGuess(guess);
+
+        given(GameService.getChosenWord(Mockito.any()).willReturn("MyGuess"));
+
+        MockHttpServletRequestBuilder postRequest = post("/guess")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isOk());
+    }
+
+    @Test
+    @Disabled
+    public void getScore() throws Exception {
+        Score scoreMessage = new Score(12, "Incredible! Your friends must be impressed!");
+        GameGetDTO gameGetDTO = new GameGetDTO();
+
+        MockHttpServletRequestBuilder getRequest = get("/score")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gameGetDTO));
+
+        given(GameService.getScore(Mockito.any()).willReturn(scoreMessage));
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.score", is(scoreMessage.getScore())))
+                .andExpect(jsonPath("$.message", is(scoreMessage.getMessage())));
+    }
+
 
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed
