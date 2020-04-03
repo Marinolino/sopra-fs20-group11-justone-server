@@ -17,15 +17,17 @@ public class DTOMapperTest {
     public void testCreateUser_fromUserPostDTO_toUser_success() {
         // create UserPostDTO
         UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setName("name");
-        userPostDTO.setUsername("username");
+        userPostDTO.setName("username");
+        userPostDTO.setUsername("password");
+        userPostDTO.setDate("02/03/2001");
 
         // MAP -> Create user
         User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
         // check content
-        assertEquals(userPostDTO.getName(), user.getName());
         assertEquals(userPostDTO.getUsername(), user.getUsername());
+        assertEquals(userPostDTO.getPassword(), user.getPassword());
+        assertEquals(userPostDTO.getDate(), user.getDate());
     }
 
     @Test
@@ -36,6 +38,9 @@ public class DTOMapperTest {
         user.setUsername("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setScore(10);
+        user.setInGame(false);
+        user.setGamesPlayed(2);
 
         // MAP -> Create UserGetDTO
         UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
@@ -45,5 +50,8 @@ public class DTOMapperTest {
         assertEquals(user.getName(), userGetDTO.getName());
         assertEquals(user.getUsername(), userGetDTO.getUsername());
         assertEquals(user.getStatus(), userGetDTO.getStatus());
+        assertEquals(user.getScore(), userGetDTO.getScore());
+        assertEquals(user.getInGame(), userGetDTO.getInGame());
+        assertEquals(user.getGamesPlayed(), userGetDTO.getGamesPlayed());
     }
 }

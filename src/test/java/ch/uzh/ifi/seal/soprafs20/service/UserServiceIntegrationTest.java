@@ -2,13 +2,18 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,12 +39,11 @@ public class UserServiceIntegrationTest {
 
     @Test
     public void createUser_validInputs_success() {
-        // given
-        assertNull(userRepository.findByUsername("testUsername"));
-
         User testUser = new User();
         testUser.setName("testName");
         testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
         // when
         User createdUser = userService.createUser(testUser);
@@ -59,6 +63,8 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setName("testName");
         testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
         User createdUser = userService.createUser(testUser);
 
         // attempt to create second user with same username
@@ -67,10 +73,12 @@ public class UserServiceIntegrationTest {
         // change the name but forget about the username
         testUser2.setName("testName2");
         testUser2.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
         // check that an error is thrown
-        String exceptionMessage = "The username provided is not unique. Therefore, the user could not be created!";
-        SopraServiceException exception = assertThrows(SopraServiceException.class, () -> userService.createUser(testUser2), exceptionMessage);
+        String exceptionMessage = String.format("There is already a user '%s'! Please try again!", testUser.getUsername());
+        PostRequestException exception = assertThrows(PostRequestException.class, () -> userService.createUser(testUser), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
     }
 }
