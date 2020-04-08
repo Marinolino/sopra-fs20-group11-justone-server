@@ -1,9 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -29,6 +28,12 @@ public interface DTOMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "password", target = "password")
+    User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "username", target = "username")
     @Mapping(source = "date", target = "date")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "score", target = "score")
@@ -36,10 +41,36 @@ public interface DTOMapper {
     @Mapping(source = "inGame", target = "inGame")
     UserGetDTO convertEntityToUserGetDTO(User user);
 
+    @Mapping(source = "normalMode", target = "normalMode")
+    @Mapping(source = "users", target = "users")
+    Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);
+
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
+    Game convertGameGetDTOtoEntity(GameGetDTO gameGetDTO);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "token", target = "token")
+    @Mapping(source = "status", target = "status")
+    @Mapping(source = "score", target = "score")
+    @Mapping(source = "gameBox", target = "gameBox")
+    @Mapping(source = "deck", target = "deck")
+    @Mapping(source = "correctlyGuessed", target = "correctlyGuessed")
+    @Mapping(source = "users", target = "users")
+    @Mapping(source = "clues", target = "clues")
+    @Mapping(source = "activeCard", target = "activeCard")
+    GamePostDTO convertEntityToGamePostDTO(Game game);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "token", target = "token")
+    @Mapping(source = "status", target = "status")
+    @Mapping(source = "score", target = "score")
+    @Mapping(source = "gameBox", target = "gameBox")
+    @Mapping(source = "deck", target = "deck")
+    @Mapping(source = "correctlyGuessed", target = "correctlyGuessed")
+    @Mapping(source = "users", target = "users")
+    @Mapping(source = "clues", target = "clues")
+    @Mapping(source = "activeCard", target = "activeCard")
+    GameGetDTO convertEntityToGameGetDTO(Game game);
 
 }
+

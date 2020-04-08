@@ -55,7 +55,7 @@ class GameBoxTest {
         testBox.addCard(testCard2);
         ArrayList<Card> cardsBefore = testBox.getCards();
 
-        testBox.removeCard(testCard.getId());
+        testBox.removeCardById(testCard.getId());
         ArrayList<Card> cardsAfter= testBox.getCards();
 
         assertEquals(cardsBefore.size(), 1);
@@ -67,7 +67,7 @@ class GameBoxTest {
         testBox.addCard(testCard);
         ArrayList<Card> cardsBefore = testBox.getCards();
 
-        testBox.removeCard(testCard2.getId());
+        testBox.removeCardById(testCard2.getId());
         ArrayList<Card> cardsAfter= testBox.getCards();
 
         assertEquals(cardsBefore.size(), 1);
