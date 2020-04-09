@@ -32,22 +32,23 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    @Transient
+    @Column(nullable = false)
     private GameBox gameBox;
 
-    @Transient
+    @Column(nullable = false)
     private Deck deck;
 
-    @Transient
+    @Column(nullable = false)
     private Deck correctlyGuessed;
 
-    @Transient
+    @Column(nullable = false)
+    @ElementCollection
     private ArrayList<User> users;
 
-    @Transient
+    @Column(nullable = false)
     private ArrayList<Clue> clues;
 
-    @Transient
+    @Column(nullable = false)
     private Card activeCard;
 
     public Long getId() {
@@ -80,6 +81,14 @@ public class Game implements Serializable {
 
     public void setNormalMode(boolean mode) {
         this.normalMode = mode;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public GameBox getGameBox() {
@@ -144,8 +153,4 @@ public class Game implements Serializable {
     public void setActiveCard(Card activeCard) {
         this.activeCard = activeCard;
     }
-
-
-
-
 }

@@ -50,19 +50,13 @@ public interface DTOMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "token", target = "token")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "score", target = "score")
-    @Mapping(source = "gameBox", target = "gameBox")
-    @Mapping(source = "deck", target = "deck")
-    @Mapping(source = "correctlyGuessed", target = "correctlyGuessed")
     @Mapping(source = "users", target = "users")
-    @Mapping(source = "clues", target = "clues")
-    @Mapping(source = "activeCard", target = "activeCard")
     GamePostDTO convertEntityToGamePostDTO(Game game);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "normalMode", target = "normalMode")
     @Mapping(source = "score", target = "score")
     @Mapping(source = "gameBox", target = "gameBox")
     @Mapping(source = "deck", target = "deck")

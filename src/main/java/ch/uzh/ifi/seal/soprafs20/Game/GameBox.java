@@ -3,15 +3,8 @@ package ch.uzh.ifi.seal.soprafs20.Game;
 import javax.persistence.*;
 import java.util.ArrayList;
 
-@Entity
-@Table(name = "GAMEBOX")
 public class GameBox {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @OneToOne(mappedBy = "game")
     private ArrayList<Card> cardList = new ArrayList<Card>();
 
     public void addCard(Card card){
