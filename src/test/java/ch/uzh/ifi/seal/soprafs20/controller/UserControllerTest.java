@@ -105,8 +105,39 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.inGame", is(user.getInGame())))
                 .andExpect(jsonPath("$.gamesPlayed", is(user.getGamesPlayed())));
     }
+    
+     @Test
+    public void testGetUsers() throws Exception {
+        // given
+        User user1 = new User();
+        user1.setId(42L);
+        user1.setName("Mikko Muller");
+        user1.setUsername("mikmu");
+        user1.setStatus(UserStatus.OFFLINE);
 
+        User user2 = new User();
+        user2.setId(24L);
+        user2.setName("Nikko Nuller");
+        user2.setUsername("niknu");
+        user2.setStatus(UserStatus.OFFLINE);
 
+        List<User> users = new ArrayList();
+        users.add(user1);
+        users.add(user2);
+
+        given(userService.getUsers()).willReturn(users);
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON);
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name", is(users.get(0).getName())))
+                .andExpect(jsonPath("$[0].username", is(users.get(0).getUsername())))
+                .andExpect(jsonPath("$[0].id", is(42)))
+
+                .andExpect(jsonPath("$[1].name", is(users.get(1).getName())))
+                .andExpect(jsonPath("$[1].username", is(users.get(1).getUsername())))
+                .andExpect(jsonPath("$[1].id", is(24)));
+    }
 
     /*@Disabled("Not implemented yet")
     @Test
