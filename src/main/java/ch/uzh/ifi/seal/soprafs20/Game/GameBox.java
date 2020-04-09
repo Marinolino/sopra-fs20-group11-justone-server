@@ -1,27 +1,40 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
+@Entity
 public class GameBox {
 
-    private ArrayList<Card> cardList = new ArrayList<Card>();
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @OneToOne
+    public Game game;
+
+    @OneToMany(mappedBy = "gameBox")
+    private List<Card> cardList = new ArrayList<Card>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void addCard(Card card){
         cardList.add(card);
     }
 
-    //Looks if any card's id in the box matches the given id. If a match is found, that card is removed from the box.
-    public void removeCardById(int Id){
-        for (Card card : cardList) {
-            if (card.getId() == Id){
-                cardList.remove(card);
-                break;
-            }
-        }
+    public List<Card> getCards(){
+        return this.cardList;
     }
 
-    public ArrayList<Card> getCards(){
-        return this.cardList;
+    public void setCards(List<Card> cardList){
+        this.cardList = cardList;
     }
 }

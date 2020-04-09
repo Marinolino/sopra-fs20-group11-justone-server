@@ -7,12 +7,13 @@ import ch.uzh.ifi.seal.soprafs20.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GamePostDTO {
 
     private Long id;
 
-    private ArrayList<User> users;
+    private List<User> users;
 
     private String token;
 
@@ -42,11 +43,11 @@ public class GamePostDTO {
         this.normalMode = mode;
     }
 
-    public ArrayList<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(ArrayList<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 }

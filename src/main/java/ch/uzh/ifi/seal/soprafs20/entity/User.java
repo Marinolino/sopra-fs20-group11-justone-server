@@ -52,6 +52,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean inGame;
 
+    @ManyToOne
+    public Game game;
+
     public Long getId() {
         return id;
     }

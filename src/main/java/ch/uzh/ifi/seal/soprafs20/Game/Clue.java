@@ -1,15 +1,23 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import javax.persistence.*;
+
+@Entity
 public class Clue {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false)
     private String clue;
-    private int clueId;
+
+    @Column(nullable = false)
     private boolean valid;
 
-    public Clue(String clue, int id){
-        this.clue = clue;
-        this.clueId = id;
-        this.valid = false;
-    }
+    @ManyToOne
+    public Game game;
 
     public String getClue(){
         return this.clue;
@@ -19,12 +27,12 @@ public class Clue {
         this.clue = clue;
     }
 
-    public int getId(){
-        return this.clueId;
+    public Long getId(){
+        return this.id;
     }
 
-    public void setId(int clueId){
-        this.clueId = clueId;
+    public void setId(Long clueId){
+        this.id = clueId;
     }
 
     public boolean getValid(){

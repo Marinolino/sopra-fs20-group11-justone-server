@@ -3,32 +3,47 @@ package ch.uzh.ifi.seal.soprafs20.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CardTest {
 
-    ArrayList<MysteryWord> wordList = new ArrayList<MysteryWord>();
+    List<MysteryWord> wordList = new ArrayList<MysteryWord>();
+    Card testCard;
 
     @BeforeEach
     public void setup(){
-        wordList.add(new MysteryWord("Test1"));
-        wordList.add(new MysteryWord("Test2"));
-        wordList.add(new MysteryWord("Test3"));
-        wordList.add(new MysteryWord("Test4"));
-        wordList.add(new MysteryWord("Test5"));
+        testCard = new Card();
+        MysteryWord mysteryWord1 = new MysteryWord();
+        MysteryWord mysteryWord2 = new MysteryWord();
+        MysteryWord mysteryWord3 = new MysteryWord();
+        MysteryWord mysteryWord4 = new MysteryWord();
+        MysteryWord mysteryWord5 = new MysteryWord();
+
+        mysteryWord1.setWord("Test1");
+        mysteryWord2.setWord("Test2");
+        mysteryWord3.setWord("Test3");
+        mysteryWord4.setWord("Test4");
+        mysteryWord5.setWord("Test5");
+
+        wordList.add(mysteryWord1);
+        wordList.add(mysteryWord2);
+        wordList.add(mysteryWord3);
+        wordList.add(mysteryWord4);
+        wordList.add(mysteryWord5);
     }
 
     @Test
     public void createNewCard(){
-        Card testCard = new Card(1, wordList);
-
+        testCard.setWords(wordList);
         assertEquals(testCard.getWords(), wordList);
     }
 
     @Test
     public void getId(){
-        Card testCard = new Card(1, wordList);
-
-        assertEquals(testCard.getId(), 1);
+        assertNotEquals(testCard.getId(), 10);
+        testCard.setId((long) 10);
+        assertEquals(testCard.getId(), 10);
     }
 }

@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "GAME")
@@ -32,23 +33,22 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    @Column(nullable = false)
+    @OneToOne(mappedBy = "game")
     private GameBox gameBox;
 
-    @Column(nullable = false)
+    @OneToOne(mappedBy = "game")
     private Deck deck;
 
-    @Column(nullable = false)
+    @OneToOne(mappedBy = "game")
     private Deck correctlyGuessed;
 
-    @Column(nullable = false)
-    @ElementCollection
-    private ArrayList<User> users;
+    @OneToMany(mappedBy = "game")
+    private List<User> users = new ArrayList<User>();
 
-    @Column(nullable = false)
-    private ArrayList<Clue> clues;
+    @OneToMany(mappedBy = "game")
+    private List<Clue> clues = new ArrayList<Clue>();
 
-    @Column(nullable = false)
+    @OneToOne(mappedBy = "game")
     private Card activeCard;
 
     public Long getId() {
@@ -120,11 +120,11 @@ public class Game implements Serializable {
         this.correctlyGuessed.addCard(card);
     }
 
-    public ArrayList<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(ArrayList<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
@@ -133,11 +133,11 @@ public class Game implements Serializable {
         this.users.add(user);
     }
 
-    public ArrayList<Clue> getClues() {
+    public List<Clue> getClues() {
         return clues;
     }
 
-    public void setClues(ArrayList<Clue> clues) {
+    public void setClues(List<Clue> clues) {
         this.clues = clues;
     }
 

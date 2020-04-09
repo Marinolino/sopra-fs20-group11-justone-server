@@ -11,8 +11,9 @@ class MysteryWordTest {
 
     @BeforeEach
     public void setup(){
+        testMysteryWord = new MysteryWord();
         word = "TestWord";
-        testMysteryWord = new MysteryWord(word);
+        testMysteryWord.setWord(word);
     }
 
     @Test

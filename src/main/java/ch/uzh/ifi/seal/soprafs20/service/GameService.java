@@ -21,10 +21,11 @@ public class GameService {
 
     private final Logger log = LoggerFactory.getLogger(GameService.class);
 
+
     private final GameRepository gameRepository;
 
-    @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
+
+    public GameService(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
 
