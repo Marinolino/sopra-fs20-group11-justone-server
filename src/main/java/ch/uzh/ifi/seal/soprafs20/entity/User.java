@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -52,7 +53,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean inGame;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     public Game game;
 
     public Long getId() {

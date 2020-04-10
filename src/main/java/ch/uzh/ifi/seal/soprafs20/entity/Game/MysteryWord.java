@@ -1,9 +1,13 @@
-package ch.uzh.ifi.seal.soprafs20.Game;
+package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class MysteryWord {
+public class MysteryWord implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -15,8 +19,16 @@ public class MysteryWord {
     @Column(nullable = false)
     private boolean chosen;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Card card;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getWord(){
         return this.word;
@@ -33,4 +45,5 @@ public class MysteryWord {
     public void setChosen(boolean chosen){
         this.chosen = chosen;
     }
+
 }

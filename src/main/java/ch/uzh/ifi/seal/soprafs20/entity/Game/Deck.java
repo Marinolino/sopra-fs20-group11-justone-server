@@ -1,14 +1,18 @@
-package ch.uzh.ifi.seal.soprafs20.Game;
+package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Deck {
+public class Deck implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -17,10 +21,10 @@ public class Deck {
     @Column(nullable = false)
     private boolean hasNext;
 
-    @OneToMany(mappedBy = "deck")
+    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
     private List<Card> cardList = new ArrayList<Card>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public Game game;
 
     public Long getId() {
@@ -29,6 +33,17 @@ public class Deck {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Card> getCardList() {
+        return cardList;
+    }
+
+    public void setCardList(List<Card> cardList) {
+        this.cardList = cardList;
+        if (cardList.size() > 0 && !hasNext){
+            hasNext = true;
+        }
     }
 
     //add a card at the top of the deck

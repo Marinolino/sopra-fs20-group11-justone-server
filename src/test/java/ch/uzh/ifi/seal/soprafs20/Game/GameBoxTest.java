@@ -1,5 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,5 +75,22 @@ class GameBoxTest {
         List<Card> cards = testBox.getCards();
 
         assertEquals(cards.size(), 1);
+    }
+
+    @Test
+    public void setCards(){
+        List<Card> cards = new ArrayList<Card>();
+        cards.add(testCard1);
+        cards.add(testCard2);
+        testBox.setCards(cards);
+
+        assertEquals(testBox.getCards(), cards);
+    }
+
+    @Test
+    public void getId(){
+        assertNotEquals(testBox.getId(), 8);
+        testBox.setId((long) 8);
+        assertEquals(testBox.getId(), 8);
     }
 }

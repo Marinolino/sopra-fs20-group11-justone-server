@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;

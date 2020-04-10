@@ -1,21 +1,25 @@
-package ch.uzh.ifi.seal.soprafs20.Game;
+package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class GameBox {
+public class GameBox implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public Game game;
 
-    @OneToMany(mappedBy = "gameBox")
+    @OneToMany(mappedBy = "gameBox", cascade = CascadeType.ALL)
     private List<Card> cardList = new ArrayList<Card>();
 
     public Long getId() {

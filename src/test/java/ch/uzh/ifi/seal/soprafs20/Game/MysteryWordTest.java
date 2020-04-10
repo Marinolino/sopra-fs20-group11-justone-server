@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,4 +30,10 @@ class MysteryWordTest {
         assertTrue(testMysteryWord.getChosen());
     }
 
+    @Test
+    public void getId(){
+        assertNotEquals(testMysteryWord.getId(), 10);
+        testMysteryWord.setId((long) 10);
+        assertEquals(testMysteryWord.getId(), 10);
+    }
 }

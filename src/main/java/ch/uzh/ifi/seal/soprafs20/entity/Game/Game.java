@@ -1,19 +1,17 @@
-package ch.uzh.ifi.seal.soprafs20.entity;
+package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.Game.Clue;
-import ch.uzh.ifi.seal.soprafs20.Game.Deck;
-import ch.uzh.ifi.seal.soprafs20.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "GAME")
-public class Game implements Serializable {
+public class Game  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,22 +31,22 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    @OneToOne(mappedBy = "game")
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private GameBox gameBox;
 
-    @OneToOne(mappedBy = "game")
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private Deck deck;
 
-    @OneToOne(mappedBy = "game")
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private Deck correctlyGuessed;
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.MERGE)
     private List<User> users = new ArrayList<User>();
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Clue> clues = new ArrayList<Clue>();
 
-    @OneToOne(mappedBy = "game")
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private Card activeCard;
 
     public Long getId() {
@@ -152,5 +150,11 @@ public class Game implements Serializable {
 
     public void setActiveCard(Card activeCard) {
         this.activeCard = activeCard;
+    }
+
+    //get's the top card from the deck and sets it as the active card
+    @Transactional
+    public void setActiveCardFromDeck(){
+        this.activeCard = this.deck.getTopCard();
     }
 }

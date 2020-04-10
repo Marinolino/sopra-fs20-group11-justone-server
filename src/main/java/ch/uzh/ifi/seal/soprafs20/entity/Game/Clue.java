@@ -1,10 +1,13 @@
-package ch.uzh.ifi.seal.soprafs20.Game;
+package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class Clue {
+public class Clue implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -16,7 +19,7 @@ public class Clue {
     @Column(nullable = false)
     private boolean valid;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Game game;
 
     public String getClue(){

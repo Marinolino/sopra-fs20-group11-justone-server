@@ -1,9 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-import ch.uzh.ifi.seal.soprafs20.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.Game.Clue;
-import ch.uzh.ifi.seal.soprafs20.Game.Deck;
-import ch.uzh.ifi.seal.soprafs20.Game.GameBox;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import java.util.List;
