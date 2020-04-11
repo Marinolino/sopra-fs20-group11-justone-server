@@ -15,14 +15,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static org.hamcrest.Matchers.*;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -134,6 +136,45 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[1].name", is(users.get(1).getName())))
                 .andExpect(jsonPath("$[1].username", is(users.get(1).getUsername())))
                 .andExpect(jsonPath("$[1].id", is(24)));
+    }
+
+    @Test
+    public void test_getUserById() throws Exception {
+        // given
+        User user = new User();
+        user.setId(42L);
+        user.setName("Mikko Muller");
+        user.setUsername("mikmu");
+        user.setStatus(UserStatus.OFFLINE);
+
+        given(userService.getUserById(user.getId())).willReturn(user);
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON);
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.id", is(42)));
+    }
+
+    @Test
+    public void test_getUserById_invalidInput() throws Exception {
+
+        given(userService.getUserById(null)).willReturn(null);
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users/0").contentType(MediaType.APPLICATION_JSON);
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void test_getUserById_notFound() throws Exception {
+
+        given(userService.getUserById(Mockito.any())).willReturn(null);
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users/1").contentType(MediaType.APPLICATION_JSON);
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isNotFound());
     }
 
 

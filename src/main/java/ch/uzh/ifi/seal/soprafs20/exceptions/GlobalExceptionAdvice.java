@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException400;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
@@ -90,5 +91,12 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleGetException404(GetRequestException404 ex){
         GetException getException = new GetException(ex.getMessage(), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = GetRequestException400.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleGetException400(GetRequestException400 ex) {
+        GetException getException = new GetException(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getException, HttpStatus.BAD_REQUEST);
     }
 }

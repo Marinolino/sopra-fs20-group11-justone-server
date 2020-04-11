@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException400;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -53,4 +55,27 @@ public class UserController {
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
     }
+
+    @GetMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException400, GetRequestException404 {
+
+        //check if a user id is valid
+        if (id == null || id.longValue() == 0) {
+            throw new GetRequestException400("Id should not empty!", HttpStatus.BAD_REQUEST);
+        }
+
+        // get user
+        User userById = userService.getUserById(id);
+
+        //check if a user was found
+        if (userById == null) {
+            throw new GetRequestException404("No user was found!", HttpStatus.NOT_FOUND);
+        }
+
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userById);
+    }
+
 }
