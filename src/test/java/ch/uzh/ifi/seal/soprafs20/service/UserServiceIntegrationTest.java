@@ -2,14 +2,12 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.text.SimpleDateFormat;
@@ -78,7 +76,7 @@ public class UserServiceIntegrationTest {
 
         // check that an error is thrown
         String exceptionMessage = String.format("There is already a user '%s'! Please try again!", testUser.getUsername());
-        PostRequestException exception = assertThrows(PostRequestException.class, () -> userService.createUser(testUser), exceptionMessage);
+        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(testUser), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
     }
 }

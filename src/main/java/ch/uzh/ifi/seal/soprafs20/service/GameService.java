@@ -6,11 +6,9 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +36,6 @@ public class GameService {
 
     public Game getGameById(Long Id){
         Game gameById = this.gameRepository.findById(Id).orElse(null);
-
-        if (gameById == null){
-            String message = "No game was found!";
-            throw new GetRequestException(message, HttpStatus.NOT_FOUND);
-        }
         return gameById;
     }
 

@@ -1,5 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -47,5 +55,40 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity handleException(Exception ex) {
         log.error(String.format("Exception raised:%s", ex));
         return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = PostRequestException409.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handlePostException409(PostRequestException409 ex){
+        PostException postException = new PostException(ex.getMessage(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(postException, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = PutRequestException204.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Object> handlePutException204(PutRequestException204 ex){
+        PutException putException = new PutException(ex.getMessage(), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(putException, HttpStatus.NO_CONTENT);
+    }
+
+    @ExceptionHandler(value = PutRequestException401.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handlePutException401(PutRequestException204 ex){
+        PutException putException = new PutException(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(putException, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = PutRequestException404.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handlePutException404(PutRequestException204 ex){
+        PutException putException = new PutException(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(putException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = GetRequestException404.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleGetException404(GetRequestException404 ex){
+        GetException getException = new GetException(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
     }
 }

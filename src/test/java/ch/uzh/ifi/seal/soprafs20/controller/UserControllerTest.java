@@ -4,7 +4,6 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,11 +15,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,7 +39,6 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
-    private Game gameService;
 
     @Test
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
@@ -140,94 +136,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[1].id", is(24)));
     }
 
-    /*@Disabled("Not implemented yet")
-    @Test
-    public void getNextCard_from_Deck_success() throws Exception {
-        List<String> mysteryWords = Arrays.asList("WordOne", "WordTwo", "WordThree", "WordFour", "WordFive");
-        Card card = new Card(mysteryWords);
-        GameGetDTO gameGetDTO = new GameGetDTO();
 
-        given(gameService.getNextCard()).willReturn(card);
-
-        MockHttpServletRequestBuilder getRequest = get("/cards")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gameGetDTO));
-
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.worldList[0]", is(mysteryWords.get(0))))
-                .andExpect(jsonPath("$.worldList[1]", is(mysteryWords.get(1))))
-                .andExpect(jsonPath("$.worldList[2]", is(mysteryWords.get(2))))
-                .andExpect(jsonPath("$.worldList[3]", is(mysteryWords.get(3))))
-                .andExpect(jsonPath("$.worldList[4]", is(mysteryWords.get(4))));
-    }
-
-    @Disabled("Not implemented yet")
-    @Test
-    public void setChosenWord() throws Exception {
-        List<String> mysteryWords = Arrays.asList("MysteryWord", "WordTwo", "WordThree", "WordFour", "WordFive");
-        Card card = new Card(mysteryWords);
-        GameService.deck.setActiveCard(card);
-        GamePutDTO gamePutDTO = new GamePutDTO();
-
-        MockHttpServletRequestBuilder putRequest = put("/cards/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gamePutDTO));
-
-        mockMvc.perform(putRequest).andExpect(status().isOk());
-    }
-
-    @Disabled("Not implemented yet")
-    @Test
-    public void getClues_success() throws Exception {
-        List<String> clues = Arrays.asList("clue1", "clue2", "clue3", "clue4");
-        GameGetDTO gameGetDTO = new GameGetDTO();
-
-        MockHttpServletRequestBuilder getRequest = get("/clues")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gameGetDTO));
-
-        given(GameService.getClues(Mockito.any()).willReturn(clues));
-
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.clues[0]", is(clues.get(0))))
-                .andExpect(jsonPath("$.clues[1]", is(clues.get(1))))
-                .andExpect(jsonPath("$.clues[2]", is(clues.get(2))))
-                .andExpect(jsonPath("$.clues[3]", is(clues.get(3))));
-    }
-
-    @Disabled("Not implemented yet")
-    @Test
-    public void checkGuess_correctGuess() throws Exception {
-        String guess = "MyGuess";
-        GamePostDTO gamePostDTO = new GamePostDTO();
-        gamePostDTO.setGuess(guess);
-
-        given(GameService.getChosenWord(Mockito.any()).willReturn("MyGuess"));
-
-        MockHttpServletRequestBuilder postRequest = post("/guess")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gamePostDTO));
-
-        mockMvc.perform(postRequest).andExpect(status().isOk());
-    }
-
-    @Disabled("Not implemented yet")
-    @Test
-    public void getScore() throws Exception {
-        Score scoreMessage = new Score(12, "Incredible! Your friends must be impressed!");
-        GameGetDTO gameGetDTO = new GameGetDTO();
-
-        MockHttpServletRequestBuilder getRequest = get("/score")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gameGetDTO));
-
-        given(GameService.getScore(Mockito.any()).willReturn(scoreMessage));
-
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.score", is(scoreMessage.getScore())))
-                .andExpect(jsonPath("$.message", is(scoreMessage.getMessage())));
-    }
-    */
 
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed

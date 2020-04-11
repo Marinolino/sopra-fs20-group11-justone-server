@@ -2,7 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class UserService {
      * The method will do nothing if the input is unique and throw an error otherwise.
      *
      * @param userToBeCreated
-     * @throws PostRequestException
+     * @throws PostRequestException409
      * @see User
      */
     private void checkIfUserExists(User userToBeCreated) {
@@ -69,7 +69,7 @@ public class UserService {
 
         if (userByUsername != null) {
             String message = String.format("There is already a user '%s'! Please try again!", userByUsername.getUsername());
-            throw new PostRequestException(message, HttpStatus.CONFLICT);
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
         }
     }
 
@@ -78,7 +78,7 @@ public class UserService {
      * The method will do nothing if the input is valid and throw an error otherwise.
      *
      * @param userToBeCreated
-     * @throws PostRequestException
+     * @throws PostRequestException409
      * @see User
      */
     public void checkIfInputIsValid(User userToBeCreated) {
@@ -86,21 +86,21 @@ public class UserService {
         if (userToBeCreated.getUsername() != null){
             if (userToBeCreated.getName().contains(" ")) {
                 String message = "The field 'NAME' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException(message, HttpStatus.CONFLICT);
+                throw new PostRequestException409(message, HttpStatus.CONFLICT);
             }
             if (userToBeCreated.getUsername().contains(" ")) {
                 String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException(message, HttpStatus.CONFLICT);
+                throw new PostRequestException409(message, HttpStatus.CONFLICT);
             }
             if (userToBeCreated.getPassword().contains(" ")) {
                 String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException(message, HttpStatus.CONFLICT);
+                throw new PostRequestException409(message, HttpStatus.CONFLICT);
             }
         }
         else{
             if (userToBeCreated.getNewUsername().contains(" ")) {
                 String message = "The field 'NEW USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException(message, HttpStatus.CONFLICT);
+                throw new PostRequestException409(message, HttpStatus.CONFLICT);
             }
         }
     }

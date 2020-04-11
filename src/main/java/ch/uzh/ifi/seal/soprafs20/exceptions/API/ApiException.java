@@ -3,6 +3,9 @@ package ch.uzh.ifi.seal.soprafs20.exceptions.API;
 import org.springframework.http.HttpStatus;
 
 public class ApiException {
+
+    private static final long serialVersionUID = 1L;
+
     private final String message;
     private final HttpStatus httpStatus;
 
