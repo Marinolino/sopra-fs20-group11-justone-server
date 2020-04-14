@@ -99,7 +99,6 @@ public class UserController {
     public UserGetDTO logOut(@RequestBody UserPutDTO userPutDTO) throws GetRequestException409 {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         User userOutput = userService.logOut(userInput.getId());
-        System.out.println(userOutput.getId());
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
 }

@@ -265,11 +265,14 @@ public class UserControllerTest {
         user.setPassword("abc");
         user.setStatus(UserStatus.ONLINE);
 
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setId((long)1);
+
         given(userService.getUserById(Mockito.anyLong())).willReturn(user);
 
         MockHttpServletRequestBuilder putRequest = put("/logout")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString((long)1));
+                .content(asJsonString(userPutDTO));
 
         mockMvc.perform(putRequest).andExpect(status()
                 .isNoContent());

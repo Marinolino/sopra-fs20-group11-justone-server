@@ -53,7 +53,7 @@ public class UserServiceTest {
         assertEquals(testUser.getName(), createdUser.getName());
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertNotNull(createdUser.getToken());
-        assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+        assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
         assertEquals(createdUser.getGamesPlayed(), 0);
         assertEquals(createdUser.getScore(), 0);
         assertEquals(createdUser.getInGame(), false);
