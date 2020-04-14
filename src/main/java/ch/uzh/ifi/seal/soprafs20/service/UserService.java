@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
@@ -40,15 +41,7 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    public User logOut(Long id){
-        User user = getUserById(id);
-        user.setStatus(UserStatus.OFFLINE);
-        User updatedUser = userRepository.save(user);
-        userRepository.flush();
-        return updatedUser;
+        return this.userRepository.findById(id).orElse(null);
     }
 
     public User findByUsername(String name){
@@ -60,7 +53,7 @@ public class UserService {
         checkIfInputIsValid(newUser);
 
         newUser.setToken(UUID.randomUUID().toString());
-        newUser.setStatus(UserStatus.ONLINE);
+        newUser.setStatus(UserStatus.OFFLINE);
         newUser.setInGame(false);
         newUser.setScore(0);
         newUser.setGamesPlayed(0);
@@ -76,7 +69,7 @@ public class UserService {
     }
 
     //checks if the user exists and if the password is correct
-    public User logIn(User userToCheck){
+    public User logIn(User userToCheck) throws  PutRequestException204, PutRequestException401 {
         User userByUsername = findByUsername(userToCheck.getUsername());
 
         if(userByUsername == null){
@@ -88,7 +81,7 @@ public class UserService {
             throw new PutRequestException401(message, HttpStatus.UNAUTHORIZED);
         }
         if(userByUsername.getStatus() == UserStatus.ONLINE){
-            String message = String.format("There user '%s' is already logged in!", userToCheck.getUsername());
+            String message = String.format("The user '%s' is already logged in!", userToCheck.getUsername());
             throw new PutRequestException204(message, HttpStatus.NO_CONTENT);
         }
         userByUsername.setToken(UUID.randomUUID().toString());
@@ -96,6 +89,19 @@ public class UserService {
         userByUsername = userRepository.save(userByUsername);
         userRepository.flush();
         return (userByUsername);
+    }
+
+    public User logOut(Long id) throws GetRequestException409 {
+        User user = getUserById(id);
+
+        if (user == null){
+            throw new GetRequestException409("No user found in repository!", HttpStatus.NOT_FOUND);
+        }
+
+        user.setStatus(UserStatus.OFFLINE);
+        user = userRepository.save(user);
+        userRepository.flush();
+        return user;
     }
 
     /**
@@ -136,12 +142,6 @@ public class UserService {
             }
             if (userToBeCreated.getPassword().contains(" ")) {
                 String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException409(message, HttpStatus.CONFLICT);
-            }
-        }
-        else{
-            if (userToBeCreated.getNewUsername().contains(" ")) {
-                String message = "The field 'NEW USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
                 throw new PostRequestException409(message, HttpStatus.CONFLICT);
             }
         }

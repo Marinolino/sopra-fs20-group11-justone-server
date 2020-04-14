@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException400;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
@@ -95,9 +96,10 @@ public class UserController {
     @PutMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public UserGetDTO logOut(@RequestBody UserPutDTO userPutDTO) {
-        Long id = userPutDTO.getId();
-        User userOutput = userService.logOut(id);
+    public UserGetDTO logOut(@RequestBody UserPutDTO userPutDTO) throws GetRequestException409 {
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        User userOutput = userService.logOut(userInput.getId());
+        System.out.println(userOutput.getId());
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
 }

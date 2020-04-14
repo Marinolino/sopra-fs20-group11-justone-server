@@ -29,9 +29,6 @@ public class User implements Serializable {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(unique = true)
-    private String newUsername;
-
     @Column(nullable = false)
     private String password;
 
@@ -72,14 +69,6 @@ public class User implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getNewUsername() {
-        return newUsername;
-    }
-
-    public void setNewUsername(String newUsername) {
-        this.newUsername = newUsername;
     }
 
     public String getPassword(){
