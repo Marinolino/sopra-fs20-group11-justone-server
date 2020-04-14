@@ -4,6 +4,8 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,36 +46,40 @@ class GameServiceIntegrationTest {
     }
 
     @Test
-    public void createGame_success() throws FileNotFoundException {
-        User testUser1 = new User();
-        testUser1.setName("testName");
-        testUser1.setUsername("testUsername");
-        testUser1.setPassword("testPassword");
-        testUser1.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-
-        testUser1 = userService.createUser(testUser1);
-
-        User testUser2 = new User();
-        testUser2.setName("testName");
-        testUser2.setUsername("testUsername2");
-        testUser2.setPassword("testPassword");
-        testUser2.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-
-        testUser2 = userService.createUser(testUser2);
-
-        List<User> TestUserList = new ArrayList<>();
-        TestUserList.add(testUser1);
-        TestUserList.add(testUser2);
+    public void createGame_success() throws Exception {
+        List<Long> testUserList = new ArrayList<>();
+        testUserList.add((long)1);
+        testUserList.add((long)2);
 
         Game testGame = new Game();
-        testGame.setUsers(TestUserList);
+        testGame.setUserIds(testUserList);
         testGame.setNormalMode(true);
 
         Game createdGame = gameService.createGame(testGame);
 
         assertEquals(createdGame.getScore(), 0);
+        assertEquals(createdGame.getRound(), 1);
         assertEquals(createdGame.getStatus(), GameStatus.RUNNING);
-        assertEquals(createdGame.getUsers().size(), 2);
+        assertEquals(createdGame.getUserIds().size(), 2);
     }
+
+    @Test
+    public void findGameById_success() throws Exception {
+        List<Long> testUserList = new ArrayList<>();
+        testUserList.add((long)1);
+        testUserList.add((long)2);
+
+        Game testGame = new Game();
+        testGame.setUserIds(testUserList);
+        testGame.setNormalMode(true);
+
+        Game createdGame = gameService.createGame(testGame);
+
+        Game gameById = gameService.getGameById(createdGame.getId());
+
+        assertEquals(createdGame.getId(), gameById.getId());
+    }
+
+
 
 }

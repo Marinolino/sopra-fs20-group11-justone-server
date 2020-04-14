@@ -20,17 +20,9 @@ public class GameGetDTO {
 
     private int score;
 
-    private GameBox gameBox;
+    private int round;
 
-    private Deck deck;
-
-    private Deck correctlyGuessed;
-
-    private List<User> users;
-
-    private List<Clue> clues;
-
-    private Card activeCard;
+    private List<Long> userIds;
 
     public Long getId() {
         return id;
@@ -72,66 +64,26 @@ public class GameGetDTO {
         this.score = score;
     }
 
-    public GameBox getGameBox() {
-        return gameBox;
+    public int getRound() {
+        return round;
     }
 
-    public void setGameBox(GameBox gameBox) {
-        this.gameBox = gameBox;
+    public void setRound(int round) {
+        this.round = round;
     }
 
-    public Deck getDeck() {
-        return deck;
+    public List<Long> getUsersIds() {
+        return userIds;
     }
 
-    public void setDeck(Deck deck) {
-        this.deck = deck;
-    }
-
-    public Deck getCorrectlyGuessed() {
-        return correctlyGuessed;
-    }
-
-    public void setCorrectlyGuessed(Deck correctlyGuessed) {
-        this.correctlyGuessed = correctlyGuessed;
-    }
-
-    //add one card at the top off the correctly guessed pile
-    public void addToCorrectlyGuessed(Card card) {
-        this.correctlyGuessed.addCard(card);
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserIds(List<Long> userIds) {
+        this.userIds = userIds;
     }
 
     //add one user to the user list
-    public void addUser(User user){
-        this.users.add(user);
-    }
-
-    public List<Clue> getClues() {
-        return clues;
-    }
-
-    public void setClues(List<Clue> clues) {
-        this.clues = clues;
-    }
-
-    //add one clue to the clue list
-    public void addClue(Clue clue){
-        this.clues.add(clue);
-    }
-
-    public Card getActiveCard() {
-        return activeCard;
-    }
-
-    public void setActiveCard(Card activeCard) {
-        this.activeCard = activeCard;
+    public void addUserId(Long id){
+        this.userIds.add(id);
     }
 }
+
+

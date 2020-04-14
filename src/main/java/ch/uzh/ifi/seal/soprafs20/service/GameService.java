@@ -6,9 +6,12 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +47,15 @@ public class GameService {
         createdGame.setToken(UUID.randomUUID().toString());
         createdGame.setStatus(GameStatus.RUNNING);
         createdGame.setScore(0);
+        createdGame.setRound(1);
+
+        //check and set if it is a game with 3 players or more than 3 players
+        if (createdGame.getUserIds().size() == 3){
+            createdGame.setNormalMode(false);
+        }
+        else {
+            createdGame.setNormalMode(true);
+        }
 
         // saves the given entity but data is only persisted in the database once flush() is called
         Game savedGame = gameRepository.save(createdGame);
@@ -63,12 +75,46 @@ public class GameService {
         newGame.setDeck(deck);
 
         //Get the top Card from Deck as active Card
-        newGame.setActiveCardFromDeck();
+        newGame.setActiveCard(new Card());
 
         //Create Deck for the correctly guessed Cards
         newGame.setCorrectlyGuessed(new Deck());
 
         return newGame;
+    }
+
+    //fetch game by id from the repository and get the top card from the deck as active card
+    public Card getActiveCard(Long id) throws Exception {
+
+        Game gameById = getGameById(id);
+
+        if (gameById == null){
+            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
+        }
+
+        gameById.setActiveCardFromDeck();
+        gameById.setRound(gameById.getRound() + 1);
+        gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return gameById.getActiveCard();
+    }
+
+    //fetch game by id from the repository and set the word of it's active card, which matches the id in cardPutDTo, to true
+    public void setChosenWord(Long id, CardPutDTO cardPutDTO) throws Exception {
+
+        Game gameById = getGameById(id);
+
+        if (gameById == null){
+            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
+        }
+
+        Card card = gameById.getActiveCard();
+        card.setChosenWord(cardPutDTO.getId());
+
+        gameById.setActiveCard(card);
+        gameRepository.save(gameById);
+        gameRepository.flush();
     }
 
     //creates 13 random cards, each containing 5 random words
@@ -94,7 +140,7 @@ public class GameService {
                 wordsOnCard.add(wordList.remove(0));
             }
             Card newCard = new Card();
-            newCard.setWords(wordsOnCard);
+            newCard.setWordList(wordsOnCard);
             cardList.add(newCard);
         }
         return cardList;

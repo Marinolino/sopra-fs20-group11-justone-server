@@ -24,10 +24,24 @@ class CardTest {
         MysteryWord mysteryWord5 = new MysteryWord();
 
         mysteryWord1.setWord("Test1");
+        mysteryWord1.setId((long)1);
+        mysteryWord1.setChosen(false);
+
         mysteryWord2.setWord("Test2");
+        mysteryWord2.setId((long)2);
+        mysteryWord2.setChosen(false);
+
         mysteryWord3.setWord("Test3");
+        mysteryWord3.setId((long)3);
+        mysteryWord3.setChosen(false);
+
         mysteryWord4.setWord("Test4");
+        mysteryWord4.setId((long)4);
+        mysteryWord4.setChosen(false);
+
         mysteryWord5.setWord("Test5");
+        mysteryWord5.setId((long)5);
+        mysteryWord5.setChosen(false);
 
         wordList.add(mysteryWord1);
         wordList.add(mysteryWord2);
@@ -38,8 +52,8 @@ class CardTest {
 
     @Test
     public void createNewCard(){
-        testCard.setWords(wordList);
-        assertEquals(testCard.getWords(), wordList);
+        testCard.setWordList(wordList);
+        assertEquals(testCard.getWordList(), wordList);
     }
 
     @Test
@@ -47,5 +61,14 @@ class CardTest {
         assertNotEquals(testCard.getId(), 10);
         testCard.setId((long) 10);
         assertEquals(testCard.getId(), 10);
+    }
+
+    @Test
+    public void setChosenWord(){
+        testCard.setWordList(wordList);
+        Long chosenId = (long) 4;
+        testCard.setChosenWord(chosenId);
+
+        assertTrue(testCard.getWordList().get(3).getChosen());
     }
 }

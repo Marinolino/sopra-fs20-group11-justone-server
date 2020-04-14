@@ -43,7 +43,7 @@ class GameBoxTest {
         wordList1.add(mysteryWord3);
         wordList1.add(mysteryWord4);
         wordList1.add(mysteryWord5);
-        testCard1.setWords(wordList1);
+        testCard1.setWordList(wordList1);
 
         mysteryWord1.setWord("TestA");
         mysteryWord2.setWord("TestB");
@@ -56,7 +56,7 @@ class GameBoxTest {
         wordList2.add(mysteryWord3);
         wordList2.add(mysteryWord4);
         wordList2.add(mysteryWord5);
-        testCard2.setWords(wordList2);
+        testCard2.setWordList(wordList2);
 
         testBox = new GameBox();
     }

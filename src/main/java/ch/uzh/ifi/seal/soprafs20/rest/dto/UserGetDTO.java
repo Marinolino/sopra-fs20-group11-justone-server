@@ -10,7 +10,6 @@ public class UserGetDTO {
     private String name;
     private String username;
     private UserStatus status;
-    private String date;
     private int score;
     private int gamesPlayed;
     private boolean inGame;
@@ -45,14 +44,6 @@ public class UserGetDTO {
 
     public void setStatus(UserStatus status) {
         this.status = status;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public int getScore(){

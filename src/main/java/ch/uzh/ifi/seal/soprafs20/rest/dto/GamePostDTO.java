@@ -6,23 +6,13 @@ import java.util.List;
 
 public class GamePostDTO {
 
-    private List<User> users;
+    private List<Long> userIds;
 
-    private boolean normalMode;
-
-    public boolean getNormalMode() {
-        return normalMode;
+    public List<Long> getUserIds() {
+        return userIds;
     }
 
-    public void setNormalMode(boolean mode) {
-        this.normalMode = mode;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserIds(List<Long> userIds) {
+        this.userIds = userIds;
     }
 }

@@ -29,7 +29,6 @@ public class UserRepositoryIntegrationTest {
         user.setName("Firstname Lastname");
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
-        user.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
 
@@ -45,6 +44,5 @@ public class UserRepositoryIntegrationTest {
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
-        assertEquals(found.getDate(), user.getDate());
     }
 }

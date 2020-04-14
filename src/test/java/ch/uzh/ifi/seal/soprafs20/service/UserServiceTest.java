@@ -36,7 +36,6 @@ public class UserServiceTest {
         testUser.setName("testName");
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
-        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
         // when -> any object is being save in the userRepository -> return the dummy testUser
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);

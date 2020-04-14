@@ -75,7 +75,6 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setToken("1");
         user.setPassword("TestPassword");
-        user.setDate("27/02/2020");
         user.setStatus(UserStatus.ONLINE);
         user.setGamesPlayed(0);
         user.setScore(0);

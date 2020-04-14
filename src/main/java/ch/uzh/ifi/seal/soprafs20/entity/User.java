@@ -42,9 +42,6 @@ public class User implements Serializable {
     private UserStatus status;
 
     @Column(nullable = false)
-    private String date;
-
-    @Column(nullable = false)
     private int score;
 
     @Column(nullable = false)
@@ -52,9 +49,6 @@ public class User implements Serializable {
 
     @Column(nullable = false)
     private boolean inGame;
-
-    @ManyToOne(cascade = CascadeType.MERGE)
-    public Game game;
 
     public Long getId() {
         return id;
@@ -110,14 +104,6 @@ public class User implements Serializable {
 
     public void setStatus(UserStatus status) {
         this.status = status;
-    }
-
-    public String getDate(){
-        return this.date;
-    }
-
-    public void setDate(String date){
-        this.date = date;
     }
 
     public int getScore(){

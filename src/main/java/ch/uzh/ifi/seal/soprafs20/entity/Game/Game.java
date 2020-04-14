@@ -31,6 +31,9 @@ public class Game  implements Serializable {
     @Column(nullable = false)
     private int score;
 
+    @Column(nullable = false)
+    private int round;
+
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private GameBox gameBox;
 
@@ -40,8 +43,9 @@ public class Game  implements Serializable {
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private Deck correctlyGuessed;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.MERGE)
-    private List<User> users = new ArrayList<User>();
+    @Column(nullable = false)
+    @ElementCollection
+    private List<Long> userIds = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Clue> clues = new ArrayList<Clue>();
@@ -89,6 +93,14 @@ public class Game  implements Serializable {
         this.score = score;
     }
 
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
     public GameBox getGameBox() {
         return gameBox;
     }
@@ -118,17 +130,17 @@ public class Game  implements Serializable {
         this.correctlyGuessed.addCard(card);
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<Long> getUserIds() {
+        return userIds;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserIds(List<Long> userIds) {
+        this.userIds = userIds;
     }
 
     //add one user to the user list
-    public void addUser(User user){
-        this.users.add(user);
+    public void addUserId(Long id){
+        this.userIds.add(id);
     }
 
     public List<Clue> getClues() {

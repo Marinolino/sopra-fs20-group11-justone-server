@@ -34,11 +34,20 @@ public class Card implements Serializable {
         this.id = id;
     }
 
-    public List<MysteryWord> getWords(){
+    public List<MysteryWord> getWordList(){
         return this.wordList;
     }
 
-    public void setWords(List<MysteryWord> wordList){
+    public void setWordList(List<MysteryWord> wordList){
         this.wordList = wordList;
+    }
+
+    public void setChosenWord(Long id){
+        for (MysteryWord mysteryWord : wordList){
+            if (id.equals(mysteryWord.getId())){
+                mysteryWord.setChosen(true);
+                break;
+            }
+        }
     }
 }

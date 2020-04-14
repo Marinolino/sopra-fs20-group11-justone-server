@@ -63,8 +63,7 @@ public class Deck implements Serializable {
             return topCard;
         }
         else{
-            String message = "The deck is empty!";
-            throw new SopraServiceException(message);
+            throw new SopraServiceException("The deck is empty!");
         }
     }
 

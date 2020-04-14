@@ -41,7 +41,6 @@ public class UserServiceIntegrationTest {
         testUser.setName("testName");
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
-        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
         // when
         User createdUser = userService.createUser(testUser);
@@ -62,7 +61,6 @@ public class UserServiceIntegrationTest {
         testUser.setName("testName");
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
-        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
         User createdUser = userService.createUser(testUser);
 
         // attempt to create second user with same username
@@ -72,7 +70,6 @@ public class UserServiceIntegrationTest {
         testUser2.setName("testName2");
         testUser2.setUsername("testUsername");
         testUser.setPassword("testPassword");
-        testUser.setDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
         // check that an error is thrown
         String exceptionMessage = String.format("There is already a user '%s'! Please try again!", testUser.getUsername());

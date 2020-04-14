@@ -44,7 +44,7 @@ class GameServiceTest {
         List<Card> cardList = gameService.createCards();
 
         for (Card card : cardList){
-            assertEquals(card.getWords().size(), 5);
+            assertEquals(card.getWordList().size(), 5);
         }
     }
 }

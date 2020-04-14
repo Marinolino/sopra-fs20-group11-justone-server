@@ -61,7 +61,8 @@ public class UserController {
     @ResponseBody
     public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException400, GetRequestException404 {
 
-        //check if a user id is valid
+
+       //check if a user id is valid
         if (id == null || id.longValue() == 0) {
             throw new GetRequestException400("Id should not empty!", HttpStatus.BAD_REQUEST);
         }
@@ -77,5 +78,4 @@ public class UserController {
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userById);
     }
-
 }
