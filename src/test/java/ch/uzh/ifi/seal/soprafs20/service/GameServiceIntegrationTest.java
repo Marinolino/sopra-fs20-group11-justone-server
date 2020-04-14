@@ -74,12 +74,8 @@ class GameServiceIntegrationTest {
         testGame.setNormalMode(true);
 
         Game createdGame = gameService.createGame(testGame);
-
         Game gameById = gameService.getGameById(createdGame.getId());
 
         assertEquals(createdGame.getId(), gameById.getId());
     }
-
-
-
 }

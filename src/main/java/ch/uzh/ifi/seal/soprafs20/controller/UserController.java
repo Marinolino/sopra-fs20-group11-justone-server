@@ -95,7 +95,8 @@ public class UserController {
     @PutMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public UserGetDTO logOut(@RequestBody Long id) {
+    public UserGetDTO logOut(@RequestBody UserPutDTO userPutDTO) {
+        Long id = userPutDTO.getId();
         User userOutput = userService.logOut(id);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }

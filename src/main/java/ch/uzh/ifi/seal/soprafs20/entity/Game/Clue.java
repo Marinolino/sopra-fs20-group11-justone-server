@@ -16,9 +16,6 @@ public class Clue implements Serializable {
     @Column(nullable = false)
     private String clue;
 
-    @Column(nullable = false)
-    private boolean valid;
-
     @ManyToOne(cascade = CascadeType.ALL)
     public Game game;
 
@@ -36,13 +33,5 @@ public class Clue implements Serializable {
 
     public void setId(Long clueId){
         this.id = clueId;
-    }
-
-    public boolean getValid(){
-        return this.valid;
-    }
-
-    public void setValid(boolean valid){
-        this.valid = valid;
     }
 }

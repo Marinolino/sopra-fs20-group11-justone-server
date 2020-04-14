@@ -93,6 +93,8 @@ public class UserService {
         }
         userByUsername.setToken(UUID.randomUUID().toString());
         userByUsername.setStatus(UserStatus.ONLINE);
+        userByUsername = userRepository.save(userByUsername);
+        userRepository.flush();
         return (userByUsername);
     }
 

@@ -32,10 +32,4 @@ class ClueTest {
 
         assertEquals(testClue.getId(), 2);
     }
-
-    @Test
-    public void setValid(){
-        testClue.setValid(true);
-        assertTrue(testClue.getValid());
-    }
 }
