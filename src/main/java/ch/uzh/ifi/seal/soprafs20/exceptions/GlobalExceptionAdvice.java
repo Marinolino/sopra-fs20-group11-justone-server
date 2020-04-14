@@ -1,8 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException400;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutException;
@@ -74,16 +72,23 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = PutRequestException401.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Object> handlePutException401(PutRequestException204 ex){
+    public ResponseEntity<Object> handlePutException401(PutRequestException401 ex){
         PutException putException = new PutException(ex.getMessage(), HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(putException, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(value = PutRequestException404.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handlePutException404(PutRequestException204 ex){
+    public ResponseEntity<Object> handlePutException404(PutRequestException404 ex){
         PutException putException = new PutException(ex.getMessage(), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(putException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = GetRequestException400.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleGetException400(GetRequestException400 ex) {
+        GetException getException = new GetException(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getException, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = GetRequestException404.class)
@@ -93,10 +98,17 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = GetRequestException400.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleGetException400(GetRequestException400 ex) {
-        GetException getException = new GetException(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(getException, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(value = GetRequestException409.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleGetException409(GetRequestException409 ex){
+        GetException getException = new GetException(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = GetRequestException500.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleGetException500(GetRequestException500 ex){
+        GetException getException = new GetException(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
     }
 }

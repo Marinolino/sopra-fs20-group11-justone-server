@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,8 +24,8 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -174,6 +175,104 @@ public class UserControllerTest {
         MockHttpServletRequestBuilder getRequest = get("/users/1").contentType(MediaType.APPLICATION_JSON);
         // then
         mockMvc.perform(getRequest).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void login_success() throws Exception {
+        User user = new User();
+        user.setId(1L);
+        user.setName("TestUser");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setPassword("testpassword");
+        user.setStatus(UserStatus.ONLINE);
+
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("testUsername");
+        userPutDTO.setPassword("testpassword");
+
+        given(userService.logIn(Mockito.any())).willReturn(user);
+
+        MockHttpServletRequestBuilder putRequest = put("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPutDTO));
+
+        mockMvc.perform(putRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+    }
+
+    @Test
+    public void login_invalidInput() throws Exception {
+        User user = new User();
+        user.setId(1L);
+        user.setName("TestUser");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setPassword("testpassword");
+        user.setStatus(UserStatus.OFFLINE);
+
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("testUsername");
+        userPutDTO.setPassword("abc");
+
+        Mockito.when(userService.logIn(Mockito.any())).thenCallRealMethod();
+        given(userService.findByUsername(Mockito.anyString())).willReturn(user);
+
+        MockHttpServletRequestBuilder putRequest = put("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPutDTO));
+
+        mockMvc.perform(putRequest)
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void login_userAlreadyLoggedIn() throws Exception {
+        User user = new User();
+        user.setId(1L);
+        user.setName("TestUser");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setPassword("testpassword");
+        user.setStatus(UserStatus.ONLINE);
+
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("testUsername");
+        userPutDTO.setPassword("testpassword");
+
+        Mockito.when(userService.logIn(Mockito.any())).thenCallRealMethod();
+        given(userService.findByUsername(Mockito.anyString())).willReturn(user);
+
+        MockHttpServletRequestBuilder putRequest = put("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPutDTO));
+
+        mockMvc.perform(putRequest)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void logoutUser_success() throws Exception {
+        User user = new User();
+        user.setId((long) 1);
+        user.setName("TestUser");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setPassword("abc");
+        user.setStatus(UserStatus.ONLINE);
+
+        given(userService.getUserById(Mockito.anyLong())).willReturn(user);
+
+        MockHttpServletRequestBuilder putRequest = put("/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString((long)1));
+
+        mockMvc.perform(putRequest).andExpect(status()
+                .isNoContent());
     }
 
 

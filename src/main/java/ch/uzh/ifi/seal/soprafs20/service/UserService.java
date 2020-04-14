@@ -3,6 +3,8 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,18 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    public User logOut(Long id){
+        User user = getUserById(id);
+        user.setStatus(UserStatus.OFFLINE);
+        User updatedUser = userRepository.save(user);
+        userRepository.flush();
+        return updatedUser;
+    }
+
+    public User findByUsername(String name){
+        return this.userRepository.findByUsername(name);
+    }
+
     public User createUser(User newUser) {
 
         checkIfInputIsValid(newUser);
@@ -59,6 +73,27 @@ public class UserService {
 
         log.debug("Created Information for User: {}", newUser);
         return newUser;
+    }
+
+    //checks if the user exists and if the password is correct
+    public User logIn(User userToCheck){
+        User userByUsername = findByUsername(userToCheck.getUsername());
+
+        if(userByUsername == null){
+            String message = String.format("There is no registered user '%s'! Please try again!", userToCheck.getUsername());
+            throw new PutRequestException401(message, HttpStatus.UNAUTHORIZED);
+        }
+        if(!userByUsername.getPassword().equals(userToCheck.getPassword())){
+            String message = "The password is incorrect! Please try again!";
+            throw new PutRequestException401(message, HttpStatus.UNAUTHORIZED);
+        }
+        if(userByUsername.getStatus() == UserStatus.ONLINE){
+            String message = String.format("There user '%s' is already logged in!", userToCheck.getUsername());
+            throw new PutRequestException204(message, HttpStatus.NO_CONTENT);
+        }
+        userByUsername.setToken(UUID.randomUUID().toString());
+        userByUsername.setStatus(UserStatus.ONLINE);
+        return (userByUsername);
     }
 
     /**
