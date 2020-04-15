@@ -47,9 +47,6 @@ public interface DTOMapper {
     @Mapping(source = "id", target = "id")
     Game convertGameGetDTOtoEntity(GameGetDTO gameGetDTO);
 
-    //TODO put conversion
-    Game convertGameGetDTOtoEntity(GamePutDTO gamePutDTO);
-
     @Mapping(source = "id", target = "id")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "status", target = "status")

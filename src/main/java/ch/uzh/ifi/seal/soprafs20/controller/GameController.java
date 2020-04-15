@@ -90,15 +90,4 @@ public class GameController {
         // convert internal representation of game to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(gameService.getGameById(id));
     }
-
-
-
-    //TODO put requests
-    /*@PutMapping(value = "/games/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public GameGetDTO updateGame(@RequestBody GamePutDTO gamePutDTO) {
-    }
-    */
-
 }

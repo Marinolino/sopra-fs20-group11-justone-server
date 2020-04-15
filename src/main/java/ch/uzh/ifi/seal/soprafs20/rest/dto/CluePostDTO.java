@@ -4,13 +4,13 @@ import java.util.List;
 
 public class CluePostDTO {
 
-    private List<String> clues;
+    private String clue;
 
-    public List<String> getClues(){
-        return clues;
+    public String getClues(){
+        return clue;
     }
 
-    public void setClues(List<String> clues){
-        this.clues = clues;
+    public void setClue(String clues){
+        this.clue = clue;
     }
 }
