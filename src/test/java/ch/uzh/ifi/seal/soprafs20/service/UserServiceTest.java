@@ -11,8 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -138,6 +137,33 @@ public class UserServiceTest {
         emptyUser.setPassword("123 ");
         exception = assertThrows(PostRequestException409.class, () -> userService.createUser(emptyUser), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void updateUser_validInputs_success() {
+
+        User testUpdateUser = new User();
+        testUpdateUser.setId(1L);
+        testUpdateUser.setName("testName");
+        testUpdateUser.setUsername("testUsername");
+        testUpdateUser.setPassword("testPassword");
+        Optional<User> userOptional = Optional.of(testUpdateUser);
+
+        // when -> any object is being update in the userRepository -> return the dummy testUpdateUser
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUpdateUser);
+        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(userOptional);
+
+
+        // when -> any object is being save in the userRepository -> return the dummy testUser
+        User updatedUser = userService.updateUser(testUpdateUser);
+
+        // then
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+
+        assertEquals(testUpdateUser.getId(), updatedUser.getId());
+        assertEquals(testUpdateUser.getName(), updatedUser.getName());
+        assertEquals(testUpdateUser.getUsername(), updatedUser.getUsername());
+
     }
 
 }

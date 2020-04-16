@@ -278,6 +278,63 @@ public class UserControllerTest {
                 .isNoContent());
     }
 
+    @Test
+    public void updateUser_validInput_userUpdated() throws Exception {
+        User user = new User();
+        user.setId(1L);
+        user.setName("TestUser");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setPassword("TestPassword");
+        user.setStatus(UserStatus.ONLINE);
+        user.setGamesPlayed(0);
+        user.setScore(0);
+        user.setInGame(false);
+
+        UserPutDTO userPostDTO = new UserPutDTO();
+        userPostDTO.setId(1L);
+        userPostDTO.setName("TestUserUpd");
+        userPostDTO.setUsername("testUsernameUpd");
+        userPostDTO.setPassword("testPasswordUpd");
+
+//        given(userService.getUserById(Mockito.any())).willReturn(user);
+        given(userService.updateUser(Mockito.any())).willReturn(user);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        // then
+        mockMvc.perform(postRequest)
+                .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void updateUser_invalidInput_userUpdated() throws Exception {
+        User user = new User();
+        user.setId(1L);
+        user.setName("TestUser");
+        user.setUsername("testUsername");
+        user.setToken("1");
+        user.setPassword("TestPassword");
+        user.setStatus(UserStatus.ONLINE);
+        user.setGamesPlayed(0);
+        user.setScore(0);
+        user.setInGame(false);
+
+//        given(userService.getUserById(Mockito.any())).willReturn(user);
+        given(userService.updateUser(Mockito.any())).willReturn(user);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(null));
+
+        // then
+        mockMvc.perform(postRequest)
+                .andExpect(status().isBadRequest());
+    }
 
 
     /**
