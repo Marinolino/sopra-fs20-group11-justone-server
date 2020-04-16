@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
@@ -40,8 +41,8 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
-        return this.userRepository.findById(id).orElse(null);
+    public User getUserById(Long id) throws GetRequestException404 {
+        return userRepository.findById(id).orElseThrow(() -> new GetRequestException404("No user was found!", HttpStatus.NOT_FOUND));
     }
 
     public User findByUsername(String name){
@@ -113,11 +114,19 @@ public class UserService {
      * @see User
      */
     private void checkIfUserExists(User userToBeCreated) {
-        User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
 
-        if (userByUsername != null) {
-            String message = String.format("There is already a user '%s'! Please try again!", userByUsername.getUsername());
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+        if (userToBeCreated.getId() == null) {
+            User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
+            if (userByUsername != null) {
+                String message = String.format("There is already a user '%s'! Please try again!", userByUsername.getUsername());
+                throw new PostRequestException409(message, HttpStatus.CONFLICT);
+            }
+        } else {
+            User userByUsername = userRepository.findByUsernameAndIdNot(userToBeCreated.getUsername(), userToBeCreated.getId());
+            if (userByUsername != null) {
+                String message = String.format("There is already a user '%s'! Please try again!", userByUsername.getUsername());
+                throw new PostRequestException409(message, HttpStatus.CONFLICT);
+            }
         }
     }
 
@@ -145,5 +154,26 @@ public class UserService {
                 throw new PostRequestException409(message, HttpStatus.CONFLICT);
             }
         }
+    }
+
+    public User updateUser(User user) throws GetRequestException404, PostRequestException409 {
+
+        checkIfInputIsValid(user);
+
+        checkIfUserExists(user);
+
+        User existedUser = getUserById(user.getId());
+
+        existedUser.setUsername(user.getUsername());
+        existedUser.setName(user.getName());
+        existedUser.setPassword(user.getPassword());
+
+        // saves the given entity but data is only persisted in the database once flush() is called
+        existedUser = userRepository.save(existedUser);
+        userRepository.flush();
+
+        log.debug("Updated Information for User: {}", user);
+        return existedUser;
+
     }
 }

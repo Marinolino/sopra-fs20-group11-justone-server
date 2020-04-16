@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * User Controller
@@ -67,7 +68,7 @@ public class UserController {
     public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException400, GetRequestException404 {
 
 
-       //check if a user id is valid
+        //check if a user id is valid
         if (id == null || id.longValue() == 0) {
             throw new GetRequestException400("Id should not empty!", HttpStatus.BAD_REQUEST);
         }
@@ -75,10 +76,26 @@ public class UserController {
         // get user
         User userById = userService.getUserById(id);
 
-        //check if a user was found
-        if (userById == null) {
-            throw new GetRequestException404("No user was found!", HttpStatus.NOT_FOUND);
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userById);
+    }
+
+    @PutMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
+    public UserGetDTO updateUserById(@PathVariable("id") Long id,
+                                     @RequestBody UserPutDTO userPutDTO) throws GetRequestException400, GetRequestException404 {
+
+        //check if a user input is valid
+        if (userPutDTO == null || Objects.isNull(userPutDTO.getId()) || userPutDTO.getId().longValue() == 0) {
+            throw new GetRequestException400("user should not empty!", HttpStatus.BAD_REQUEST);
         }
+
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        // update user
+        User userById = userService.updateUser(userInput);
 
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userById);
