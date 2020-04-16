@@ -54,12 +54,13 @@ class GameServiceIntegrationTest {
         Game testGame = new Game();
         testGame.setUserIds(testUserList);
         testGame.setNormalMode(true);
+        testGame.setCurrentUserId((long)1);
 
         Game createdGame = gameService.createGame(testGame);
 
         assertEquals(createdGame.getScore(), 0);
-        assertEquals(createdGame.getRound(), 1);
-        assertEquals(createdGame.getStatus(), GameStatus.RUNNING);
+        assertEquals(createdGame.getRound(), 0);
+        assertEquals(createdGame.getStatus(), GameStatus.CREATED);
         assertEquals(createdGame.getUserIds().size(), 2);
     }
 
@@ -72,6 +73,7 @@ class GameServiceIntegrationTest {
         Game testGame = new Game();
         testGame.setUserIds(testUserList);
         testGame.setNormalMode(true);
+        testGame.setCurrentUserId((long)1);
 
         Game createdGame = gameService.createGame(testGame);
         Game gameById = gameService.getGameById(createdGame.getId());

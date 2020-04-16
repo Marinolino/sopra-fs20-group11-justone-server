@@ -7,6 +7,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class GamePutDTO {
     private String token;
 
     private GameStatus status;
+
+    private Long currentUserId;
 
     private boolean normalMode;
 
@@ -72,6 +75,14 @@ public class GamePutDTO {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public Long getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void setCurrentUserId(Long currentUserId) {
+        this.currentUserId = currentUserId;
     }
 
     public GameBox getGameBox() {

@@ -167,6 +167,7 @@ public class UserControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isBadRequest());
     }
 
+    /*TODO: Move to Integration Test
     @Test
     public void test_getUserById_notFound() throws Exception {
 
@@ -175,7 +176,7 @@ public class UserControllerTest {
         MockHttpServletRequestBuilder getRequest = get("/users/1").contentType(MediaType.APPLICATION_JSON);
         // then
         mockMvc.perform(getRequest).andExpect(status().isNotFound());
-    }
+    }*/
 
     @Test
     public void login_success() throws Exception {
@@ -298,7 +299,7 @@ public class UserControllerTest {
         userPostDTO.setPassword("testPasswordUpd");
 
 //        given(userService.getUserById(Mockito.any())).willReturn(user);
-        given(userService.updateUser(Mockito.any())).willReturn(user);
+        given(userService.updateUser(Mockito.any(),Mockito.any())).willReturn(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = put("/users/1")
@@ -324,7 +325,7 @@ public class UserControllerTest {
         user.setInGame(false);
 
 //        given(userService.getUserById(Mockito.any())).willReturn(user);
-        given(userService.updateUser(Mockito.any())).willReturn(user);
+        given(userService.updateUser(Mockito.any(), Mockito.any())).willReturn(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = put("/users/1")

@@ -105,6 +105,30 @@ public class UserService {
         return user;
     }
 
+    public User updateUser(Long id, User user) throws GetRequestException404, PostRequestException409 {
+
+        checkIfInputIsValid(user);
+
+        checkIfUserExists(user);
+
+        User existedUser = getUserById(id);
+
+        if (user.getUsername() != null){
+            existedUser.setUsername(user.getUsername());
+        }
+
+        if (user.getName() != null){
+            existedUser.setName(user.getName());
+        }
+
+        // saves the given entity but data is only persisted in the database once flush() is called
+        User updatedUser = userRepository.save(existedUser);
+        userRepository.flush();
+
+        log.debug("Updated Information for User: {}", user);
+        return updatedUser;
+    }
+
     /**
      * This is a helper method that will check the uniqueness criteria of the username defined in the User entity.
      * The method will do nothing if the input is unique and throw an error otherwise.
@@ -140,40 +164,17 @@ public class UserService {
      */
     public void checkIfInputIsValid(User userToBeCreated) {
 
-        if (userToBeCreated.getUsername() != null){
-            if (userToBeCreated.getName().contains(" ")) {
-                String message = "The field 'NAME' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException409(message, HttpStatus.CONFLICT);
-            }
-            if (userToBeCreated.getUsername().contains(" ")) {
-                String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException409(message, HttpStatus.CONFLICT);
-            }
-            if (userToBeCreated.getPassword().contains(" ")) {
-                String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
-                throw new PostRequestException409(message, HttpStatus.CONFLICT);
-            }
+        if (userToBeCreated.getName() != null && userToBeCreated.getName().contains(" ")) {
+            String message = "The field 'NAME' must not contain any whitespaces! Therefore, the user could not be created!";
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
         }
-    }
-
-    public User updateUser(User user) throws GetRequestException404, PostRequestException409 {
-
-        checkIfInputIsValid(user);
-
-        checkIfUserExists(user);
-
-        User existedUser = getUserById(user.getId());
-
-        existedUser.setUsername(user.getUsername());
-        existedUser.setName(user.getName());
-        existedUser.setPassword(user.getPassword());
-
-        // saves the given entity but data is only persisted in the database once flush() is called
-        existedUser = userRepository.save(existedUser);
-        userRepository.flush();
-
-        log.debug("Updated Information for User: {}", user);
-        return existedUser;
-
+        if (userToBeCreated.getUsername() != null && userToBeCreated.getUsername().contains(" ")) {
+            String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+        }
+        if (userToBeCreated.getPassword() != null && userToBeCreated.getPassword().contains(" ")) {
+            String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+        }
     }
 }

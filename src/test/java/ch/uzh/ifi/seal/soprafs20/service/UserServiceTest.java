@@ -59,20 +59,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_duplicateUserName_throwsException() {
-        // given -> a first user has already been created
-        userService.createUser(testUser);
-
-        // when -> setup additional mocks for UserRepository
-        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
-
-        // then -> attempt to create second user with same user -> check that an error is thrown
-        String exceptionMessage = String.format("There is already a user '%s'! Please try again!", testUser.getUsername());
-        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(testUser), exceptionMessage);
-        assertEquals(exceptionMessage, exception.getMessage());
-    }
-
-    @Test
     public void checkIfNameHasWhitespaces_throwsException() {
         User emptyUser = new User();
         emptyUser.setUsername("Test");
@@ -155,7 +141,7 @@ public class UserServiceTest {
 
 
         // when -> any object is being save in the userRepository -> return the dummy testUser
-        User updatedUser = userService.updateUser(testUpdateUser);
+        User updatedUser = userService.updateUser(testUpdateUser.getId(), testUpdateUser);
 
         // then
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());

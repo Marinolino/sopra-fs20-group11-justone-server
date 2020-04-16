@@ -5,10 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException500;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.CardGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
@@ -29,7 +26,7 @@ public class GameController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameGetDTO createUser(@RequestBody GamePostDTO gamePostDTO) throws FileNotFoundException {
+    public GameGetDTO createGame(@RequestBody GamePostDTO gamePostDTO) throws FileNotFoundException {
         // convert API user to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gamePostDTO);
 
@@ -39,6 +36,32 @@ public class GameController {
         // convert internal representation of game back to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
     }
+
+    @PutMapping("/games/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO addUserToGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) throws Exception {
+        // convert API user to internal representation
+        Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
+
+        // create game
+        Game updatedGame = gameService.addUserToGame(id, gameInput);
+
+        // convert internal representation of game back to API
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+    }
+
+    @PutMapping("/games/start/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO startGame(@PathVariable("id") long id)  throws FileNotFoundException {
+        // start game
+        Game startedGame = gameService.startGame(id);
+
+        // convert internal representation of game back to API
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(startedGame);
+    }
+
 
     @GetMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -71,7 +94,7 @@ public class GameController {
             throw new GetRequestException500("Something went wrong when fetching the card!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // convert internal representation of card to API
+        //convert internal representation of card to API
         return DTOMapper.INSTANCE.convertEntityToCardGetDTO(activeCard);
     }
 

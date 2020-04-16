@@ -34,6 +34,9 @@ public class Game  implements Serializable {
     @Column(nullable = false)
     private int round;
 
+    @Column(nullable = false)
+    private Long currentUserId;
+
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     private GameBox gameBox;
 
@@ -99,6 +102,14 @@ public class Game  implements Serializable {
 
     public void setRound(int round) {
         this.round = round;
+    }
+
+    public Long getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void setCurrentUserId(Long currentUserId) {
+        this.currentUserId = currentUserId;
     }
 
     public GameBox getGameBox() {

@@ -53,6 +53,7 @@ public class UserServiceIntegrationTest {
         assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
     }
 
+
     @Test
     public void createUser_duplicateUsername_throwsException() {
         assertNull(userRepository.findByUsername("testUsername"));
@@ -65,15 +66,13 @@ public class UserServiceIntegrationTest {
 
         // attempt to create second user with same username
         User testUser2 = new User();
-
-        // change the name but forget about the username
         testUser2.setName("testName2");
         testUser2.setUsername("testUsername");
-        testUser.setPassword("testPassword");
+        testUser2.setPassword("testPassword");
 
         // check that an error is thrown
         String exceptionMessage = String.format("There is already a user '%s'! Please try again!", testUser.getUsername());
-        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(testUser), exceptionMessage);
+        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(testUser2), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
     }
 }

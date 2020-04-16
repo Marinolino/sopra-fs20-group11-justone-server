@@ -66,13 +66,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException400, GetRequestException404 {
-
-
-        //check if a user id is valid
-        if (id == null || id.longValue() == 0) {
-            throw new GetRequestException400("Id should not empty!", HttpStatus.BAD_REQUEST);
-        }
-
         // get user
         User userById = userService.getUserById(id);
 
@@ -83,19 +76,12 @@ public class UserController {
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public UserGetDTO updateUserById(@PathVariable("id") Long id,
-                                     @RequestBody UserPutDTO userPutDTO) throws GetRequestException400, GetRequestException404 {
-
-        //check if a user input is valid
-        if (userPutDTO == null || Objects.isNull(userPutDTO.getId()) || userPutDTO.getId().longValue() == 0) {
-            throw new GetRequestException400("user should not empty!", HttpStatus.BAD_REQUEST);
-        }
-
+    public UserGetDTO updateUserById(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws GetRequestException400, GetRequestException404 {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
         // update user
-        User userById = userService.updateUser(userInput);
+        User userById = userService.updateUser(id, userInput);
 
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userById);

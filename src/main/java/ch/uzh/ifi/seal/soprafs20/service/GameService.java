@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePutDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,23 +46,34 @@ public class GameService {
     public Game createGame(Game newGame) throws FileNotFoundException {
         Game createdGame = createGameElements(newGame);
         createdGame.setToken(UUID.randomUUID().toString());
-        createdGame.setStatus(GameStatus.RUNNING);
+        createdGame.setStatus(GameStatus.CREATED);
         createdGame.setScore(0);
-        createdGame.setRound(1);
-
-        //check and set if it is a game with 3 players or more than 3 players
-        if (createdGame.getUserIds().size() == 3){
-            createdGame.setNormalMode(false);
-        }
-        else {
-            createdGame.setNormalMode(true);
-        }
+        createdGame.setRound(0);
 
         // saves the given entity but data is only persisted in the database once flush() is called
         Game savedGame = gameRepository.save(createdGame);
         gameRepository.flush();
 
         log.debug("Created Information for Game: {}", newGame);
+        return savedGame;
+    }
+
+    public Game startGame(Long id){
+        Game gameById = getGameById(id);
+        gameById.setStatus(GameStatus.RUNNING);
+
+        //check and set if it is a game with 3 players or more than 3 players
+        if (gameById.getUserIds().size() == 3){
+            gameById.setNormalMode(false);
+        }
+        else {
+            gameById.setNormalMode(true);
+        }
+
+        // saves the given entity but data is only persisted in the database once flush() is called
+        Game savedGame = gameRepository.save(gameById);
+        gameRepository.flush();
+
         return savedGame;
     }
 
@@ -81,6 +93,21 @@ public class GameService {
         newGame.setCorrectlyGuessed(new Deck());
 
         return newGame;
+    }
+
+    public Game addUserToGame(Long id, Game game) throws Exception {
+        Game gameById = getGameById(id);
+
+        if (gameById == null){
+            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
+        }
+
+        gameById.addUserId(game.getCurrentUserId());
+
+        Game savedGame = gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return savedGame;
     }
 
     //fetch game by id from the repository and get the top card from the deck as active card
