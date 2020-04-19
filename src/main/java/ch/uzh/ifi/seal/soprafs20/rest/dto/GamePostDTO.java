@@ -6,13 +6,13 @@ import java.util.List;
 
 public class GamePostDTO {
 
-    private List<Long> userIds;
+    private Long currentUserId;
 
-    public List<Long> getUserIds() {
-        return userIds;
+    public Long getCurrentUserId() {
+        return currentUserId;
     }
 
-    public void setUserIds(List<Long> userIds) {
-        this.userIds = userIds;
+    public void setCurrentUserId(Long currentUserId) {
+        this.currentUserId = currentUserId;
     }
 }

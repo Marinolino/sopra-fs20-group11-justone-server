@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException500;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -60,6 +62,19 @@ public class GameController {
 
         // convert internal representation of game back to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(startedGame);
+    }
+
+    @GetMapping("/games")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<GameGetDTO> getAllGames() {
+        List<GameGetDTO> gameGetDTOs = new ArrayList<>();
+        List<Game> games = gameService.getGames();
+
+        for (Game game : games) {
+            gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
+        }
+        return gameGetDTOs;
     }
 
 

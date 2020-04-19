@@ -49,6 +49,7 @@ public class GameService {
         createdGame.setStatus(GameStatus.CREATED);
         createdGame.setScore(0);
         createdGame.setRound(0);
+        createdGame.addUserId(createdGame.getCurrentUserId());
 
         // saves the given entity but data is only persisted in the database once flush() is called
         Game savedGame = gameRepository.save(createdGame);

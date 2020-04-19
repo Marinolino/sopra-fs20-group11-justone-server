@@ -42,7 +42,7 @@ public class UserService {
     }
 
     public User getUserById(Long id) throws GetRequestException404 {
-        return userRepository.findById(id).orElseThrow(() -> new GetRequestException404("No user was found!", HttpStatus.NOT_FOUND));
+        return userRepository.findById(id).orElse(null);
     }
 
     public User findByUsername(String name){

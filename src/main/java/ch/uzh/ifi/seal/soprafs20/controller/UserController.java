@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * User Controller
@@ -65,9 +64,13 @@ public class UserController {
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException400, GetRequestException404 {
+    public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException404 {
         // get user
         User userById = userService.getUserById(id);
+
+        if (userById == null){
+            throw new GetRequestException404("No user was found!", HttpStatus.NOT_FOUND);
+        }
 
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userById);

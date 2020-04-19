@@ -47,12 +47,7 @@ class GameServiceIntegrationTest {
 
     @Test
     public void createGame_success() throws Exception {
-        List<Long> testUserList = new ArrayList<>();
-        testUserList.add((long)1);
-        testUserList.add((long)2);
-
         Game testGame = new Game();
-        testGame.setUserIds(testUserList);
         testGame.setNormalMode(true);
         testGame.setCurrentUserId((long)1);
 
@@ -61,6 +56,18 @@ class GameServiceIntegrationTest {
         assertEquals(createdGame.getScore(), 0);
         assertEquals(createdGame.getRound(), 0);
         assertEquals(createdGame.getStatus(), GameStatus.CREATED);
+        assertEquals(createdGame.getUserIds().size(), 1);
+    }
+
+    @Test
+    public void addUserToGame_success() throws Exception {
+        Game testGame = new Game();
+        testGame.setNormalMode(true);
+        testGame.setCurrentUserId((long)1);
+
+        Game createdGame = gameService.createGame(testGame);
+        createdGame.addUserId((long)2);
+
         assertEquals(createdGame.getUserIds().size(), 2);
     }
 

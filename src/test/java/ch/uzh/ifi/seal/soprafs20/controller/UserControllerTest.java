@@ -164,7 +164,7 @@ public class UserControllerTest {
         // when
         MockHttpServletRequestBuilder getRequest = get("/users/0").contentType(MediaType.APPLICATION_JSON);
         // then
-        mockMvc.perform(getRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(getRequest).andExpect(status().isNotFound());
     }
 
     /*TODO: Move to Integration Test
