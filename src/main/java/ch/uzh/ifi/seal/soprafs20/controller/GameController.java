@@ -98,16 +98,9 @@ public class GameController {
     @GetMapping("/cards/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CardGetDTO getActiveCard(@PathVariable("id") long id) throws GetRequestException500 {
-        Card activeCard;
+    public CardGetDTO getActiveCard(@PathVariable("id") long id) throws Exception {
 
-        //get topCard from deck
-        try {
-            activeCard = gameService.getActiveCard(id);
-        }
-        catch (Exception e){
-            throw new GetRequestException500("Something went wrong when fetching the card!", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Card activeCard = gameService.getActiveCard(id);
 
         //convert internal representation of card to API
         return DTOMapper.INSTANCE.convertEntityToCardGetDTO(activeCard);

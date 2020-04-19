@@ -122,10 +122,10 @@ public class GameService {
 
         gameById.setActiveCardFromDeck();
         gameById.setRound(gameById.getRound() + 1);
-        gameRepository.save(gameById);
+        Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
 
-        return gameById.getActiveCard();
+        return savedGame.getActiveCard();
     }
 
     //fetch game by id from the repository and set the word of it's active card, which matches the id in cardPutDTo, to true

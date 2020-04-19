@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
@@ -29,6 +30,7 @@ class GameServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        testGame = new Game();
         //Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
     }
 

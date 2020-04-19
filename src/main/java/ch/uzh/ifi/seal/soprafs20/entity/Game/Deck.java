@@ -56,11 +56,10 @@ public class Deck implements Serializable {
     //returns the top card of the deck, throws an exception if the deck is empty
     public Card getTopCard(){
         if (hasNext){
-            Card topCard = cardList.remove(0);
-            if (cardList.size() == 0){
+            if (cardList.size() == 1){
                 hasNext = false;
             }
-            return topCard;
+            return cardList.remove(0);
         }
         else{
             throw new SopraServiceException("The deck is empty!");
