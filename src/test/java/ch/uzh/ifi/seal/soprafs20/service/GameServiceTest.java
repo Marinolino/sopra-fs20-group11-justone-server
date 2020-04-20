@@ -4,12 +4,13 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -19,6 +20,22 @@ class GameServiceTest {
 
     @Mock
     private GameRepository gameRepository;
+
+    @Mock
+    private GameBoxRepository gameBoxRepository;
+
+    @Mock
+    private DeckRepository deckRepository;
+
+    @Mock
+    private CardRepository cardRepository;
+
+    @Mock
+    private ClueRepository clueRepository;
+
+    @Mock
+    private MysteryWordRepository mysteryWordRepository;
+
 
     @InjectMocks
     private GameService gameService;

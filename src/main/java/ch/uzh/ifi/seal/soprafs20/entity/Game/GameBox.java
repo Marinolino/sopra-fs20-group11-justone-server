@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "GAMEBOX")
 public class GameBox implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -16,7 +17,8 @@ public class GameBox implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="game_id")
     public Game game;
 
     @OneToMany(mappedBy = "gameBox", cascade = CascadeType.ALL)

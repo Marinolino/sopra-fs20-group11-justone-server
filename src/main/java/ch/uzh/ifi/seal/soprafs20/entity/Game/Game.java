@@ -177,6 +177,6 @@ public class Game  implements Serializable {
 
     //get's the top card from the deck and sets it as the active card
     public void setActiveCardFromDeck(){
-        activeCard = deck.getTopCard();
+        this.setActiveCard(this.deck.getTopCard());
     }
 }

@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "MYSTERYWORD")
 public class MysteryWord implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,7 +20,8 @@ public class MysteryWord implements Serializable {
     @Column(nullable = false)
     private boolean chosen;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="card_id")
     public Card card;
 
     public Long getId() {

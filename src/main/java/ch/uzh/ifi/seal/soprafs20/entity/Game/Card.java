@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "CARD")
 public class Card implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -17,13 +18,16 @@ public class Card implements Serializable {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<MysteryWord> wordList = new ArrayList<MysteryWord>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="game")
     public Game game;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="gameBox")
     public GameBox gameBox;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="deck")
     public Deck deck;
 
     public Long getId(){
