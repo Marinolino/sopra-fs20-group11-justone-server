@@ -29,9 +29,15 @@ public class GameService {
 
     private final GameRepository gameRepository;
 
+<<<<<<< Updated upstream
 
     public GameService(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
+=======
+    public GameService(GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+
+>>>>>>> Stashed changes
     }
 
     public List<Game> getGames() {
@@ -86,6 +92,7 @@ public class GameService {
         Deck deck = new Deck();
         deck.setCardList(createCards());
         newGame.setDeck(deck);
+<<<<<<< Updated upstream
 
         //Get the top Card from Deck as active Card
         newGame.setActiveCard(new Card());
@@ -93,6 +100,11 @@ public class GameService {
         //Create Deck for the correctly guessed Cards
         newGame.setCorrectlyGuessed(new Deck());
 
+=======
+
+        //Create Deck for the correctly guessed Cards
+        newGame.setCorrectlyGuessed(new Deck());
+>>>>>>> Stashed changes
         return newGame;
     }
 
@@ -125,7 +137,11 @@ public class GameService {
         gameRepository.save(gameById);
         gameRepository.flush();
 
+<<<<<<< Updated upstream
         return gameById.getActiveCard();
+=======
+        return savedGame.getActiveCard();
+>>>>>>> Stashed changes
     }
 
     //fetch game by id from the repository and set the word of it's active card, which matches the id in cardPutDTo, to true

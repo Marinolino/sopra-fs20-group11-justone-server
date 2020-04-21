@@ -1,22 +1,21 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "GAME")
-public class Game  implements Serializable {
+@Table(name = "game")
+public class Game implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -37,24 +36,29 @@ public class Game  implements Serializable {
     @Column(nullable = false)
     private Long currentUserId;
 
-    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "gameBox_id", referencedColumnName = "id")
     private GameBox gameBox;
 
-    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "deck_id", referencedColumnName = "id")
     private Deck deck;
 
-    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "correctlyGuessed_id", referencedColumnName = "id")
     private Deck correctlyGuessed;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
+    private Card activeCard;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "game_id")
+    private List<Clue> clues = new ArrayList<Clue>();
 
     @Column(nullable = false)
     @ElementCollection
     private List<Long> userIds = new ArrayList<>();
-
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
-    private List<Clue> clues = new ArrayList<Clue>();
-
-    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
-    private Card activeCard;
 
     public Long getId() {
         return id;
@@ -118,6 +122,7 @@ public class Game  implements Serializable {
 
     public void setGameBox(GameBox gameBox) {
         this.gameBox = gameBox;
+        gameBox.setGame(this);
     }
 
     public Deck getDeck() {
@@ -126,6 +131,7 @@ public class Game  implements Serializable {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+        deck.setGame(this);
     }
 
     public Deck getCorrectlyGuessed() {
@@ -134,6 +140,7 @@ public class Game  implements Serializable {
 
     public void setCorrectlyGuessed(Deck correctlyGuessed) {
         this.correctlyGuessed = correctlyGuessed;
+        correctlyGuessed.setGame(this);
     }
 
     //add one card at the top off the correctly guessed pile
@@ -160,11 +167,15 @@ public class Game  implements Serializable {
 
     public void setClues(List<Clue> clues) {
         this.clues = clues;
+        for (Clue clue : clues){
+            clue.setGame(this);
+        }
     }
 
     //add one clue to the clue list
     public void addClue(Clue clue){
         this.clues.add(clue);
+        clue.setGame(this);
     }
 
     public Card getActiveCard() {
@@ -173,11 +184,17 @@ public class Game  implements Serializable {
 
     public void setActiveCard(Card activeCard) {
         this.activeCard = activeCard;
+        activeCard.setGame(this);
     }
 
     //get's the top card from the deck and sets it as the active card
     @Transactional
     public void setActiveCardFromDeck(){
+<<<<<<< Updated upstream
         this.activeCard = this.deck.getTopCard();
+=======
+        this.setActiveCard(this.deck.getTopCard());
+        activeCard.setGame(this);
+>>>>>>> Stashed changes
     }
 }

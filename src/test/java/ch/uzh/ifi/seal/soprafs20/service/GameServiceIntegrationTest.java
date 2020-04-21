@@ -14,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+<<<<<<< Updated upstream
 
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+=======
+>>>>>>> Stashed changes
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,17 +35,30 @@ class GameServiceIntegrationTest {
 
     @Autowired
     private GameService gameService;
+<<<<<<< Updated upstream
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
+=======
+>>>>>>> Stashed changes
 
     @BeforeEach
     public void setup() {
         gameRepository.deleteAll();
+<<<<<<< Updated upstream
         userRepository.deleteAll();
+=======
+    }
+
+    @Test
+    public void getAllGames_noGamesInRepo(){
+        List<Game> games = gameService.getGames();
+
+        assertEquals(games.size(), 0);
+>>>>>>> Stashed changes
     }
 
     @Test
