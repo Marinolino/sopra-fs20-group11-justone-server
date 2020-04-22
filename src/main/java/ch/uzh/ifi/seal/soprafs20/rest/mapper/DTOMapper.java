@@ -9,6 +9,9 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * DTOMapper
  * This class is responsible for generating classes that will automatically transform/map the internal representation
@@ -50,6 +53,12 @@ public interface DTOMapper {
 
     @Mapping(source = "clue", target = "clue")
     Clue convertCluePostDTOtoEntity(CluePostDTO cluePostDTO);
+
+    default List<String> convertClueDeleteDTOtoList(ClueDeleteDTO clueDeleteDTO){
+        List<String> cluesToDelete = new ArrayList<>();
+        cluesToDelete = clueDeleteDTO.getCluesToDelete();
+        return cluesToDelete;
+    }
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "token", target = "token")

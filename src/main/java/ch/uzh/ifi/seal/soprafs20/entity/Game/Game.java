@@ -166,12 +166,7 @@ public class Game implements Serializable {
     }
 
     public void deleteClue(String name) {
-        for (Clue clue : getClues()){
-            if (name.equals(clue.getClue())){
-                clue.setGame(null);
-                clues.remove(clue);
-            }
-        }
+        this.clues.removeIf(clue -> name.equals(clue.getClue()));
     }
 
     public void setClues(List<Clue> clues) {
