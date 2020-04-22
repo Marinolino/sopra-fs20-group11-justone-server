@@ -54,10 +54,10 @@ public interface DTOMapper {
     @Mapping(source = "clue", target = "clue")
     Clue convertCluePostDTOtoEntity(CluePostDTO cluePostDTO);
 
-    default List<String> convertClueDeleteDTOtoList(ClueDeleteDTO clueDeleteDTO){
-        List<String> cluesToDelete = new ArrayList<>();
-        cluesToDelete = clueDeleteDTO.getCluesToDelete();
-        return cluesToDelete;
+    default List<String> convertCluePutDTOtoList(CluePutDTO clueDeleteDTO){
+        List<String> cluesToChange = new ArrayList<>();
+        cluesToChange  = clueDeleteDTO.getCluesToChange();
+        return cluesToChange ;
     }
 
     @Mapping(source = "id", target = "id")
@@ -71,9 +71,11 @@ public interface DTOMapper {
 
     default ClueGetDTO convertEntityToClueGetDTO(Game game){
         ClueGetDTO clueGetDTO = new ClueGetDTO();
-
+        //add all valid clues to the list
         for (Clue clue : game.getClues()){
-            clueGetDTO.addAClue(clue.getClue());
+            if (clue.getValid()){
+                clueGetDTO.addAClue(clue.getClue());
+            }
         }
         return clueGetDTO;
     }

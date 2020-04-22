@@ -165,8 +165,12 @@ public class Game implements Serializable {
         return clues;
     }
 
-    public void deleteClue(String name) {
-        this.clues.removeIf(clue -> name.equals(clue.getClue()));
+    public void setClueToInvalid(String name) {
+        for(Clue clue : clues){
+            if (name.equals(clue.getClue())){
+                clue.setValid(false);
+            }
+        }
     }
 
     public void setClues(List<Clue> clues) {

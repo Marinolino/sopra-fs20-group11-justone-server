@@ -17,6 +17,9 @@ public class Clue implements Serializable {
     @Column(nullable = false)
     private String clue;
 
+    @Column(nullable = false)
+    private boolean valid;
+
     @ManyToOne
     @JoinColumn(name="game_id", insertable = false, updatable = false)
     private Game game;
@@ -35,6 +38,14 @@ public class Clue implements Serializable {
 
     public void setId(Long clueId){
         this.id = clueId;
+    }
+
+    public boolean getValid(){
+        return valid;
+    }
+
+    public void setValid(boolean valid){
+        this.valid = valid;
     }
 
     public Game getGame() {

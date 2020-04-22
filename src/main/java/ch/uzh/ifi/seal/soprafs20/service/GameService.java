@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
 import org.slf4j.Logger;
@@ -122,35 +123,37 @@ public class GameService {
         Game gameById = getGameById(id);
 
         Card card = gameById.getActiveCard();
-        if (card != null) {
-            card.setChosenWord(cardPutDTO.getId());
+
+        if (card == null){
+            throw new PutRequestException404("This game contains no active card!", HttpStatus.NOT_FOUND);
         }
+
+        card.setChosenWord(cardPutDTO.getId());
 
         gameById.setActiveCard(card);
         gameRepository.save(gameById);
         gameRepository.flush();
     }
 
-    //checks a clue with the parser, if the clue is valid, it is added to the games clue list
+    //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
     public Game addClueToGame(Long id, String clueInput){
         Game gameById = getGameById(id);
-        //check if the clue is valid
-        if (ClueChecker.checkClue(clueInput)){
-            Clue validClue = new Clue();
-            validClue.setClue(clueInput);
-            gameById.addClue(validClue);
+        Clue checkedClue = new Clue();
+        checkedClue.setClue(clueInput);
 
-            gameById = gameRepository.save(gameById);
-            gameRepository.flush();
-        }
+        checkedClue.setValid(ClueChecker.checkClue(clueInput, gameById));
+        gameById.addClue(checkedClue);
+        gameById = gameRepository.save(gameById);
+        gameRepository.flush();
+
         return gameById;
     }
 
-    public Game deleteClues(Long id, List<String> cluesToDelete){
+    public Game setCluesToInvalid(Long id, List<String> cluesToDelete){
         Game gameById = getGameById(id);
 
         for (String clue : cluesToDelete){
-            gameById.deleteClue(clue);
+            gameById.setClueToInvalid(clue);
             gameById = gameRepository.save(gameById);
             gameRepository.flush();
         }

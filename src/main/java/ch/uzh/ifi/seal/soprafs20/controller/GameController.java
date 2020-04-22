@@ -139,15 +139,15 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToClueGetDTO(gameById);
     }
 
-    @DeleteMapping("/clues/{id}")
+    @PutMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ClueGetDTO deleteClues(@PathVariable("id") long id, @RequestBody ClueDeleteDTO clueDeleteDTO) throws GetRequestException404 {
+    public ClueGetDTO setCluesToInvalid(@PathVariable("id") long id, @RequestBody CluePutDTO cluePutDTO) throws GetRequestException404 {
         // convert API clue to internal representation
-        List<String> cluesToDelete = DTOMapper.INSTANCE.convertClueDeleteDTOtoList(clueDeleteDTO);
+        List<String> cluesToChange = DTOMapper.INSTANCE.convertCluePutDTOtoList(cluePutDTO);
 
         // create clue
-        Game updatedGame = gameService.deleteClues(id, cluesToDelete);
+        Game updatedGame = gameService.setCluesToInvalid(id, cluesToChange);
 
         // convert internal representation of clue back to API
         return DTOMapper.INSTANCE.convertEntityToClueGetDTO(updatedGame);
