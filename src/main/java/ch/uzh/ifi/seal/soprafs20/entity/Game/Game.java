@@ -1,10 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,8 +174,7 @@ public class Game  implements Serializable {
     }
 
     //get's the top card from the deck and sets it as the active card
-    @Transactional
     public void setActiveCardFromDeck(){
-        this.activeCard = this.deck.getTopCard();
+        this.setActiveCard(this.deck.getTopCard());
     }
 }

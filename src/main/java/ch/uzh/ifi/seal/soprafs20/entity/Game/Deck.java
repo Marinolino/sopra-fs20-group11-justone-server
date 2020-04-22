@@ -1,15 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "DECK")
 public class Deck implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,12 +17,13 @@ public class Deck implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private boolean hasNext;
+    private boolean hasNext = false;
 
     @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
     private List<Card> cardList = new ArrayList<Card>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="game")
     public Game game;
 
     public Long getId() {
@@ -56,11 +55,10 @@ public class Deck implements Serializable {
     //returns the top card of the deck, throws an exception if the deck is empty
     public Card getTopCard(){
         if (hasNext){
-            Card topCard = cardList.remove(0);
-            if (cardList.size() == 0){
+            if (cardList.size() == 1){
                 hasNext = false;
             }
-            return topCard;
+            return this.cardList.remove(0);
         }
         else{
             throw new SopraServiceException("The deck is empty!");

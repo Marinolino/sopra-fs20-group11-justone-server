@@ -1,10 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "CLUE")
 public class Clue implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -16,7 +16,8 @@ public class Clue implements Serializable {
     @Column(nullable = false)
     private String clue;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="game")
     public Game game;
 
     public String getClue(){
