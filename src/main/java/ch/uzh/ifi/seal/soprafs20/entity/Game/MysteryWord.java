@@ -1,6 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import javax.persistence.*;
 import java.io.Serializable;
 
