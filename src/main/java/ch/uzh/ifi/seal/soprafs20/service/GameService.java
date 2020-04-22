@@ -133,7 +133,9 @@ public class GameService {
         }
 
         Card card = gameById.getActiveCard();
-        card.setChosenWord(cardPutDTO.getId());
+        if (card != null) {
+            card.setChosenWord(cardPutDTO.getId());
+        }
 
         gameById.setActiveCard(card);
         gameRepository.save(gameById);
