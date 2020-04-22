@@ -6,11 +6,11 @@ public class CluePostDTO {
 
     private String clue;
 
-    public String getClues(){
+    public String getClue(){
         return clue;
     }
 
-    public void setClue(String clues){
+    public void setClue(String clue){
         this.clue = clue;
     }
 }

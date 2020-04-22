@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
@@ -29,7 +30,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public GameGetDTO createGame(@RequestBody GamePostDTO gamePostDTO) throws FileNotFoundException {
-        // convert API user to internal representation
+        // convert API game to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gamePostDTO);
 
         // create game
@@ -43,7 +44,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO addUserToGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) throws Exception {
-        // convert API user to internal representation
+        // convert API game to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
 
         // create game
@@ -121,4 +122,30 @@ public class GameController {
         // convert internal representation of game to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(gameService.getGameById(id));
     }
+
+    @PostMapping("/clues/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public ClueGetDTO createClue(@PathVariable("id") long id, @RequestBody CluePostDTO cluePostDTO) throws GetRequestException404 {
+        // convert API clue to internal representation
+        Clue clueInput = DTOMapper.INSTANCE.convertCluePostDTOtoEntity(cluePostDTO);
+
+        // create clue
+        Game updatedGame = gameService.addClueToGame(id, clueInput.getClue());
+
+        // convert internal representation of clue back to API
+        return DTOMapper.INSTANCE.convertEntityToClueGetDTO(updatedGame);
+    }
+
+    @DeleteMapping("/clues/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ClueGetDTO deleteClues(@PathVariable("id") long id, @RequestBody List<String> cluesToDelete) throws GetRequestException404 {
+        // create clue
+        Game updatedGame = gameService.deleteClues(id, cluesToDelete);
+
+        // convert internal representation of clue back to API
+        return DTOMapper.INSTANCE.convertEntityToClueGetDTO(updatedGame);
+    }
+
 }

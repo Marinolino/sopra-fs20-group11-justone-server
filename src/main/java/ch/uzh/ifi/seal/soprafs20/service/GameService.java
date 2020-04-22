@@ -1,11 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
+import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
@@ -35,8 +32,12 @@ public class GameService {
         return this.gameRepository.findAll();
     }
 
-    public Game getGameById(Long Id){
-        return this.gameRepository.findById(Id).orElse(null);
+    public Game getGameById(Long id){
+        Game gameById = gameRepository.findById(id).orElse(null);
+        if (gameById == null){
+            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
+        }
+        return gameById;
     }
 
     public Game createGame(Game newGame) throws FileNotFoundException {
@@ -87,16 +88,15 @@ public class GameService {
         //Create Deck for the correctly guessed Cards
         newGame.setCorrectlyGuessed(new Deck());
 
+        //Create Clue List
+        List<Clue> clues = new ArrayList<>();
+        newGame.setClues(clues);
+
         return newGame;
     }
 
     public Game addUserToGame(Long id, Game game) throws Exception {
         Game gameById = getGameById(id);
-
-        if (gameById == null){
-            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
-        }
-
         gameById.addUserId(game.getCurrentUserId());
 
         Game savedGame = gameRepository.save(gameById);
@@ -107,13 +107,7 @@ public class GameService {
 
     //fetch game by id from the repository and get the top card from the deck as active card
     public Card getActiveCard(Long id) throws Exception {
-
         Game gameById = getGameById(id);
-
-        if (gameById == null){
-            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
-        }
-
         gameById.setActiveCardFromDeck();
         gameById.setRound(gameById.getRound() + 1);
 
@@ -125,12 +119,7 @@ public class GameService {
 
     //fetch game by id from the repository and set the word of it's active card, which matches the id in cardPutDTo, to true
     public void setChosenWord(Long id, CardPutDTO cardPutDTO) throws Exception {
-
         Game gameById = getGameById(id);
-
-        if (gameById == null){
-            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
-        }
 
         Card card = gameById.getActiveCard();
         card.setChosenWord(cardPutDTO.getId());
@@ -138,6 +127,32 @@ public class GameService {
         gameById.setActiveCard(card);
         gameRepository.save(gameById);
         gameRepository.flush();
+    }
+
+    //checks a clue with the parser, if the clue is valid, it is added to the games clue list
+    public Game addClueToGame(Long id, String clueInput){
+        Game gameById = getGameById(id);
+        //check if the clue is valid
+        if (ClueChecker.checkClue(clueInput)){
+            Clue validClue = new Clue();
+            validClue.setClue(clueInput);
+            gameById.addClue(validClue);
+
+            gameById = gameRepository.save(gameById);
+            gameRepository.flush();
+        }
+        return gameById;
+    }
+
+    public Game deleteClues(Long id, List<String> cluesToDelete){
+        Game gameById = getGameById(id);
+
+        for (String clue : cluesToDelete){
+            gameById.deleteClue(clue);
+            gameById = gameRepository.save(gameById);
+            gameRepository.flush();
+        }
+        return gameById;
     }
 
     //creates 13 random cards, each containing 5 random words
