@@ -1,12 +1,11 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.ClueGetDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.CluePostDTO;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -130,26 +129,48 @@ class GameControllerTest {
         mockMvc.perform(putRequest).andExpect(status().isOk());
     }
 
-    /*@Disabled("Not implemented yet")
     @Test
-    public void getClues_success() throws Exception {
-        List<String> clues = Arrays.asList("clue1", "clue2", "clue3", "clue4");
-        GameGetDTO gameGetDTO = new GameGetDTO();
+    public void postClue_success() throws Exception {
+        Game testGame = new Game();
+        Clue clue1 = new Clue();
+        CluePostDTO cluePostDTO = new CluePostDTO();
 
-        MockHttpServletRequestBuilder getRequest = get("/clues")
+        cluePostDTO.setClue("A");
+        clue1.setClue("A");
+        testGame.addClue(clue1);
+
+        MockHttpServletRequestBuilder postRequest = post("/clues/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gameGetDTO));
+                .content(asJsonString(cluePostDTO));
 
-        given(GameService.getClues(Mockito.any()).willReturn(clues));
+        given(gameService.addClueToGame(Mockito.any(), Mockito.any())).willReturn(testGame);
 
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.clues[0]", is(clues.get(0))))
-                .andExpect(jsonPath("$.clues[1]", is(clues.get(1))))
-                .andExpect(jsonPath("$.clues[2]", is(clues.get(2))))
-                .andExpect(jsonPath("$.clues[3]", is(clues.get(3))));
+        mockMvc.perform(postRequest).andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(clue1.getClue())));
     }
 
-    @Disabled("Not implemented yet")
+    @Test
+    public void getClues_success() throws Exception {
+        Game testGame = new Game();
+        Clue clue1 = new Clue();
+        Clue clue2 = new Clue();
+
+        clue1.setClue("A");
+        clue2.setClue("B");
+        testGame.addClue(clue1);
+        testGame.addClue(clue2);
+
+        MockHttpServletRequestBuilder getRequest = get("/clues/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(clue1.getClue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[1]", is(clue2.getClue())));
+    }
+
+    /*@Disabled("Not implemented yet")
     @Test
     public void checkGuess_correctGuess() throws Exception {
         String guess = "MyGuess";

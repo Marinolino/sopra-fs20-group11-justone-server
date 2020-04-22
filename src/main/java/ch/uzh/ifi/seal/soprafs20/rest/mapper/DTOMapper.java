@@ -1,12 +1,16 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTOMapper
@@ -47,8 +51,14 @@ public interface DTOMapper {
     @Mapping(source = "currentUserId", target = "currentUserId")
     Game convertGamePutDTOtoEntity(GamePutDTO gamePutDTO);
 
-    @Mapping(source = "id", target = "id")
-    Game convertGameGetDTOtoEntity(GameGetDTO gameGetDTO);
+    @Mapping(source = "clue", target = "clue")
+    Clue convertCluePostDTOtoEntity(CluePostDTO cluePostDTO);
+
+    default List<String> convertClueDeleteDTOtoList(ClueDeleteDTO clueDeleteDTO){
+        List<String> cluesToDelete = new ArrayList<>();
+        cluesToDelete = clueDeleteDTO.getCluesToDelete();
+        return cluesToDelete;
+    }
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "token", target = "token")
@@ -59,6 +69,16 @@ public interface DTOMapper {
     @Mapping(source = "userIds", target = "userIds")
     GameGetDTO convertEntityToGameGetDTO(Game game);
 
+    default ClueGetDTO convertEntityToClueGetDTO(Game game){
+        ClueGetDTO clueGetDTO = new ClueGetDTO();
+
+        for (Clue clue : game.getClues()){
+            clueGetDTO.addAClue(clue.getClue());
+        }
+        return clueGetDTO;
+    }
+
+
     default CardGetDTO convertEntityToCardGetDTO(Card card){
         CardGetDTO cardGetDTO = new CardGetDTO();
 
@@ -68,5 +88,7 @@ public interface DTOMapper {
         }
         return cardGetDTO;
     }
+
+
 }
 
