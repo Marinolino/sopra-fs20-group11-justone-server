@@ -4,13 +4,14 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "MYSTERYWORD")
+@Table(name = "mysteryWord")
 public class MysteryWord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
     @Column(nullable = false)
@@ -19,9 +20,9 @@ public class MysteryWord implements Serializable {
     @Column(nullable = false)
     private boolean chosen;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="card_id")
-    public Card card;
+    @ManyToOne
+    @JoinColumn(name="card_id", insertable = false, updatable = false)
+    private Card card;
 
     public Long getId() {
         return id;
@@ -45,6 +46,14 @@ public class MysteryWord implements Serializable {
 
     public void setChosen(boolean chosen){
         this.chosen = chosen;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card){
+        this.card = card;
     }
 
 }

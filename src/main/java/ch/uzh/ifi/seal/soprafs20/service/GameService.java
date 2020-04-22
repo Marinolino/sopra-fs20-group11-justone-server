@@ -9,7 +9,6 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePutDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,22 +23,12 @@ import java.util.*;
 @Transactional
 public class GameService {
 
-    private final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameRepository gameRepository;
-    private final GameBoxRepository gameBoxRepository;
-    private final DeckRepository deckRepository;
-    private final CardRepository cardRepository;
-    private final MysteryWordRepository mysteryWordRepository;
-    private final ClueRepository clueRepository;
 
+    private final Logger log = LoggerFactory.getLogger(GameService.class);
 
-    public GameService(GameRepository gameRepository, GameBoxRepository gameBoxRepository,DeckRepository deckRepository, CardRepository cardRepository, MysteryWordRepository mysteryWordRepository, ClueRepository clueRepository) {
+    public GameService(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
-        this.gameBoxRepository = gameBoxRepository;
-        this.deckRepository = deckRepository;
-        this.cardRepository = cardRepository;
-        this.mysteryWordRepository = mysteryWordRepository;
-        this.clueRepository = clueRepository;
     }
 
     public List<Game> getGames() {
@@ -89,21 +78,15 @@ public class GameService {
         //create Game Box
         GameBox gameBox = new GameBox();
         newGame.setGameBox(gameBox);
-        gameBoxRepository.save(gameBox);
-        gameBoxRepository.flush();
 
         //Create Deck of 13 cards
         Deck deck = new Deck();
         deck.setCardList(createCards());
         newGame.setDeck(deck);
-        deckRepository.save(deck);
-        deckRepository.flush();
 
         //Create Deck for the correctly guessed Cards
-        Deck correctlyGuessed = new Deck();
         newGame.setCorrectlyGuessed(new Deck());
-        deckRepository.save(correctlyGuessed);
-        deckRepository.flush();
+
         return newGame;
     }
 
@@ -137,12 +120,6 @@ public class GameService {
         Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
 
-        deckRepository.save(savedGame.getDeck());
-        deckRepository.flush();
-
-        cardRepository.save(savedGame.getActiveCard());
-        cardRepository.flush();
-
         return savedGame.getActiveCard();
     }
 
@@ -161,9 +138,6 @@ public class GameService {
         gameById.setActiveCard(card);
         gameRepository.save(gameById);
         gameRepository.flush();
-
-        cardRepository.save(gameById.getActiveCard());
-        cardRepository.flush();
     }
 
     //creates 13 random cards, each containing 5 random words
@@ -179,9 +153,6 @@ public class GameService {
                 mysteryWord.setChosen(false);
                 mysteryWord.setWord(s.nextLine());
                 wordList.add(mysteryWord);
-                //save new Mystery Word in the repo
-                mysteryWordRepository.save(mysteryWord);
-                mysteryWordRepository.flush();
             }
         }
         //create the cards
@@ -194,9 +165,6 @@ public class GameService {
             Card newCard = new Card();
             newCard.setWordList(wordsOnCard);
             cardList.add(newCard);
-            //save new Card in the repo
-            cardRepository.save(newCard);
-            cardRepository.flush();
         }
         return cardList;
     }

@@ -7,24 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "DECK")
+@Table(name = "deck")
 public class Deck implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
     @Column(nullable = false)
     private boolean hasNext = false;
 
-    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "deck_id")
     private List<Card> cardList = new ArrayList<Card>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="game")
-    public Game game;
+    @OneToOne(mappedBy = "deck")
+    private Game game;
+
 
     public Long getId() {
         return id;
@@ -43,6 +45,9 @@ public class Deck implements Serializable {
         if (cardList.size() > 0 && !hasNext){
             hasNext = true;
         }
+        for (Card card : cardList){
+            card.setDeck(this);
+        }
     }
 
     //add a card at the top of the deck
@@ -50,15 +55,18 @@ public class Deck implements Serializable {
         cardList.add(0, card);
         if (!hasNext)
         hasNext = true;
+        card.setDeck(this);
     }
 
     //returns the top card of the deck, throws an exception if the deck is empty
     public Card getTopCard(){
         if (hasNext){
-            if (cardList.size() == 1){
+            Card card = cardList.remove(0);
+            card.setDeck(null);
+            if (cardList.size() == 0){
                 hasNext = false;
             }
-            return this.cardList.remove(0);
+            return card;
         }
         else{
             throw new SopraServiceException("The deck is empty!");
@@ -67,5 +75,13 @@ public class Deck implements Serializable {
 
     public int deckSize(){
         return cardList.size();
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game){
+        this.game = game;
     }
 }

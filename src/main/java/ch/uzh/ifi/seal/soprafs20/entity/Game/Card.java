@@ -6,29 +6,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "CARD")
+@Table(name = "card")
 public class Card implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
-    private List<MysteryWord> wordList = new ArrayList<MysteryWord>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id")
+    private List<MysteryWord> wordList = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="game")
-    public Game game;
+    @OneToOne(mappedBy = "activeCard")
+    private Game game;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="gameBox")
-    public GameBox gameBox;
+    @ManyToOne
+    @JoinColumn(name="gameBox_id", insertable = false, updatable = false)
+    private GameBox gameBox;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="deck")
-    public Deck deck;
+    @ManyToOne
+    @JoinColumn(name="deck_id", insertable = false, updatable = false)
+    private Deck deck;
 
     public Long getId(){
         return this.id;
@@ -44,6 +45,33 @@ public class Card implements Serializable {
 
     public void setWordList(List<MysteryWord> wordList){
         this.wordList = wordList;
+        for (MysteryWord word : wordList){
+            word.setCard(this);
+        }
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game){
+        this.game = game;
+    }
+
+    public GameBox getGameBox() {
+        return gameBox;
+    }
+
+    public void setGameBox(GameBox gameBox){
+        this.gameBox = gameBox;
+    }
+
+    public Deck getGDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck){
+        this.deck = deck;
     }
 
     public void setChosenWord(Long id){

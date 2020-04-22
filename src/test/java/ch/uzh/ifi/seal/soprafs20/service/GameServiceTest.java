@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -21,28 +20,12 @@ class GameServiceTest {
     @Mock
     private GameRepository gameRepository;
 
-    @Mock
-    private GameBoxRepository gameBoxRepository;
-
-    @Mock
-    private DeckRepository deckRepository;
-
-    @Mock
-    private CardRepository cardRepository;
-
-    @Mock
-    private ClueRepository clueRepository;
-
-    @Mock
-    private MysteryWordRepository mysteryWordRepository;
-
-
     @InjectMocks
     private GameService gameService;
 
     private Game testGame;
-    User testUser1;
-    User testUser2;
+    private User testUser1;
+    private User testUser2;
 
     @BeforeEach
     public void setup() {

@@ -1,7 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,9 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,31 +20,19 @@ class GameServiceIntegrationTest {
     private GameRepository gameRepository;
 
     @Autowired
-    private GameBoxRepository gameBoxRepository;
-
-    @Autowired
-    private DeckRepository deckRepository;
-
-    @Autowired
-    private CardRepository cardRepository;
-
-    @Autowired
-    private ClueRepository clueRepository;
-
-    @Autowired
-    private MysteryWordRepository mysteryWordRepository;
-
-    @Autowired
     private GameService gameService;
+
 
     @BeforeEach
     public void setup() {
         gameRepository.deleteAll();
-        gameBoxRepository.deleteAll();
-        deckRepository.deleteAll();
-        cardRepository.deleteAll();
-        clueRepository.deleteAll();
-        mysteryWordRepository.deleteAll();
+    }
+
+    @Test
+    public void getAllGames_noGamesInRepo(){
+        List<Game> games = gameService.getGames();
+
+        assertEquals(games.size(), 0);
     }
 
     @Test

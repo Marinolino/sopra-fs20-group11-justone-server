@@ -6,20 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "GAMEBOX")
+@Table(name = "gameBox")
 public class GameBox implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="game_id")
-    public Game game;
+    @OneToOne(mappedBy = "gameBox")
+    private Game game;
 
-    @OneToMany(mappedBy = "gameBox", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "gameBox_id")
     private List<Card> cardList = new ArrayList<Card>();
 
     public Long getId() {
@@ -30,8 +31,17 @@ public class GameBox implements Serializable {
         this.id = id;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game){
+        this.game = game;
+    }
+
     public void addCard(Card card){
         cardList.add(card);
+        card.setGameBox(this);
     }
 
     public List<Card> getCards(){
