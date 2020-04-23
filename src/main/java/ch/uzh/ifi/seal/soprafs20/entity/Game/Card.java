@@ -16,9 +16,9 @@ public class Card implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "card_id")
-    private List<MysteryWord> wordList = new ArrayList<>();
+    @Column(nullable = false)
+    @ElementCollection
+    private List<String> mysteryWords = new ArrayList<>();
 
     @OneToOne(mappedBy = "activeCard")
     private Game game;
@@ -39,15 +39,12 @@ public class Card implements Serializable {
         this.id = id;
     }
 
-    public List<MysteryWord> getWordList(){
-        return this.wordList;
+    public List<String> getMysteryWords(){
+        return this.mysteryWords;
     }
 
-    public void setWordList(List<MysteryWord> wordList){
-        this.wordList = wordList;
-        for (MysteryWord word : wordList){
-            word.setCard(this);
-        }
+    public void setMysteryWords(List<String> mysteryWords){
+        this.mysteryWords = mysteryWords;
     }
 
     public Game getGame() {
@@ -72,14 +69,5 @@ public class Card implements Serializable {
 
     public void setDeck(Deck deck){
         this.deck = deck;
-    }
-
-    public void setChosenWord(Long id){
-        for (MysteryWord mysteryWord : wordList){
-            if (id.equals(mysteryWord.getId())){
-                mysteryWord.setChosen(true);
-                break;
-            }
-        }
     }
 }

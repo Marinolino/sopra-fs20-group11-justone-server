@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.Game;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameBoxTest {
 
-    List<MysteryWord> wordList1 = new ArrayList<MysteryWord>();
-    List<MysteryWord> wordList2 = new ArrayList<MysteryWord>();
+    List<String> wordList1 = new ArrayList<>();
+    List<String> wordList2 = new ArrayList<>();
     Card testCard1;
     Card testCard2;
     GameBox testBox;
@@ -26,37 +25,19 @@ class GameBoxTest {
         testCard1 = new Card();
         testCard2 = new Card();
 
-        MysteryWord mysteryWord1 = new MysteryWord();
-        MysteryWord mysteryWord2 = new MysteryWord();
-        MysteryWord mysteryWord3 = new MysteryWord();
-        MysteryWord mysteryWord4 = new MysteryWord();
-        MysteryWord mysteryWord5 = new MysteryWord();
+        wordList1.add("Test1");
+        wordList1.add("Test2");
+        wordList1.add("Test3");
+        wordList1.add("Test4");
+        wordList1.add("Test5");
+        testCard1.setMysteryWords(wordList1);
 
-        mysteryWord1.setWord("Test1");
-        mysteryWord2.setWord("Test2");
-        mysteryWord3.setWord("Test3");
-        mysteryWord4.setWord("Test4");
-        mysteryWord5.setWord("Test5");
-
-        wordList1.add(mysteryWord1);
-        wordList1.add(mysteryWord2);
-        wordList1.add(mysteryWord3);
-        wordList1.add(mysteryWord4);
-        wordList1.add(mysteryWord5);
-        testCard1.setWordList(wordList1);
-
-        mysteryWord1.setWord("TestA");
-        mysteryWord2.setWord("TestB");
-        mysteryWord3.setWord("TestC");
-        mysteryWord4.setWord("TestD");
-        mysteryWord5.setWord("TestE");
-
-        wordList2.add(mysteryWord1);
-        wordList2.add(mysteryWord2);
-        wordList2.add(mysteryWord3);
-        wordList2.add(mysteryWord4);
-        wordList2.add(mysteryWord5);
-        testCard2.setWordList(wordList2);
+        wordList2.add("TestA");
+        wordList2.add("TestB");
+        wordList2.add("TestC");
+        wordList2.add("TestD");
+        wordList2.add("TestE");
+        testCard2.setMysteryWords(wordList2);
 
         testBox = new GameBox();
     }

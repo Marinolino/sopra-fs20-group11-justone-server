@@ -52,6 +52,9 @@ public class Game implements Serializable {
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     private Card activeCard;
 
+    @Column
+    private String chosenWord;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "game_id")
     private List<Clue> clues = new ArrayList<Clue>();
@@ -199,5 +202,13 @@ public class Game implements Serializable {
     public void setActiveCardFromDeck(){
         this.setActiveCard(this.deck.getTopCard());
         activeCard.setGame(this);
+    }
+
+    public String getChosenWord() {
+        return chosenWord;
+    }
+
+    public void setChosenWord(String chosenWord){
+        this.chosenWord = chosenWord;
     }
 }

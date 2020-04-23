@@ -14,13 +14,17 @@ public class ClueChecker {
         for (Clue existingClue : game.getClues()){
             stringClues.add(existingClue.getClue());
         }
-        //check if the clue already exists
         for (String clue: stringClues){
+            //check if the clue already exists
             if (checkForDuplicate(clueInput, clue)){
                 return false;
             }
+            //check if the clue is equal to the chosen word
+            if (game.getChosenWord().equals(clue)){
+                return false;
+            }
+            //TODO: check invalid words
         }
-        //TODO: check invalid words
         return true;
     }
 

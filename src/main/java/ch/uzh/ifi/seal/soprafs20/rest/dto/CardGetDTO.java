@@ -7,8 +7,6 @@ public class CardGetDTO {
 
     private List<String> words = new ArrayList<>();
 
-    private List<Long> ids = new ArrayList<>();
-
     public List<String> getWords(){
         return this.words;
     }
@@ -19,17 +17,5 @@ public class CardGetDTO {
 
     public void addAWord(String word){
         this.words.add(word);
-    }
-
-    public List<Long> getIds(){
-        return this.ids;
-    }
-
-    public void setIds(List<Long> ids){
-        this.ids = ids;
-    }
-
-    public void addAnId(Long id){
-        this.ids.add(id);
     }
 }

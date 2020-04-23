@@ -1,13 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 public class CardPutDTO {
-    private Long id;
+    private String chosenWord;
 
-    public Long getId(){
-        return id;
+    public String getChosenWord(){
+        return chosenWord;
     }
 
-    public void setId(Long id){
-        this.id = id;
+    public void setChosenWord(String id){
+        this.chosenWord = chosenWord;
     }
 }

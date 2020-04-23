@@ -108,8 +108,10 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO setChosenWord(@PathVariable("id") long id, @RequestBody CardPutDTO cardPutDTO) throws Exception {
+        String chosenWord = cardPutDTO.getChosenWord();
+
         //set the chosen word for the specified game
-        gameService.setChosenWord(id, cardPutDTO);
+        gameService.setChosenWord(id, chosenWord);
 
         // convert internal representation of game to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(gameService.getGameById(id));

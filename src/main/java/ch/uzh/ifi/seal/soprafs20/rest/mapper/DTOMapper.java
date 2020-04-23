@@ -3,7 +3,6 @@ package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
@@ -83,10 +82,8 @@ public interface DTOMapper {
 
     default CardGetDTO convertEntityToCardGetDTO(Card card){
         CardGetDTO cardGetDTO = new CardGetDTO();
-
-        for (MysteryWord mysteryWord : card.getWordList()){
-            cardGetDTO.addAWord(mysteryWord.getWord());
-            cardGetDTO.addAnId(mysteryWord.getId());
+        for (String mysteryWord : card.getMysteryWords()){
+            cardGetDTO.addAWord(mysteryWord);
         }
         return cardGetDTO;
     }

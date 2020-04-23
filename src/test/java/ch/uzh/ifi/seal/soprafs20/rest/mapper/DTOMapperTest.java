@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.MysteryWord;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
@@ -63,42 +62,23 @@ public class DTOMapperTest {
     @Test
     public void getCard_fromCard_toCardGetDTO_success(){
         //create card
-        List<MysteryWord> wordList = new ArrayList<MysteryWord>();
+        List<String> wordList = new ArrayList<>();
         Card testCard = new Card();
 
-        MysteryWord mysteryWord1 = new MysteryWord();
-        MysteryWord mysteryWord2 = new MysteryWord();
-        MysteryWord mysteryWord3 = new MysteryWord();
-        MysteryWord mysteryWord4 = new MysteryWord();
-        MysteryWord mysteryWord5 = new MysteryWord();
+        wordList.add("Test1");
+        wordList.add("Test2");
+        wordList.add("Test3");
+        wordList.add("Test4");
+        wordList.add("Test5");
 
-        mysteryWord1.setWord("Test1");
-        mysteryWord1.setId((long)1);
-        mysteryWord2.setWord("Test2");
-        mysteryWord2.setId((long)2);
-        mysteryWord3.setWord("Test3");
-        mysteryWord3.setId((long)3);
-        mysteryWord4.setWord("Test4");
-        mysteryWord4.setId((long)4);
-        mysteryWord5.setWord("Test5");
-        mysteryWord5.setId((long)5);
-
-        wordList.add(mysteryWord1);
-        wordList.add(mysteryWord2);
-        wordList.add(mysteryWord3);
-        wordList.add(mysteryWord4);
-        wordList.add(mysteryWord5);
-
-        testCard.setWordList(wordList);
+        testCard.setMysteryWords(wordList);
 
         //create array of words and array of ids
-        List<String> words = Arrays.asList(mysteryWord1.getWord(), mysteryWord2.getWord(), mysteryWord3.getWord(), mysteryWord4.getWord(), mysteryWord5.getWord());
-        List<Long> ids = Arrays.asList(mysteryWord1.getId(), mysteryWord2.getId(), mysteryWord3.getId(), mysteryWord4.getId(), mysteryWord5.getId());
+        List<String> words = Arrays.asList("Test1", "Test2", "Test3", "Test4", "Test5");
 
         // MAP -> Create UserGetDTO
         CardGetDTO cardGetDTO = DTOMapper.INSTANCE.convertEntityToCardGetDTO(testCard);
 
         assertEquals(cardGetDTO.getWords(), words);
-        assertEquals(cardGetDTO.getIds(), ids);
     }
 }

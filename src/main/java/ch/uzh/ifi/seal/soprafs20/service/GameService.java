@@ -119,7 +119,7 @@ public class GameService {
     }
 
     //fetch game by id from the repository and set the word of it's active card, which matches the id in cardPutDTo, to true
-    public void setChosenWord(Long id, CardPutDTO cardPutDTO) throws Exception {
+    public Game setChosenWord(Long id, String chosenWord) throws Exception {
         Game gameById = getGameById(id);
 
         Card card = gameById.getActiveCard();
@@ -128,11 +128,11 @@ public class GameService {
             throw new PutRequestException404("This game contains no active card!", HttpStatus.NOT_FOUND);
         }
 
-        card.setChosenWord(cardPutDTO.getId());
-
-        gameById.setActiveCard(card);
-        gameRepository.save(gameById);
+        gameById.setChosenWord(chosenWord);
+        gameById = gameRepository.save(gameById);
         gameRepository.flush();
+
+        return gameById;
     }
 
     //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
@@ -163,27 +163,24 @@ public class GameService {
     //creates 13 random cards, each containing 5 random words
     public List<Card> createCards() throws FileNotFoundException {
 
-        List<MysteryWord> wordList = new ArrayList<>();
+        List<String> wordList = new ArrayList<>();
         List<Card> cardList = new ArrayList<>();
 
         //create the Mystery Words and set their attributes
         try (Scanner s = new Scanner(new FileReader("src/main/resources/JustOneWordsEN.txt"))) {
             while (s.hasNext()) {
-                MysteryWord mysteryWord = new MysteryWord();
-                mysteryWord.setChosen(false);
-                mysteryWord.setWord(s.nextLine());
-                wordList.add(mysteryWord);
+                wordList.add(s.nextLine());
             }
         }
         //create the cards
         Collections.shuffle(wordList);
         for (int i = 0; i<13; i++){
-            List<MysteryWord> wordsOnCard = new ArrayList<>();
+            List<String> wordsOnCard = new ArrayList<>();
             for (int j = 0; j<5; j++ ){
                 wordsOnCard.add(wordList.remove(0));
             }
             Card newCard = new Card();
-            newCard.setWordList(wordsOnCard);
+            newCard.setMysteryWords(wordsOnCard);
             cardList.add(newCard);
         }
         return cardList;
