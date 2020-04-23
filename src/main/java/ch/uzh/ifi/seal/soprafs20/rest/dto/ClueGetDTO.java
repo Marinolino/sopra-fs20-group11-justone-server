@@ -7,6 +7,8 @@ public class ClueGetDTO {
 
     private List<String> clues = new ArrayList<>();
 
+    private boolean allClues;
+
     public List<String> getClues() {
         return clues;
     }
@@ -17,6 +19,14 @@ public class ClueGetDTO {
 
     public void addAClue(String clue){
         this.clues.add(clue);
+    }
+
+    public boolean getAllClues(){
+        return allClues;
+    }
+
+    public void setAllClues(boolean allClues){
+        this.allClues = allClues;
     }
 }
 

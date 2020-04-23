@@ -65,25 +65,6 @@ class GameControllerTest {
 
     @Test
     public void getActiveCard_success() throws Exception{
-        Deck testDeck = new Deck();
-        testDeck.setCardList(createCards());
-
-        Game testGame = new Game();
-        testGame.setId((long)1);
-        testGame.setDeck(testDeck);
-
-        given(gameService.getActiveCard(Mockito.any())).willReturn(testDeck.getTopCard());
-
-        MockHttpServletRequestBuilder getRequest = get("/cards/1").contentType(MediaType.APPLICATION_JSON);
-
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.words", notNullValue()));
-        ;
-    }
-
-
-    @Test
-    public void setChosenWord_success() throws Exception {
         List<String> wordList = new ArrayList<>();
         Card testCard = new Card();
 
@@ -94,12 +75,22 @@ class GameControllerTest {
         wordList.add("Test5");
         testCard.setMysteryWords(wordList);
 
+        given(gameService.getActiveCard(Mockito.any())).willReturn(testCard);
+
+        MockHttpServletRequestBuilder getRequest = get("/cards/1").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.words", hasSize(5)));
+        ;
+    }
+
+
+    @Test
+    public void setChosenWord_success() throws Exception {
         Game testGame = new Game();
-        testGame.setActiveCard(testCard);
 
         CardPutDTO cardPutDTO = new CardPutDTO();
         cardPutDTO.setChosenWord("Test3");
-
 
         MockHttpServletRequestBuilder putRequest = put("/cards/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -109,52 +100,6 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isOk());
     }
-    //TODO: Move these tests to integration
-    /*@Test
-    public void postClue_success() throws Exception {
-        Game testGame = new Game();
-        Card testCard = createCards().get(0);
-        testGame.setActiveCard(testCard);
-        testGame.setChosenWord(testCard.getWordList().get(2).getId());
-        Clue clue1 = new Clue();
-        CluePostDTO cluePostDTO = new CluePostDTO();
-
-        cluePostDTO.setClue("A");
-        clue1.setClue("A");
-        testGame.addClue(clue1);
-
-        MockHttpServletRequestBuilder postRequest = post("/clues/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(cluePostDTO));
-
-        given(gameService.addClueToGame(Mockito.any(), Mockito.any())).willReturn(testGame);
-
-        mockMvc.perform(postRequest).andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(clue1.getClue())));
-    }
-
-    @Test
-    public void getClues_success() throws Exception {
-        Game testGame = new Game();
-        MysteryWord testWord = new MysteryWord();
-        testWord.setWord("C");
-        Clue clue1 = new Clue();
-        Clue clue2 = new Clue();
-
-        clue1.setClue("A");
-        clue2.setClue("B");
-        testGame.addClue(clue1);
-        testGame.addClue(clue2);
-
-        MockHttpServletRequestBuilder getRequest = get("/clues/1")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
-
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(clue1.getClue())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[1]", is(clue2.getClue())));
-    }*/
 
     /*@Disabled("Not implemented yet")
     @Test
@@ -203,31 +148,5 @@ class GameControllerTest {
         catch (JsonProcessingException e) {
             throw new SopraServiceException(String.format("The request body could not be created.%s", e.toString()));
         }
-    }
-
-    //creates 13 random cards, each containing 5 random words
-    public List<Card> createCards() throws FileNotFoundException {
-
-        List<String> wordList = new ArrayList<>();
-        List<Card> cardList = new ArrayList<>();
-
-        //create the Mystery Words and set their attributes
-        try (Scanner s = new Scanner(new FileReader("src/main/resources/JustOneWordsEN.txt"))) {
-            while (s.hasNext()) {
-                wordList.add(s.nextLine());
-            }
-        }
-        //create the cards
-        Collections.shuffle(wordList);
-        for (int i = 0; i<13; i++){
-            List<String> wordsOnCard = new ArrayList<>();
-            for (int j = 0; j<5; j++ ){
-                wordsOnCard.add(wordList.remove(0));
-            }
-            Card newCard = new Card();
-            newCard.setMysteryWords(wordsOnCard);
-            cardList.add(newCard);
-        }
-        return cardList;
     }
 }

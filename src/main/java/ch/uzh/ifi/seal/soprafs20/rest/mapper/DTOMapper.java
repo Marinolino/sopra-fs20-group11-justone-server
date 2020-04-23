@@ -76,6 +76,12 @@ public interface DTOMapper {
                 clueGetDTO.addAClue(clue.getClue());
             }
         }
+        if (game.getUserIds().size() == game.getClues().size()){
+            clueGetDTO.setAllClues(true);
+        }
+        else{
+            clueGetDTO.setAllClues(false);
+        }
         return clueGetDTO;
     }
 
