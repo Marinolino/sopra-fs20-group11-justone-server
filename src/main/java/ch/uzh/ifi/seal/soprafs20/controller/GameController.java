@@ -51,6 +51,20 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
 
+    @PutMapping("/games/leave/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO removeUserFromGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) throws Exception {
+        // convert API game to internal representation
+        Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
+
+        // create game
+        Game updatedGame = gameService.addUserToGame(id, gameInput);
+
+        // convert internal representation of game back to API
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+    }
+
     @PutMapping("/games/start/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -111,16 +125,16 @@ public class GameController {
         String chosenWord = cardPutDTO.getChosenWord();
 
         //set the chosen word for the specified game
-        gameService.setChosenWord(id, chosenWord);
+        Game updatedGame = gameService.setChosenWord(id, chosenWord);
 
         // convert internal representation of game to API
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(gameService.getGameById(id));
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
 
     @PostMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ClueGetDTO createClue(@PathVariable("id") long id, @RequestBody CluePostDTO cluePostDTO) throws GetRequestException404 {
+    public ClueGetDTO createClue(@PathVariable("id") long id, @RequestBody CluePostDTO cluePostDTO) throws Exception {
         // convert API clue to internal representation
         Clue clueInput = DTOMapper.INSTANCE.convertCluePostDTOtoEntity(cluePostDTO);
 
@@ -153,5 +167,15 @@ public class GameController {
 
         // convert internal representation of clue back to API
         return DTOMapper.INSTANCE.convertEntityToClueGetDTO(updatedGame);
+    }
+
+    @PutMapping("/finish/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO finishGame(@PathVariable("id") long id) {
+        Game updatedGame = gameService.finishGame(id);
+
+        //convert internal representation of game to API
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
 }

@@ -3,7 +3,9 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
@@ -76,6 +78,16 @@ public class GameService {
         return savedGame;
     }
 
+    public Game finishGame(Long id){
+        Game gameById = getGameById(id);
+        gameById.setStatus(GameStatus.FINISHED);
+
+        Game savedGame = gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return savedGame;
+    }
+
     public Game createGameElements(Game newGame) throws FileNotFoundException {
         //create Game Box
         GameBox gameBox = new GameBox();
@@ -96,9 +108,21 @@ public class GameService {
         return newGame;
     }
 
+    //add a user to an existing game
     public Game addUserToGame(Long id, Game game) throws Exception {
         Game gameById = getGameById(id);
         gameById.addUserId(game.getCurrentUserId());
+
+        Game savedGame = gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return savedGame;
+    }
+
+    //remove a user from an existing game
+    public Game removeUserFromGame(Long id, Game game) throws Exception {
+        Game gameById = getGameById(id);
+        gameById.removeUserId(game.getCurrentUserId());
 
         Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
@@ -136,8 +160,17 @@ public class GameService {
     }
 
     //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
-    public Game addClueToGame(Long id, String clueInput){
+    public Game addClueToGame(Long id, String clueInput) throws Exception {
+        //check if the clues is a non empty word, without whitespaces
+        checkIfClueInputIsValid(clueInput);
+
         Game gameById = getGameById(id);
+
+        if (gameById.getUserIds().size() == gameById.getClues().size()){
+            String message = "There are already as many clues as users! Therefore, this clue can't be added!";
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+        }
+
         Clue checkedClue = new Clue();
         checkedClue.setClue(clueInput);
 
@@ -184,5 +217,18 @@ public class GameService {
             cardList.add(newCard);
         }
         return cardList;
+    }
+
+    public void checkIfClueInputIsValid(String clueInput) {
+
+        if (clueInput == null || clueInput.isBlank()) {
+            String message = "Clues must not be empty!";
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+        }
+
+        if (clueInput.contains(" ")) {
+            String message = "Clues must not contain any whitespaces!";
+            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+        }
     }
 }

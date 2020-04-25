@@ -8,6 +8,8 @@ import java.util.List;
 
 public class ClueChecker {
     public static boolean checkClue(String clueInput, Game game){
+
+
         List<String> stringClues = new ArrayList<>();
 
         //add all clues that are already saved in the game

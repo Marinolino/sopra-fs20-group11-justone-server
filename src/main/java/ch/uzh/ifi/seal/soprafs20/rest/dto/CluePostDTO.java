@@ -6,6 +6,8 @@ public class CluePostDTO {
 
     private String clue;
 
+    //TODO: add variable for time
+
     public String getClue(){
         return clue;
     }

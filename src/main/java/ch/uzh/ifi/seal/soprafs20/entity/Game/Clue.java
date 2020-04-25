@@ -20,6 +20,8 @@ public class Clue implements Serializable {
     @Column(nullable = false)
     private boolean valid;
 
+    //TODO: add variable time
+
     @ManyToOne
     @JoinColumn(name="game_id", insertable = false, updatable = false)
     private Game game;

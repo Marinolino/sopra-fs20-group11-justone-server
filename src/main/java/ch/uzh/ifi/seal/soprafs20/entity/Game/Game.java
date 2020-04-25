@@ -164,6 +164,10 @@ public class Game implements Serializable {
         this.userIds.add(id);
     }
 
+    public void removeUserId(Long id) {
+        this.userIds.remove(id);
+    }
+
     public List<Clue> getClues() {
         return clues;
     }

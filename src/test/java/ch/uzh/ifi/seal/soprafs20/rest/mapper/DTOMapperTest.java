@@ -2,8 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardGetDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.ClueGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import org.junit.jupiter.api.Test;
@@ -12,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DTOMapperTest
@@ -20,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class DTOMapperTest {
     @Test
-    public void createUser_fromUserPostDTO_toUser_success() {
+    public void createUser_fromUserPostDTOToUser_success() {
         // create UserPostDTO
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setName("username");
@@ -35,7 +38,7 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void getUser_fromUser_toUserGetDTO_success() {
+    public void getUser_fromUserToUserGetDTO_success() {
         // create User
         User user = new User();
         user.setName("Firstname Lastname");
@@ -60,7 +63,7 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void getCard_fromCard_toCardGetDTO_success(){
+    public void getCard_fromCardToCardGetDTO_success(){
         //create card
         List<String> wordList = new ArrayList<>();
         Card testCard = new Card();
@@ -80,5 +83,48 @@ public class DTOMapperTest {
         CardGetDTO cardGetDTO = DTOMapper.INSTANCE.convertEntityToCardGetDTO(testCard);
 
         assertEquals(cardGetDTO.getWords(), words);
+    }
+
+    @Test
+    public void getClue_fromGameToClueGetDTO_NotALlUsersHaveGivenClues(){
+        Game testGame = new Game();
+        Clue testClue1 = new Clue();
+        Long userId1 = (long) 1;
+        Long userId2 = (long) 2;
+
+        testGame.addUserId(userId1);
+        testGame.addUserId(userId2);
+        testClue1.setClue("B");
+        testClue1.setValid(true);
+        testGame.addClue(testClue1);
+
+        ClueGetDTO clueGetDTO = DTOMapper.INSTANCE.convertEntityToClueGetDTO(testGame);
+
+        assertEquals(clueGetDTO.getClues().get(0), "B");
+        assertFalse(clueGetDTO.getAllClues());
+    }
+
+    @Test
+    public void getClue_fromGameToClueGetDTO_ALlUsersHaveGivenClues(){
+        Game testGame = new Game();
+        Clue testClue1 = new Clue();
+        Clue testClue2 = new Clue();
+        Long userId1 = (long) 1;
+        Long userId2 = (long) 2;
+
+        testGame.addUserId(userId1);
+        testGame.addUserId(userId2);
+        testClue1.setClue("B");
+        testClue1.setValid(true);
+        testClue2.setClue("C");
+        testClue2.setValid(true);
+        testGame.addClue(testClue1);
+        testGame.addClue(testClue2);
+
+        ClueGetDTO clueGetDTO = DTOMapper.INSTANCE.convertEntityToClueGetDTO(testGame);
+
+        assertEquals(clueGetDTO.getClues().get(0), "B");
+        assertEquals(clueGetDTO.getClues().get(1), "C");
+        assertTrue(clueGetDTO.getAllClues());
     }
 }

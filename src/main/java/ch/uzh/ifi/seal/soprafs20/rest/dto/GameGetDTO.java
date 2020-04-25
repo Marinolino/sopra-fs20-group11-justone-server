@@ -22,6 +22,8 @@ public class GameGetDTO {
 
     private int round;
 
+    private String chosenWord;
+
     private List<Long> userIds;
 
     public Long getId() {
@@ -70,6 +72,14 @@ public class GameGetDTO {
 
     public void setRound(int round) {
         this.round = round;
+    }
+
+    public String getChosenWord() {
+        return chosenWord;
+    }
+
+    public void setChosenWord(String chosenWord){
+        this.chosenWord = chosenWord;
     }
 
     public List<Long> getUsersIds() {
