@@ -107,4 +107,13 @@ public class UserController {
         User userOutput = userService.logOut(userInput.getId());
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
+
+    @PutMapping("/users/gamestats/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO updateUserGameStats(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws PutRequestException204, PutRequestException401 {
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        User userOutput = userService.updateUserGameStats(id, userInput);
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
+    }
 }

@@ -146,9 +146,7 @@ public class GameService {
     public Game setChosenWord(Long id, String chosenWord) throws Exception {
         Game gameById = getGameById(id);
 
-        Card card = gameById.getActiveCard();
-
-        if (card == null){
+        if (gameById.getActiveCard()== null){
             throw new PutRequestException404("This game contains no active card!", HttpStatus.NOT_FOUND);
         }
 
@@ -160,26 +158,20 @@ public class GameService {
     }
 
     //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
-    public Game addClueToGame(Long id, String clueInput) throws Exception {
-        //check if the clues is a non empty word, without whitespaces
-        checkIfClueInputIsValid(clueInput);
-
-        Game gameById = getGameById(id);
+    public Clue addClueToGame(Long id, Clue clueInput) throws Exception {
+       Game gameById = getGameById(id);
 
         if (gameById.getUserIds().size() == gameById.getClues().size()){
             String message = "There are already as many clues as users! Therefore, this clue can't be added!";
             throw new PostRequestException409(message, HttpStatus.CONFLICT);
         }
+        Clue checkedClue = ClueChecker.checkClue(clueInput, gameById);
 
-        Clue checkedClue = new Clue();
-        checkedClue.setClue(clueInput);
-
-        checkedClue.setValid(ClueChecker.checkClue(clueInput, gameById));
         gameById.addClue(checkedClue);
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 
-        return gameById;
+        return checkedClue;
     }
 
     public Game setCluesToInvalid(Long id, List<String> cluesToDelete){
@@ -214,21 +206,9 @@ public class GameService {
             }
             Card newCard = new Card();
             newCard.setMysteryWords(wordsOnCard);
+            newCard.setScore(0);
             cardList.add(newCard);
         }
         return cardList;
-    }
-
-    public void checkIfClueInputIsValid(String clueInput) {
-
-        if (clueInput == null || clueInput.isBlank()) {
-            String message = "Clues must not be empty!";
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
-        }
-
-        if (clueInput.contains(" ")) {
-            String message = "Clues must not contain any whitespaces!";
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
-        }
     }
 }

@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.ClueChecker;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
@@ -48,6 +49,9 @@ class ClueCheckerTest {
 
     @Test
     public void checkClueChecker() throws IOException {
-        assertFalse(ClueChecker.checkClue("price", testGame));
+        Clue testClue = new Clue();
+        testClue.setClue("price");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(checkedClue.getValid(), ClueStatus.INVALID);
     }
 }

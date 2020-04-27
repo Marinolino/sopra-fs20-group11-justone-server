@@ -1,32 +1,36 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 
 public class ClueGetDTO {
 
-    private List<String> clues = new ArrayList<>();
+    private String clue;
 
-    private boolean allClues;
+    private int time;
 
-    public List<String> getClues() {
-        return clues;
+    private ClueStatus valid;
+
+    public String getClue() {
+        return clue;
     }
 
-    public void setClues(List<String> clues) {
-        this.clues = clues;
+    public void setClue(String clue) {
+        this.clue = clue;
     }
 
-    public void addAClue(String clue){
-        this.clues.add(clue);
+    public int getTime(){
+        return time;
     }
 
-    public boolean getAllClues(){
-        return allClues;
+    public void setTime(int time){
+        this.time = time;
     }
 
-    public void setAllClues(boolean allClues){
-        this.allClues = allClues;
+    public ClueStatus getValid(){
+        return valid;
+    }
+
+    public void setValid(ClueStatus valid){
+        this.valid = valid;
     }
 }
-

@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
@@ -33,15 +34,18 @@ public interface DTOMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "username", target = "username")
     @Mapping(source = "password", target = "password")
+    @Mapping(source = "correctlyGuessed", target = "correctlyGuessed")
+    @Mapping(source = "duplicateClues", target = "duplicateClues")
     User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "username", target = "username")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "correctlyGuessed", target = "correctlyGuessed")
+    @Mapping(source = "duplicateClues", target = "duplicateClues")
     @Mapping(source = "score", target = "score")
     @Mapping(source = "gamesPlayed", target = "gamesPlayed")
-    @Mapping(source = "inGame", target = "inGame")
     UserGetDTO convertEntityToUserGetDTO(User user);
 
     @Mapping(source = "currentUserId", target = "currentUserId")
@@ -51,6 +55,7 @@ public interface DTOMapper {
     Game convertGamePutDTOtoEntity(GamePutDTO gamePutDTO);
 
     @Mapping(source = "clue", target = "clue")
+    @Mapping(source = "time", target = "time")
     Clue convertCluePostDTOtoEntity(CluePostDTO cluePostDTO);
 
     default List<String> convertCluePutDTOtoList(CluePutDTO clueDeleteDTO){
@@ -69,21 +74,27 @@ public interface DTOMapper {
     @Mapping(source = "userIds", target = "userIds")
     GameGetDTO convertEntityToGameGetDTO(Game game);
 
-    default ClueGetDTO convertEntityToClueGetDTO(Game game){
-        ClueGetDTO clueGetDTO = new ClueGetDTO();
+    @Mapping(source = "clue", target = "clue")
+    @Mapping(source = "time", target = "time")
+    @Mapping(source = "valid", target = "valid")
+    ClueGetDTO convertEntityToClueGetDTO(Clue clue);
+
+    default CluesGetDTO convertEntityToCluesGetDTO(Game game) {
+        CluesGetDTO cluesGetDTO = new CluesGetDTO();
+
         //add all valid clues to the list
-        for (Clue clue : game.getClues()){
-            if (clue.getValid()){
-                clueGetDTO.addAClue(clue.getClue());
+        for (Clue clue : game.getClues()) {
+            if (clue.getValid() == ClueStatus.VALID) {
+                cluesGetDTO.addAClue(clue.getClue());
+            }
+            if (game.getUserIds().size() == game.getClues().size()) {
+                cluesGetDTO.setAllClues(true);
+            }
+            else {
+                cluesGetDTO.setAllClues(false);
             }
         }
-        if (game.getUserIds().size() == game.getClues().size()){
-            clueGetDTO.setAllClues(true);
-        }
-        else{
-            clueGetDTO.setAllClues(false);
-        }
-        return clueGetDTO;
+        return cluesGetDTO;
     }
 
 

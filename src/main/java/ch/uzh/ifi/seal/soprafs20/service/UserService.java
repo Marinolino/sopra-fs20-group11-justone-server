@@ -55,7 +55,8 @@ public class UserService {
 
         newUser.setToken(UUID.randomUUID().toString());
         newUser.setStatus(UserStatus.OFFLINE);
-        newUser.setInGame(false);
+        newUser.setCorrectlyGuessed(0);
+        newUser.setDuplicateClues(0);
         newUser.setScore(0);
         newUser.setGamesPlayed(0);
 
@@ -111,23 +112,41 @@ public class UserService {
 
         checkIfUserExists(user);
 
-        User existedUser = getUserById(id);
+        User userById = getUserById(id);
 
         if (user.getUsername() != null){
-            existedUser.setUsername(user.getUsername());
+            userById.setUsername(user.getUsername());
         }
 
         if (user.getName() != null){
-            existedUser.setName(user.getName());
+            userById.setName(user.getName());
         }
-
-        // saves the given entity but data is only persisted in the database once flush() is called
-        User updatedUser = userRepository.save(existedUser);
+        User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
         log.debug("Updated Information for User: {}", user);
         return updatedUser;
     }
+
+    public User updateUserGameStats(Long id, User userInput){
+        User userById = getUserById(id);
+        int guess = userInput.getCorrectlyGuessed();
+        int clue = userInput.getDuplicateClues();
+
+        if (guess > 0){
+            userById.addCorrectlyGuessed(guess);
+        }
+        if (clue > 0){
+            userById.addDuplicateClues(clue);
+        }
+
+        User updatedUser = userRepository.save(userById);
+        userRepository.flush();
+
+        log.debug("Updated Information for User: {}", userById);
+        return updatedUser;
+    }
+
 
     /**
      * This is a helper method that will check the uniqueness criteria of the username defined in the User entity.

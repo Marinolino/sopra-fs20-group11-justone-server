@@ -7,11 +7,21 @@ import javax.persistence.Column;
 public class UserGetDTO {
 
     private Long id;
+
     private String name;
+
     private String username;
+
     private UserStatus status;
+
+    private int correctlyGuessed;
+
+    private int duplicateClues;
+
     private int score;
+
     private int gamesPlayed;
+
     private boolean inGame;
 
     public Long getId() {
@@ -44,6 +54,22 @@ public class UserGetDTO {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public int getCorrectlyGuessed(){
+        return this.correctlyGuessed;
+    }
+
+    public void setCorrectlyGuessed(int correctlyGuessed){
+        this.correctlyGuessed = correctlyGuessed;
+    }
+
+    public int getDuplicateClues(){
+        return this.duplicateClues;
+    }
+
+    public void setDuplicateClues(int duplicateClues){
+        this.duplicateClues = duplicateClues;
     }
 
     public int getScore(){

@@ -79,7 +79,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.ONLINE);
         user.setGamesPlayed(0);
         user.setScore(0);
-        user.setInGame(false);
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setName("TestUser");
@@ -101,7 +100,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
                 .andExpect(jsonPath("$.score", is(user.getScore())))
-                .andExpect(jsonPath("$.inGame", is(user.getInGame())))
                 .andExpect(jsonPath("$.gamesPlayed", is(user.getGamesPlayed())));
     }
     
@@ -290,7 +288,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.ONLINE);
         user.setGamesPlayed(0);
         user.setScore(0);
-        user.setInGame(false);
 
         UserPutDTO userPostDTO = new UserPutDTO();
         userPostDTO.setId(1L);
@@ -322,7 +319,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.ONLINE);
         user.setGamesPlayed(0);
         user.setScore(0);
-        user.setInGame(false);
 
 //        given(userService.getUserById(Mockito.any())).willReturn(user);
         given(userService.updateUser(Mockito.any(), Mockito.any())).willReturn(user);

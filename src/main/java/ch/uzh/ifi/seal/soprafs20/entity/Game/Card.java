@@ -17,6 +17,9 @@ public class Card implements Serializable {
     private Long id;
 
     @Column(nullable = false)
+    private int score;
+
+    @Column(nullable = false)
     @ElementCollection
     private List<String> mysteryWords = new ArrayList<>();
 
@@ -37,6 +40,14 @@ public class Card implements Serializable {
 
     public void setId(Long id){
         this.id = id;
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+
+    public void setScore(int score){
+        this.score = score;
     }
 
     public List<String> getMysteryWords(){

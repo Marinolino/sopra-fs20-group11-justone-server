@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
@@ -43,36 +44,4 @@ class GameServiceTest {
             assertEquals(card.getMysteryWords().size(), 5);
         }
     }
-
-    @Test
-    public void checkIfClueInputIsValid_ClueIsBlank() throws Exception{
-        String exceptionMessage = "Clues must not be empty!";
-
-        String clue1 = "";
-        PostRequestException409 exception1 = assertThrows(PostRequestException409.class, () -> gameService.checkIfClueInputIsValid(clue1), exceptionMessage);
-        assertEquals(exceptionMessage, exception1.getMessage());
-
-        String clue2 = null;
-        PostRequestException409 exception2 = assertThrows(PostRequestException409.class, () -> gameService.checkIfClueInputIsValid(clue2), exceptionMessage);
-        assertEquals(exceptionMessage, exception2.getMessage());
-    }
-
-    @Test
-    public void checkIfClueInputIsValid_ClueContainsWhiteSpaces() throws Exception{
-        String exceptionMessage = "Clues must not contain any whitespaces!";
-
-        String clue1 = " TestClue";
-        PostRequestException409 exception1 = assertThrows(PostRequestException409.class, () -> gameService.checkIfClueInputIsValid(clue1), exceptionMessage);
-        assertEquals(exceptionMessage, exception1.getMessage());
-
-        String clue2 = "TestClue ";
-        PostRequestException409 exception2 = assertThrows(PostRequestException409.class, () -> gameService.checkIfClueInputIsValid(clue2), exceptionMessage);
-        assertEquals(exceptionMessage, exception2.getMessage());
-
-        String clue3 = "Test Clue";
-        PostRequestException409 exception3 = assertThrows(PostRequestException409.class, () -> gameService.checkIfClueInputIsValid(clue3), exceptionMessage);
-        assertEquals(exceptionMessage, exception2.getMessage());
-    }
-
-
 }

@@ -9,6 +9,10 @@ public class UserPutDTO {
 
     private String password;
 
+    private int correctlyGuessed;
+
+    private int duplicateClues;
+
     public Long getId() {
         return id;
     }
@@ -39,5 +43,21 @@ public class UserPutDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getCorrectlyGuessed(){
+        return this.correctlyGuessed;
+    }
+
+    public void setCorrectlyGuessed(int correctlyGuessed){
+        this.correctlyGuessed = correctlyGuessed;
+    }
+
+    public int getDuplicateClues(){
+        return this.duplicateClues;
+    }
+
+    public void setDuplicateClues(int duplicateClues){
+        this.duplicateClues = duplicateClues;
     }
 }

@@ -39,13 +39,16 @@ public class User implements Serializable {
     private UserStatus status;
 
     @Column(nullable = false)
+    private int correctlyGuessed;
+
+    @Column(nullable = false)
+    private int duplicateClues;
+
+    @Column(nullable = false)
     private int score;
 
     @Column(nullable = false)
     private int gamesPlayed;
-
-    @Column(nullable = false)
-    private boolean inGame;
 
     public Long getId() {
         return id;
@@ -95,6 +98,30 @@ public class User implements Serializable {
         this.status = status;
     }
 
+    public int getCorrectlyGuessed(){
+        return this.correctlyGuessed;
+    }
+
+    public void setCorrectlyGuessed(int correctlyGuessed){
+        this.correctlyGuessed = correctlyGuessed;
+    }
+
+    public void addCorrectlyGuessed(int guess){
+        this.correctlyGuessed += guess;
+    }
+
+    public int getDuplicateClues(){
+        return this.duplicateClues;
+    }
+
+    public void setDuplicateClues(int duplicateClues){
+        this.duplicateClues = duplicateClues;
+    }
+
+    public void addDuplicateClues(int clue){
+        this.correctlyGuessed += clue;
+    }
+
     public int getScore(){
         return this.score;
     }
@@ -117,13 +144,5 @@ public class User implements Serializable {
 
     public void addGames(){
         this.gamesPlayed += 1;
-    }
-
-    public boolean getInGame(){
-        return this.inGame;
-    }
-
-    public void setInGame(boolean inGame){
-        this.inGame = inGame;
     }
 }

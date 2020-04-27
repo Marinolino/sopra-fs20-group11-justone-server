@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -18,9 +20,10 @@ public class Clue implements Serializable {
     private String clue;
 
     @Column(nullable = false)
-    private boolean valid;
+    private ClueStatus valid;
 
-    //TODO: add variable time
+    @Column(nullable = false)
+    private int time;
 
     @ManyToOne
     @JoinColumn(name="game_id", insertable = false, updatable = false)
@@ -42,11 +45,11 @@ public class Clue implements Serializable {
         this.id = clueId;
     }
 
-    public boolean getValid(){
+    public ClueStatus getValid(){
         return valid;
     }
 
-    public void setValid(boolean valid){
+    public void setValid(ClueStatus valid){
         this.valid = valid;
     }
 
@@ -56,5 +59,13 @@ public class Clue implements Serializable {
 
     public void setGame(Game game){
         this.game = game;
+    }
+
+    public int getTime(){
+        return time;
+    }
+
+    public void setTime(int time){
+        this.time = time;
     }
 }

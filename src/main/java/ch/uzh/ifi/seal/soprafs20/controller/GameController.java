@@ -122,6 +122,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO setChosenWord(@PathVariable("id") long id, @RequestBody CardPutDTO cardPutDTO) throws Exception {
+
         String chosenWord = cardPutDTO.getChosenWord();
 
         //set the chosen word for the specified game
@@ -139,26 +140,26 @@ public class GameController {
         Clue clueInput = DTOMapper.INSTANCE.convertCluePostDTOtoEntity(cluePostDTO);
 
         // create clue
-        Game updatedGame = gameService.addClueToGame(id, clueInput.getClue());
+        Clue checkedClue = gameService.addClueToGame(id, clueInput);
 
         // convert internal representation of clue back to API
-        return DTOMapper.INSTANCE.convertEntityToClueGetDTO(updatedGame);
+        return DTOMapper.INSTANCE.convertEntityToClueGetDTO(checkedClue);
     }
 
     @GetMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ClueGetDTO getAllClues(@PathVariable("id") long id) throws GetRequestException404 {
+    public CluesGetDTO getAllClues(@PathVariable("id") long id) throws GetRequestException404 {
         Game gameById = gameService.getGameById(id);
 
         // convert internal representation of clue back to API
-        return DTOMapper.INSTANCE.convertEntityToClueGetDTO(gameById);
+        return DTOMapper.INSTANCE.convertEntityToCluesGetDTO(gameById);
     }
 
     @PutMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ClueGetDTO setCluesToInvalid(@PathVariable("id") long id, @RequestBody CluePutDTO cluePutDTO) throws GetRequestException404 {
+    public CluesGetDTO setCluesToInvalid(@PathVariable("id") long id, @RequestBody CluePutDTO cluePutDTO) throws GetRequestException404 {
         // convert API clue to internal representation
         List<String> cluesToChange = DTOMapper.INSTANCE.convertCluePutDTOtoList(cluePutDTO);
 
@@ -166,7 +167,7 @@ public class GameController {
         Game updatedGame = gameService.setCluesToInvalid(id, cluesToChange);
 
         // convert internal representation of clue back to API
-        return DTOMapper.INSTANCE.convertEntityToClueGetDTO(updatedGame);
+        return DTOMapper.INSTANCE.convertEntityToCluesGetDTO(updatedGame);
     }
 
     @PutMapping("/finish/{id}")

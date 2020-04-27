@@ -1,7 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.ClueChecker;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import org.springframework.http.HttpStatus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,40 +19,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClueChecker {
-    public static boolean checkClue(String clueInput, Game game) throws IOException {
-
+    public static Clue checkClue(Clue clueInput, Game game) throws IOException {
 
         List<String> stringClues = new ArrayList<>();
 
+        //check if the clue input is valid
+        if (clueInput.getClue() == null || clueInput.getClue().isBlank() || clueInput.getClue().contains(" ")) {
+            clueInput.setValid(ClueStatus.INVALID);
+            return clueInput;
+        }
         //add all clues that are already saved in the game
         for (Clue existingClue : game.getClues()){
             stringClues.add(existingClue.getClue());
         }
-        for (String clue: stringClues){
+        for (String clue: stringClues) {
             //check if the clue already exists
-            if (checkForDuplicate(clueInput, clue)){
-                return false;
+            if (checkForDuplicate(clueInput.getClue(), clue)) {
+                clueInput.setValid(ClueStatus.DUPLICATE);
+                return clueInput;
             }
-            //check if the clue is equal to the chosen word
-            if (game.getChosenWord().equals(clue)){
-                return false;
-            }
-            //TODO: check invalid words
-            URL obj = new URL("https://api.datamuse.com/words?sp=prince");
-
-            String str = ClueChecker.makeRequest(game.getChosenWord());
-            ArrayList<String> wordList = ClueChecker.makeList(str);
-            System.out.println("-CONTENT BEGIN-");
-            System.out.println(wordList);
-            System.out.println("-CONTENT END-");
-            for (int i = 0; i<wordList.size(); i++) {
-                if (wordList.get(i).equalsIgnoreCase("\"" + clueInput + "\"")) {
-                    return false;
-                }
-            }
-            return true;
         }
-        return true;
+        //check if the clue is equal to the chosen word
+        if (game.getChosenWord().equals(clueInput.getClue())){
+            clueInput.setValid(ClueStatus.DUPLICATE);
+            return clueInput;
+        }
+        //TODO: check invalid words
+        URL obj = new URL("https://api.datamuse.com/words?sp=prince");
+
+        String str = ClueChecker.makeRequest(game.getChosenWord());
+        ArrayList<String> wordList = ClueChecker.makeList(str);
+        System.out.println("-CONTENT BEGIN-");
+        System.out.println(wordList);
+        System.out.println("-CONTENT END-");
+        for (int i = 0; i<wordList.size(); i++) {
+            if (wordList.get(i).equalsIgnoreCase("\"" + clueInput + "\"")) {
+                clueInput.setValid(ClueStatus.INVALID);
+                return clueInput;
+            }
+        }
+        clueInput.setValid(ClueStatus.VALID);
+        return clueInput;
     }
 
     //checks if the clue already exists
@@ -65,6 +75,7 @@ public class ClueChecker {
         }
         return false;
     }
+
     private static String makeRequest(String chosenWord) throws IOException {
         String response;
         String urlString = "https://api.datamuse.com/words?sp=" + chosenWord;

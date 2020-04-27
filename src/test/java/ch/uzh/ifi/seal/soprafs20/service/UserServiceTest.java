@@ -55,7 +55,6 @@ public class UserServiceTest {
         assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
         assertEquals(createdUser.getGamesPlayed(), 0);
         assertEquals(createdUser.getScore(), 0);
-        assertEquals(createdUser.getInGame(), false);
     }
 
     @Test

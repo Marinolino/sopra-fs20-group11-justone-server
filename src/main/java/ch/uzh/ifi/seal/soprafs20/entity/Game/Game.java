@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 
 import javax.persistence.*;
@@ -175,7 +176,7 @@ public class Game implements Serializable {
     public void setClueToInvalid(String name) {
         for(Clue clue : clues){
             if (name.equals(clue.getClue())){
-                clue.setValid(false);
+                clue.setValid(ClueStatus.INVALID);
             }
         }
     }

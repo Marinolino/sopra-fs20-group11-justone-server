@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
@@ -173,34 +175,39 @@ class GameServiceIntegrationTest {
     @Test
     public void addClueToGame_success() throws Exception {
         String chosenWord = "TestWord";
+        Clue newClue = new Clue();
         String clue = "TestClue";
+
+        newClue.setClue(clue);
         testGame.setCurrentUserId((long)1);
         Game createdGame = gameService.createGame(testGame);
         Long gameId = createdGame.getId();
         gameService.getActiveCard(gameId);
         Game updatedGame = gameService.setChosenWord(gameId, chosenWord);
-        updatedGame = gameService.addClueToGame(gameId, clue);
+        Clue testClue = gameService.addClueToGame(gameId, newClue);
+        updatedGame = gameService.getGameById(gameId);
 
-        assertEquals(updatedGame.getClues().size(), 1);
-        assertEquals(updatedGame.getClues().get(0).getClue(), clue);
+        assertEquals(testClue.getClue(), clue);
+        assertEquals(testClue.getValid(), ClueStatus.VALID);
     }
 
     @Test
     public void addClueToGame_amountOfUsersIsEqualToClues() throws Exception {
         String chosenWord = "TestWord";
+        Clue newClue = new Clue();
         String clue = "TestClue";
+
+        newClue.setClue(clue);
         testGame.setCurrentUserId((long)1);
         Game createdGame = gameService.createGame(testGame);
         Long gameId = createdGame.getId();
         gameService.getActiveCard(gameId);
         Game updatedGame = gameService.setChosenWord(gameId, chosenWord);
-        updatedGame = gameService.addClueToGame(gameId, clue);
+        Clue testClue = gameService.addClueToGame(gameId, newClue);
 
         String exceptionMessage = "There are already as many clues as users! Therefore, this clue can't be added!";
-        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> gameService.addClueToGame(gameId, clue), exceptionMessage);
+        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> gameService.addClueToGame(gameId, newClue), exceptionMessage);
 
         assertEquals(exceptionMessage, exception.getMessage());
     }
-
-
 }
