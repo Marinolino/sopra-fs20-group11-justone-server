@@ -44,4 +44,34 @@ class GameServiceTest {
             assertEquals(card.getMysteryWords().size(), 5);
         }
     }
+
+    @Test
+    public void getUserIndex_LastElement(){
+        Game testGame = new Game();
+        Long userId1 = (long)1;
+        Long userId2 = (long)2;
+        Long userId3 = (long)3;
+
+        testGame.addUserId(userId1);
+        testGame.addUserId(userId2);
+        testGame.addUserId(userId3);
+        testGame.setCurrentUserId(userId3);
+
+        assertEquals(gameService.getUserIndex(testGame), 0);
+    }
+
+    @Test
+    public void getUserIndex_NotLastElement(){
+        Game testGame = new Game();
+        Long userId1 = (long)1;
+        Long userId2 = (long)2;
+        Long userId3 = (long)3;
+
+        testGame.addUserId(userId1);
+        testGame.addUserId(userId2);
+        testGame.addUserId(userId3);
+        testGame.setCurrentUserId(userId2);
+
+        assertEquals(gameService.getUserIndex(testGame), 2);
+    }
 }

@@ -116,6 +116,10 @@ public class Game implements Serializable {
         this.round = round;
     }
 
+    public void addRound(){
+        this.round += 1;
+    }
+
     public Long getCurrentUserId() {
         return currentUserId;
     }
@@ -187,9 +191,12 @@ public class Game implements Serializable {
 
     public void setClues(List<Clue> clues) {
         this.clues = clues;
-        for (Clue clue : clues){
-            clue.setGame(this);
+        if (clues != null){
+            for (Clue clue : clues){
+                clue.setGame(this);
+            }
         }
+
     }
 
     //add one clue to the clue list
@@ -204,7 +211,9 @@ public class Game implements Serializable {
 
     public void setActiveCard(Card activeCard) {
         this.activeCard = activeCard;
-        activeCard.setGame(this);
+        if (activeCard != null){
+            activeCard.setGame(this);
+        }
     }
 
     //get's the top card from the deck and sets it as the active card

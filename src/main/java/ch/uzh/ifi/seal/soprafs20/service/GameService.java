@@ -11,6 +11,7 @@ import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class GameService {
 
     private final Logger log = LoggerFactory.getLogger(GameService.class);
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
 
@@ -86,7 +87,7 @@ public class GameService {
         for (Card card : gameById.getCorrectlyGuessed().getCardList()){
             gameById.addScore(card.getScore());
         }
-        
+
         Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
 
@@ -139,7 +140,7 @@ public class GameService {
     public Card getActiveCard(Long id) throws Exception {
         Game gameById = getGameById(id);
         gameById.setActiveCardFromDeck();
-        gameById.setRound(gameById.getRound() + 1);
+        gameById.addRound();
 
         Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
@@ -188,6 +189,35 @@ public class GameService {
             gameRepository.flush();
         }
         return gameById;
+    }
+    //resets clues, moves active card to gameBox, changes active user
+    public Game skipGuessing(Long id){
+        Game gameById = getGameById(id);
+
+        //move active card to game box
+        gameById.getGameBox().addCard(gameById.getActiveCard());
+        gameById.setActiveCard(null);
+
+        //delete all clues
+        gameById.setClues(null);
+
+        //pass the turn to the next user
+        int index = getUserIndex(gameById);
+        gameById.setCurrentUserId(gameById.getUserIds().get(index));
+
+        gameById = gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return gameById;
+    }
+
+    //returns the index for the list of userIds, so that the new currentUserId can be set correctly
+    public int getUserIndex(Game game) {
+        int currentUserIndex = game.getUserIds().indexOf(game.getCurrentUserId());
+        if (currentUserIndex + 1 == game.getUserIds().size()) {
+            return 0;
+        }
+        return currentUserIndex + 1;
     }
 
     //creates 13 random cards, each containing 5 random words

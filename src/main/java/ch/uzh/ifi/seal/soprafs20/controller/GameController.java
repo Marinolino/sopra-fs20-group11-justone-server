@@ -179,4 +179,14 @@ public class GameController {
         // convert internal representation of clue back to API
         return DTOMapper.INSTANCE.convertEntityToCluesGetDTO(updatedGame);
     }
+
+    @PutMapping("/skip/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO skipGuessing(@PathVariable("id") long id) throws GetRequestException404 {
+        Game updatedGame = gameService.skipGuessing(id);
+
+        // convert internal representation of clue back to API
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+    }
 }

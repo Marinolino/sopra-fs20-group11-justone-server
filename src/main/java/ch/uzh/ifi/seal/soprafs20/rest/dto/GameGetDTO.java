@@ -24,6 +24,8 @@ public class GameGetDTO {
 
     private String chosenWord;
 
+    private Long currentUserId;
+
     private List<Long> userIds;
 
     public Long getId() {
@@ -80,6 +82,14 @@ public class GameGetDTO {
 
     public void setChosenWord(String chosenWord){
         this.chosenWord = chosenWord;
+    }
+
+    public Long getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void setCurrentUserId(Long currentUserId) {
+        this.currentUserId = currentUserId;
     }
 
     public List<Long> getUsersIds() {
