@@ -7,6 +7,8 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException400;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
@@ -49,6 +51,7 @@ public class GameService {
         Game createdGame = createGameElements(newGame);
         createdGame.setToken(UUID.randomUUID().toString());
         createdGame.setStatus(GameStatus.CREATED);
+        createdGame.setChangeWord(true);
         createdGame.setScore(0);
         createdGame.setRound(0);
         createdGame.setWordStatus(ChosenWordStatus.NONE);
@@ -170,8 +173,14 @@ public class GameService {
         return gameById;
     }
 
-    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO){
+    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO) throws Exception {
         Game gameById = getGameById(id);
+
+        //check if during this turn, a word has already been rejected
+        if (!gameById.getChangeWord()){
+            throw new PutRequestException403("You can only reject one word per turn!", HttpStatus.FORBIDDEN);
+        }
+
         gameById.addWordCounter();
 
         //word is already rejected
@@ -183,6 +192,7 @@ public class GameService {
         //word get's rejected
         if (!chosenWordPutDTO.getStatus()){
             gameById.setWordStatus(ChosenWordStatus.REJECTED);
+            gameById.setChangeWord(false);
             gameById = gameRepository.save(gameById);
             gameRepository.flush();
             return gameById;
@@ -249,6 +259,9 @@ public class GameService {
         //pass the turn to the next user
         int index = getUserIndex(gameById);
         gameById.setCurrentUserId(gameById.getUserIds().get(index));
+
+        //reset this so users can reject a chosen word again
+        gameById.setChangeWord(true);
 
         gameById = gameRepository.save(gameById);
         gameRepository.flush();

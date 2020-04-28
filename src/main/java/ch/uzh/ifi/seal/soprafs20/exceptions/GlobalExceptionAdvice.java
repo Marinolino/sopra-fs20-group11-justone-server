@@ -81,6 +81,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(putException.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(value = PutRequestException403.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handlePutException403(PutRequestException403 ex){
+        PutException putException = new PutException(ex.getMessage(), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(putException.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(value = PutRequestException404.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handlePutException404(PutRequestException404 ex){

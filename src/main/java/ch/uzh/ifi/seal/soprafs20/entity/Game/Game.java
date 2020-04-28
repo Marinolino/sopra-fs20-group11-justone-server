@@ -30,6 +30,9 @@ public class Game implements Serializable {
     private boolean normalMode;
 
     @Column(nullable = false)
+    private boolean changeWord;
+
+    @Column(nullable = false)
     private int score;
 
     @Column(nullable = false)
@@ -101,6 +104,14 @@ public class Game implements Serializable {
 
     public void setNormalMode(boolean mode) {
         this.normalMode = mode;
+    }
+
+    public boolean getChangeWord() {
+        return changeWord;
+    }
+
+    public void setChangeWord(boolean changeWord) {
+        this.changeWord = changeWord;
     }
 
     public int getScore() {

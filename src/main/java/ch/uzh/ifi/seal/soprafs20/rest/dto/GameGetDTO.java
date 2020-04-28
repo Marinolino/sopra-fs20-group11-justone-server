@@ -1,11 +1,14 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+
+import javax.persistence.Column;
 import java.util.List;
 
 public class GameGetDTO {
@@ -18,11 +21,15 @@ public class GameGetDTO {
 
     private boolean normalMode;
 
+    private boolean changeWord;
+
     private int score;
 
     private int round;
 
     private String chosenWord;
+
+    private ChosenWordStatus wordStatus;
 
     private Long currentUserId;
 
@@ -60,6 +67,14 @@ public class GameGetDTO {
         this.normalMode = mode;
     }
 
+    public boolean getChangeWord() {
+        return changeWord;
+    }
+
+    public void setChangeWord(boolean changeWord) {
+        this.changeWord = changeWord;
+    }
+
     public int getScore() {
         return score;
     }
@@ -82,6 +97,14 @@ public class GameGetDTO {
 
     public void setChosenWord(String chosenWord){
         this.chosenWord = chosenWord;
+    }
+
+    public ChosenWordStatus getWordStatus() {
+        return wordStatus;
+    }
+
+    public void setWordStatus(ChosenWordStatus wordStatus){
+        this.wordStatus = wordStatus;
     }
 
     public Long getCurrentUserId() {
