@@ -17,6 +17,7 @@ class ClueCheckerTest {
     Game testGame;
     Card testCard;
     List<String> wordList;
+    Clue testClue = new Clue();
 
     @BeforeEach
     public void setUp(){
@@ -34,23 +35,50 @@ class ClueCheckerTest {
         testCard.setMysteryWords(wordList);
         testGame.addClue(clue1);
         testGame.setActiveCard(testCard);
-        testGame.setChosenWord("prince");
+        testGame.setChosenWord("house");
     }
 
     @Test
-    public void clueAlreadyExists(){
-        //assertFalse(ClueChecker.checkClue("A", testGame));
+    public void clueAlreadyExists() throws IOException {
+        testClue.setClue("A");
+        assertEquals(ClueChecker.checkClue(testClue, testGame).getValid(), ClueStatus.DUPLICATE);
     }
 
     @Test
-    public void clueDoesNotExists(){
-        //assertTrue(ClueChecker.checkClue("B", testGame));
+    public void clueDoesNotExist() throws IOException {
+        testClue.setClue("B");
+        assertEquals(ClueChecker.checkClue(testClue, testGame).getValid(), ClueStatus.VALID);
     }
 
     @Test
-    public void checkClueChecker() throws IOException {
-        Clue testClue = new Clue();
-        testClue.setClue("price");
+    public void clueIsNull() throws IOException {
+        testClue.setClue(null);
+        assertEquals(ClueChecker.checkClue(testClue, testGame).getValid(), ClueStatus.INVALID);
+    }
+    @Test
+    public void clueIsChosenWord() throws IOException {
+        testClue.setClue("house");
+        assertEquals(ClueChecker.checkClue(testClue, testGame).getValid(), ClueStatus.DUPLICATE);
+    }
+
+    @Test
+    public void clueIsHomophone() throws IOException {
+        testClue.setClue("haus");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(checkedClue.getValid(), ClueStatus.INVALID);
+    }
+
+    @Test
+    public void clueIsPluralOfChosenWord() throws IOException {
+        testClue.setClue("houses");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(checkedClue.getValid(), ClueStatus.INVALID);
+    }
+
+    @Test
+    public void chosenWordIsPluralOfClue() throws IOException {
+        testGame.setChosenWord("houses");
+        testClue.setClue("house");
         Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
         assertEquals(checkedClue.getValid(), ClueStatus.INVALID);
     }

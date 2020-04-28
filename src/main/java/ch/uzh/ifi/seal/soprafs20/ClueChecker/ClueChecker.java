@@ -44,19 +44,21 @@ public class ClueChecker {
             clueInput.setValid(ClueStatus.DUPLICATE);
             return clueInput;
         }
-        //TODO: check invalid words
-        URL obj = new URL("https://api.datamuse.com/words?sp=prince");
-
+        //create list of homophones
         String str = ClueChecker.makeRequest(game.getChosenWord());
         ArrayList<String> wordList = ClueChecker.makeList(str);
-        System.out.println("-CONTENT BEGIN-");
-        System.out.println(wordList);
-        System.out.println("-CONTENT END-");
+        //check if clue is homophone of chosenword
         for (int i = 0; i<wordList.size(); i++) {
-            if (wordList.get(i).equalsIgnoreCase("\"" + clueInput + "\"")) {
+            if (wordList.get(i).equalsIgnoreCase("\"" + clueInput.getClue() + "\"")) {
                 clueInput.setValid(ClueStatus.INVALID);
                 return clueInput;
             }
+        }
+        //check if clue is plural of chosenword or vice versa.
+        if (clueInput.getClue().equalsIgnoreCase(game.getChosenWord() + "s") ||
+                game.getChosenWord().equalsIgnoreCase(clueInput.getClue() + "s")) {
+                clueInput.setValid(ClueStatus.INVALID);
+                return clueInput;
         }
         clueInput.setValid(ClueStatus.VALID);
         return clueInput;
@@ -78,15 +80,13 @@ public class ClueChecker {
 
     private static String makeRequest(String chosenWord) throws IOException {
         String response;
-        String urlString = "https://api.datamuse.com/words?sp=" + chosenWord;
+        String urlString = "https://api.datamuse.com/words?rel_hom=" + chosenWord;
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuffer content = new StringBuffer();
         response =  content.append(in.readLine()).toString();
-
         in.close();
         return response;
     }
@@ -95,32 +95,11 @@ public class ClueChecker {
         String[] tempList;
         ArrayList<String> finalList = new ArrayList<>();
         tempList = rawList.split(":|\\,");
-
         for (int i = 0; i < tempList.length; i ++) {
-            if ((i-1)%4 == 0) {
+            if ((i-1)%6 == 0) {
                 finalList.add(tempList[i]);
             }
         }
-        System.out.println(finalList);
         return finalList;
-    }
-
-    private static String makeRequestBackup() throws IOException {
-        String response;
-        URL url = new URL("https://api.datamuse.com/words?sp=prince");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        //String inputLine;
-        StringBuffer content = new StringBuffer();
-        response =  content.append(in.readLine()).toString();
-
-        // while ((inputLine = in.readLine()) != null) {
-        //content.append(inputLine);
-        // }
-        in.close();
-        //response = content.toString();
-        return response;
     }
 }
