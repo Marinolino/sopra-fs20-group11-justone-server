@@ -41,7 +41,7 @@ public class ClueChecker {
         }
         //check if the clue is equal to the chosen word
         if (game.getChosenWord().equals(clueInput.getClue())){
-            clueInput.setValid(ClueStatus.DUPLICATE);
+            clueInput.setValid(ClueStatus.INVALID);
             return clueInput;
         }
         //create list of homophones
