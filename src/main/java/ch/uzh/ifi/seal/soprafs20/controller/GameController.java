@@ -76,6 +76,16 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(startedGame);
     }
 
+    @PutMapping("/games/finish/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO finishGame(@PathVariable("id") long id) {
+        Game updatedGame = gameService.finishGame(id);
+
+        //convert internal representation of game to API
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+    }
+
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -168,15 +178,5 @@ public class GameController {
 
         // convert internal representation of clue back to API
         return DTOMapper.INSTANCE.convertEntityToCluesGetDTO(updatedGame);
-    }
-
-    @PutMapping("/finish/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public GameGetDTO finishGame(@PathVariable("id") long id) {
-        Game updatedGame = gameService.finishGame(id);
-
-        //convert internal representation of game to API
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
 }

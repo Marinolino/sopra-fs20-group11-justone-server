@@ -13,6 +13,8 @@ public class UserPutDTO {
 
     private int duplicateClues;
 
+    private int score;
+
     public Long getId() {
         return id;
     }
@@ -59,5 +61,13 @@ public class UserPutDTO {
 
     public void setDuplicateClues(int duplicateClues){
         this.duplicateClues = duplicateClues;
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+
+    public void setScore(int score){
+        this.score = score;
     }
 }

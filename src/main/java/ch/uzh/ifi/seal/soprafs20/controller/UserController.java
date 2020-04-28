@@ -108,12 +108,37 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
 
+    @PutMapping("/users/join/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO joinGame(@PathVariable("id") Long id) throws GetRequestException409 {
+        User userOutput = userService.joinGame(id);
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
+    }
+
+    @PutMapping("/users/leave/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO leaveGame(@PathVariable("id") Long id) throws GetRequestException409 {
+        User userOutput = userService.leaveGame(id);
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
+    }
+
     @PutMapping("/users/gamestats/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO updateUserGameStats(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws PutRequestException204, PutRequestException401 {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         User userOutput = userService.updateUserGameStats(id, userInput);
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
+    }
+
+    @PutMapping("/users/score/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO updateUserScore(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws PutRequestException204, PutRequestException401 {
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        User userOutput = userService.updateUserScore(id, userInput);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
 }

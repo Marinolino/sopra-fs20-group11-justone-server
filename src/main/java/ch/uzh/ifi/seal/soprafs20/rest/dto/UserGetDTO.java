@@ -22,8 +22,6 @@ public class UserGetDTO {
 
     private int gamesPlayed;
 
-    private boolean inGame;
-
     public Long getId() {
         return id;
     }
@@ -86,13 +84,5 @@ public class UserGetDTO {
 
     public void setGamesPlayed(int gamesPlayed){
         this.gamesPlayed = gamesPlayed;
-    }
-
-    public boolean getInGame(){
-        return this.inGame;
-    }
-
-    public void setInGame(boolean inGame){
-        this.inGame = inGame;
     }
 }

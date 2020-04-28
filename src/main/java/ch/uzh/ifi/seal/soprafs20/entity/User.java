@@ -119,7 +119,7 @@ public class User implements Serializable {
     }
 
     public void addDuplicateClues(int clue){
-        this.correctlyGuessed += clue;
+        this.duplicateClues += clue;
     }
 
     public int getScore(){

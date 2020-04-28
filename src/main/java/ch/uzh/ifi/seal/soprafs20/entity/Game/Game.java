@@ -104,6 +104,10 @@ public class Game implements Serializable {
         this.score = score;
     }
 
+    public void addScore(int score) {
+        this.score += score;
+    }
+
     public int getRound() {
         return round;
     }

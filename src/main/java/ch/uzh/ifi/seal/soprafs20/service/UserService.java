@@ -42,7 +42,13 @@ public class UserService {
     }
 
     public User getUserById(Long id) throws GetRequestException404 {
-        return userRepository.findById(id).orElse(null);
+        User userById = userRepository.findById(id).orElse(null);
+
+        if (userById == null){
+            throw new GetRequestException409("No user found in repository!", HttpStatus.NOT_FOUND);
+        }
+
+        return userById;
     }
 
     public User findByUsername(String name){
@@ -93,13 +99,8 @@ public class UserService {
         return (userByUsername);
     }
 
-    public User logOut(Long id) throws GetRequestException409 {
+    public User logOut(Long id) {
         User user = getUserById(id);
-
-        if (user == null){
-            throw new GetRequestException409("No user found in repository!", HttpStatus.NOT_FOUND);
-        }
-
         user.setStatus(UserStatus.OFFLINE);
         user = userRepository.save(user);
         userRepository.flush();
@@ -109,18 +110,16 @@ public class UserService {
     public User updateUser(Long id, User user) throws GetRequestException404, PostRequestException409 {
 
         checkIfInputIsValid(user);
-
         checkIfUserExists(user);
-
         User userById = getUserById(id);
 
         if (user.getUsername() != null){
             userById.setUsername(user.getUsername());
         }
-
         if (user.getName() != null){
             userById.setName(user.getName());
         }
+
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
@@ -128,6 +127,30 @@ public class UserService {
         return updatedUser;
     }
 
+    public User joinGame(Long id){
+        User userById = getUserById(id);
+
+        userById.setStatus(UserStatus.INGAME);
+        User updatedUser = userRepository.save(userById);
+        userRepository.flush();
+
+        log.debug("Updated Information for User: {}", userById);
+        return updatedUser;
+    }
+
+    public User leaveGame(Long id){
+        User userById = getUserById(id);
+
+        userById.setStatus(UserStatus.ONLINE);
+        User updatedUser = userRepository.save(userById);
+        userRepository.flush();
+
+        log.debug("Updated Information for User: {}", userById);
+        return updatedUser;
+    }
+
+
+    //update the amount of correctly guessed words or the duplicate clues
     public User updateUserGameStats(Long id, User userInput){
         User userById = getUserById(id);
         int guess = userInput.getCorrectlyGuessed();
@@ -139,6 +162,25 @@ public class UserService {
         if (clue > 0){
             userById.addDuplicateClues(clue);
         }
+
+        User updatedUser = userRepository.save(userById);
+        userRepository.flush();
+
+        log.debug("Updated Information for User: {}", userById);
+        return updatedUser;
+    }
+
+    //update the score of the user, depending on correctly guessed words and duplicate clues
+    public User updateUserScore(Long id, User userInput){
+        User userById = getUserById(id);
+        int score = userInput.getScore();
+
+        //increase gamesPlayed by 1
+        userById.addGames();
+        //User receives penalty or bonus for correctly guessed words and duplicate clues
+        //TODO: finalize calculation
+        int updatedScore = score - userById.getDuplicateClues() + userById.getCorrectlyGuessed();
+        userById.addScore(updatedScore);
 
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
