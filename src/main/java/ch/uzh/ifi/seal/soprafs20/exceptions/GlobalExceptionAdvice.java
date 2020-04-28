@@ -3,10 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.exceptions;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -68,6 +65,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handlePutException204(PutRequestException204 ex){
         PutException putException = new PutException(ex.getMessage(), HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(putException.getMessage(), HttpStatus.NO_CONTENT);
+    }
+
+    @ExceptionHandler(value = PutRequestException400.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handlePutException400(PutRequestException400 ex){
+        PutException putException = new PutException(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(putException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = PutRequestException401.class)

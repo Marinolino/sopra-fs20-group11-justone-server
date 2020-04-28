@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity.Game;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 
@@ -55,6 +56,12 @@ public class Game implements Serializable {
 
     @Column
     private String chosenWord;
+
+    @Column
+    private ChosenWordStatus wordStatus;
+
+    @Column
+    private int wordCounter;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "game_id")
@@ -228,5 +235,25 @@ public class Game implements Serializable {
 
     public void setChosenWord(String chosenWord){
         this.chosenWord = chosenWord;
+    }
+
+    public ChosenWordStatus getWordStatus() {
+        return wordStatus;
+    }
+
+    public void setWordStatus(ChosenWordStatus wordStatus){
+        this.wordStatus = wordStatus;
+    }
+
+    public int getWordCounter(){
+        return wordCounter;
+    }
+
+    public void setWordCounter(int wordCounter){
+        this.wordCounter = wordCounter;
+    }
+
+    public void addWordCounter(){
+        wordCounter += 1;
     }
 }

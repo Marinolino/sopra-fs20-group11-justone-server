@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +99,6 @@ public class GameController {
         return gameGetDTOs;
     }
 
-
     @GetMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -127,10 +127,21 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToCardGetDTO(activeCard);
     }
 
-    @PutMapping("/cards/{id}")
+    @GetMapping("/chosenword/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO setChosenWord(@PathVariable("id") long id, @RequestBody CardPutDTO cardPutDTO) throws Exception {
+    public ChosenWordGetDTO getChosenWord(@PathVariable("id") long id) throws Exception {
+        //set the chosen word for the specified game
+        Game updatedGame = gameService.getGameById(id);
+
+        //convert internal representation of game to API
+        return DTOMapper.INSTANCE.convertEntityToChosenWordGetDTO(updatedGame);
+    }
+
+    @PutMapping("/chosenword/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ChosenWordGetDTO setChosenWord(@PathVariable("id") long id, @RequestBody CardPutDTO cardPutDTO) throws Exception {
 
         String chosenWord = cardPutDTO.getChosenWord();
 
@@ -138,7 +149,18 @@ public class GameController {
         Game updatedGame = gameService.setChosenWord(id, chosenWord);
 
         // convert internal representation of game to API
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+        return DTOMapper.INSTANCE.convertEntityToChosenWordGetDTO(updatedGame);
+    }
+
+    @PutMapping("/chosenword/update/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ChosenWordGetDTO updateChosenWord(@PathVariable("id") long id, @RequestBody ChosenWordPutDTO chosenWordPutDTO) throws Exception {
+        //set the chosen word for the specified game
+        Game updatedGame = gameService.updateChosenWord(id, chosenWordPutDTO);
+
+        // convert internal representation of game to API
+        return DTOMapper.INSTANCE.convertEntityToChosenWordGetDTO(updatedGame);
     }
 
     @PostMapping("/clues/{id}")

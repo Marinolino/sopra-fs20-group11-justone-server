@@ -20,6 +20,7 @@ public class Deck implements Serializable {
     @Column(nullable = false)
     private boolean hasNext = false;
 
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "deck_id")
     private List<Card> cardList = new ArrayList<Card>();

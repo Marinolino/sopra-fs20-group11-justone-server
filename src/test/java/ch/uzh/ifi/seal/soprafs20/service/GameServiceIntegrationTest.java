@@ -1,7 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.transaction.Transactional;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
@@ -153,15 +156,17 @@ class GameServiceIntegrationTest {
     }
 
     @Test
+    @Transactional
     public void setChosenWord() throws Exception {
-        String chosenWord = "TestWord";
         testGame.setCurrentUserId((long)1);
         Game createdGame = gameService.createGame(testGame);
         Long gameId = createdGame.getId();
-        gameService.getActiveCard(gameId);
+        Card activeCard = gameService.getActiveCard(gameId);
+        String chosenWord = activeCard.getMysteryWords().get(0);
         Game updatedGame = gameService.setChosenWord(gameId, chosenWord);
 
         assertEquals(updatedGame.getChosenWord(), chosenWord);
+        assertEquals(updatedGame.getWordStatus(), ChosenWordStatus.SELECTED);
     }
 
     @Test
@@ -172,9 +177,9 @@ class GameServiceIntegrationTest {
         gameService.getActiveCard(createdGame.getId());
     }
 
+    @Transactional
     @Test
     public void addClueToGame_success() throws Exception {
-        String chosenWord = "TestWord";
         Clue newClue = new Clue();
         String clue = "TestClue";
 
@@ -182,7 +187,8 @@ class GameServiceIntegrationTest {
         testGame.setCurrentUserId((long)1);
         Game createdGame = gameService.createGame(testGame);
         Long gameId = createdGame.getId();
-        gameService.getActiveCard(gameId);
+        Card activeCard = gameService.getActiveCard(gameId);
+        String chosenWord = activeCard.getMysteryWords().get(0);
         Game updatedGame = gameService.setChosenWord(gameId, chosenWord);
         Clue testClue = gameService.addClueToGame(gameId, newClue);
         updatedGame = gameService.getGameById(gameId);
@@ -191,9 +197,9 @@ class GameServiceIntegrationTest {
         assertEquals(testClue.getValid(), ClueStatus.VALID);
     }
 
+    @Transactional
     @Test
     public void addClueToGame_amountOfUsersIsEqualToClues() throws Exception {
-        String chosenWord = "TestWord";
         Clue newClue = new Clue();
         String clue = "TestClue";
 
@@ -201,7 +207,8 @@ class GameServiceIntegrationTest {
         testGame.setCurrentUserId((long)1);
         Game createdGame = gameService.createGame(testGame);
         Long gameId = createdGame.getId();
-        gameService.getActiveCard(gameId);
+        Card activeCard = gameService.getActiveCard(gameId);
+        String chosenWord = activeCard.getMysteryWords().get(0);
         Game updatedGame = gameService.setChosenWord(gameId, chosenWord);
         Clue testClue = gameService.addClueToGame(gameId, newClue);
 

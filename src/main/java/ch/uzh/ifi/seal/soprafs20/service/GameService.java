@@ -1,14 +1,15 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
+import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException400;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,6 +51,7 @@ public class GameService {
         createdGame.setStatus(GameStatus.CREATED);
         createdGame.setScore(0);
         createdGame.setRound(0);
+        createdGame.setWordStatus(ChosenWordStatus.NONE);
         createdGame.addUserId(createdGame.getCurrentUserId());
 
         // saves the given entity but data is only persisted in the database once flush() is called
@@ -156,10 +158,45 @@ public class GameService {
             throw new PutRequestException404("This game contains no active card!", HttpStatus.NOT_FOUND);
         }
 
+        if (!gameById.getActiveCard().getMysteryWords().contains(chosenWord)){
+            throw new PutRequestException400(String.format("The word '%s' is not on the active card!", chosenWord), HttpStatus.BAD_REQUEST);
+        }
+
         gameById.setChosenWord(chosenWord);
+        gameById.setWordStatus(ChosenWordStatus.SELECTED);
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 
+        return gameById;
+    }
+
+    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO){
+        Game gameById = getGameById(id);
+        gameById.addWordCounter();
+
+        //word is already rejected
+        if (gameById.getWordStatus() == ChosenWordStatus.REJECTED){
+            gameById = gameRepository.save(gameById);
+            gameRepository.flush();
+            return gameById;
+        }
+        //word get's rejected
+        if (!chosenWordPutDTO.getStatus()){
+            gameById.setWordStatus(ChosenWordStatus.REJECTED);
+            gameById = gameRepository.save(gameById);
+            gameRepository.flush();
+            return gameById;
+        }
+        //word is accepted by all users
+        if (chosenWordPutDTO.getStatus() && gameById.getUserIds().size() == gameById.getWordCounter()){
+            gameById.setWordStatus(ChosenWordStatus.ACCEPTED);
+            gameById = gameRepository.save(gameById);
+            gameRepository.flush();
+            return gameById;
+        }
+        //word is accepted but not all users have made their decision yet
+        gameById = gameRepository.save(gameById);
+        gameRepository.flush();
         return gameById;
     }
 
@@ -190,6 +227,7 @@ public class GameService {
         }
         return gameById;
     }
+
     //resets clues, moves active card to gameBox, changes active user
     public Game skipGuessing(Long id){
         Game gameById = getGameById(id);
@@ -197,6 +235,13 @@ public class GameService {
         //move active card to game box
         gameById.getGameBox().addCard(gameById.getActiveCard());
         gameById.setActiveCard(null);
+
+        //delete current chosen word
+        gameById.setChosenWord(null);
+        gameById.setWordStatus(ChosenWordStatus.NONE);
+
+        //reset word counter
+        gameById.setWordCounter(0);
 
         //delete all clues
         gameById.setClues(null);

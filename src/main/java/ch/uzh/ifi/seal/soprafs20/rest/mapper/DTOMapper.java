@@ -80,6 +80,10 @@ public interface DTOMapper {
     @Mapping(source = "valid", target = "valid")
     ClueGetDTO convertEntityToClueGetDTO(Clue clue);
 
+    @Mapping(source = "chosenWord", target = "chosenWord")
+    @Mapping(source = "wordStatus", target = "wordStatus")
+    ChosenWordGetDTO convertEntityToChosenWordGetDTO(Game game);
+
     default CluesGetDTO convertEntityToCluesGetDTO(Game game) {
         CluesGetDTO cluesGetDTO = new CluesGetDTO();
 
@@ -106,7 +110,5 @@ public interface DTOMapper {
         }
         return cardGetDTO;
     }
-
-
 }
 

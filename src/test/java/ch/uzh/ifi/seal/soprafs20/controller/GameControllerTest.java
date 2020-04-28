@@ -92,7 +92,7 @@ class GameControllerTest {
         CardPutDTO cardPutDTO = new CardPutDTO();
         cardPutDTO.setChosenWord("Test3");
 
-        MockHttpServletRequestBuilder putRequest = put("/cards/1")
+        MockHttpServletRequestBuilder putRequest = put("/chosenword/update/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(cardPutDTO));
 

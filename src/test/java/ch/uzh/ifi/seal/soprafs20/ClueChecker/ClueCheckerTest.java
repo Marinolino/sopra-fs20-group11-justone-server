@@ -58,7 +58,7 @@ class ClueCheckerTest {
     @Test
     public void clueIsChosenWord() throws IOException {
         testClue.setClue("house");
-        assertEquals(ClueChecker.checkClue(testClue, testGame).getValid(), ClueStatus.DUPLICATE);
+        assertEquals(ClueChecker.checkClue(testClue, testGame).getValid(), ClueStatus.INVALID);
     }
 
     @Test
