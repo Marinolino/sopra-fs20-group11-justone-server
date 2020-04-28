@@ -37,7 +37,7 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
     }
 
-    @PutMapping("/games/{id}")
+    @PutMapping("/games/join/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO addUserToGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) throws Exception {
@@ -59,7 +59,7 @@ public class GameController {
         Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
 
         // create game
-        Game updatedGame = gameService.addUserToGame(id, gameInput);
+        Game updatedGame = gameService.removeUserFromGame(id, gameInput);
 
         // convert internal representation of game back to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);

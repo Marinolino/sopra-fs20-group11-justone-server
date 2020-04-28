@@ -3,12 +3,11 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.CardPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.ClueGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.CluePostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +40,50 @@ class GameControllerTest {
     @MockBean
     private GameService gameService;
 
+    private Game testGame;
+
+    @BeforeEach
+    public void setUp(){
+        testGame = new Game();
+        testGame.setId((long)1);
+    }
+
+    @Test
+    public void createGame_success() throws Exception {
+        GamePostDTO gamePostDTO = new GamePostDTO();
+        gamePostDTO.setCurrentUserId((long)1);
+
+        given(gameService.createGame(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder postRequest = post("/games")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
+
+    }
+
+    @Test
+    public void getAllGames_success() throws Exception {
+        Game testGame2 = new Game();
+        testGame2.setId((long)2);
+        List<Game> games = new ArrayList<>();
+        games.add(testGame);
+        games.add(testGame2);
+
+        given(gameService.getGames()).willReturn(games);
+
+        MockHttpServletRequestBuilder getRequest = get("/games").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id", is(testGame.getId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].id", is(testGame2.getId().intValue())));
+    }
+
     @Test
     public void getGameById_success() throws Exception {
-        Game testGame = new Game();
-        testGame.setId((long)1);
-
         given(gameService.getGameById(Mockito.any())).willReturn(testGame);
 
         MockHttpServletRequestBuilder getRequest = get("/games/1").contentType(MediaType.APPLICATION_JSON);
@@ -62,6 +100,57 @@ class GameControllerTest {
 
         mockMvc.perform(getRequest).andExpect(status().isNotFound());
     }
+
+    @Test
+    public void addUserToGame_success() throws Exception {
+        GamePutDTO gamePutDTO = new GamePutDTO();
+        gamePutDTO.setCurrentUserId((long)1);
+
+        given(gameService.addUserToGame(Mockito.any(), Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/games/join/1").contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePutDTO));;
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
+    }
+
+    @Test
+    public void removeUserFromGame_success() throws Exception {
+        GamePutDTO gamePutDTO = new GamePutDTO();
+        gamePutDTO.setCurrentUserId((long)1);
+
+        given(gameService.removeUserFromGame(Mockito.any(), Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/games/leave/1").contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePutDTO));;
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
+    }
+
+    @Test
+    public void startGame_success() throws Exception {
+        given(gameService.startGame(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/games/start/1").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
+    }
+
+    @Test
+    public void finishGame_success() throws Exception {
+        given(gameService.finishGame(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/games/finish/1").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
+    }
+
+
+
 
     @Test
     public void getActiveCard_success() throws Exception{
@@ -87,16 +176,14 @@ class GameControllerTest {
 
     @Test
     public void setChosenWord_success() throws Exception {
-        Game testGame = new Game();
-
         CardPutDTO cardPutDTO = new CardPutDTO();
         cardPutDTO.setChosenWord("Test3");
+
+        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
 
         MockHttpServletRequestBuilder putRequest = put("/chosenword/update/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(cardPutDTO));
-
-        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
 
         mockMvc.perform(putRequest).andExpect(status().isOk());
     }
