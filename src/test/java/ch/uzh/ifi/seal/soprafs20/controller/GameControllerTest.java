@@ -1,9 +1,12 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -149,9 +152,6 @@ class GameControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
     }
 
-
-
-
     @Test
     public void getActiveCard_success() throws Exception{
         List<String> wordList = new ArrayList<>();
@@ -179,13 +179,137 @@ class GameControllerTest {
         CardPutDTO cardPutDTO = new CardPutDTO();
         cardPutDTO.setChosenWord("Test3");
 
-        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
+        given(gameService.updateChosenWord(Mockito.any(), Mockito.any())).willReturn(testGame);
 
-        MockHttpServletRequestBuilder putRequest = put("/chosenword/update/1")
+        MockHttpServletRequestBuilder putRequest = put("/chosenword/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(cardPutDTO));
 
         mockMvc.perform(putRequest).andExpect(status().isOk());
+    }
+
+    @Test
+    public void getChosenWord_success() throws Exception {
+        testGame.setChosenWord("TestWord");
+        testGame.setWordStatus(ChosenWordStatus.ACCEPTED);
+
+        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder getRequest = get("/chosenword/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.chosenWord", is("TestWord")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.wordStatus", is(ChosenWordStatus.ACCEPTED.toString())));
+    }
+
+    @Test
+    public void updateChosenWord_reject() throws Exception {
+        ChosenWordPutDTO chosenWordPutDTO = new ChosenWordPutDTO();
+        chosenWordPutDTO.setStatus(false);
+        testGame.setWordStatus(ChosenWordStatus.REJECTED);
+
+        given(gameService.updateChosenWord(Mockito.any(), Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/chosenword/update/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(chosenWordPutDTO));
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.wordStatus", is(ChosenWordStatus.REJECTED.toString())));
+
+    }
+
+    @Test
+    public void createClue_validClue() throws Exception {
+        CluePostDTO cluePostDTO = new CluePostDTO();
+        cluePostDTO.setClue("TestClue");
+        cluePostDTO.setTime(10);
+        Clue testClue = new Clue();
+        testClue.setClue("TestClue");
+        testClue.setValid(ClueStatus.VALID);
+        testClue.setTime(10);
+
+        given(gameService.addClueToGame(Mockito.any(), Mockito.any())).willReturn(testClue);
+
+        MockHttpServletRequestBuilder postRequest = post("/clues/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(cluePostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clue", is(cluePostDTO.getClue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.time", is(cluePostDTO.getTime())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.valid", is(ClueStatus.VALID.toString())));
+    }
+
+    @Test
+    public void getAllClues_success() throws Exception {
+        List<Clue> clues = new ArrayList<>();
+
+        Clue testClue1 = new Clue();
+        testClue1.setClue("TestClue");
+        testClue1.setValid(ClueStatus.VALID);
+        testClue1.setTime(10);
+        clues.add(testClue1);
+
+        Clue testClue2 = new Clue();
+        testClue2.setClue("AnotherTestClue");
+        testClue2.setValid(ClueStatus.DUPLICATE);
+        testClue2.setTime(5);
+        clues.add(testClue2);
+
+        testGame.setClues(clues);
+
+        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder getRequest = get("/clues/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues", hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(testClue1.getClue())));
+    }
+
+    @Test
+    public void setCluesToInvalid_success() throws Exception {
+        CluePutDTO cluePutDTO = new CluePutDTO();
+        cluePutDTO.setCluesToChange(Arrays.asList("TestClue", "AnotherTestClue"));
+
+        List<Clue> clues = new ArrayList<>();
+
+        Clue testClue1 = new Clue();
+        testClue1.setClue("TestClue");
+        testClue1.setValid(ClueStatus.INVALID);
+        testClue1.setTime(10);
+        clues.add(testClue1);
+
+        Clue testClue2 = new Clue();
+        testClue2.setClue("AnotherTestClue");
+        testClue2.setValid(ClueStatus.INVALID);
+        testClue2.setTime(5);
+        clues.add(testClue2);
+
+        testGame.setClues(clues);
+
+        given(gameService.setCluesToInvalid(Mockito.any(), Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/clues/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(cluePutDTO));
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues", hasSize(0)));
+    }
+
+    @Test
+    public void skipGuessing() throws Exception {
+        MockHttpServletRequestBuilder putRequest = put("/skip/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        given(gameService.skipGuessing(Mockito.any())).willReturn(testGame);
+
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
     }
 
     /*@Disabled("Not implemented yet")
