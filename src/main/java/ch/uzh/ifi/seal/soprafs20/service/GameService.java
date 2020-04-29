@@ -99,29 +99,13 @@ public class GameService {
         return savedGame;
     }
 
-    public Game createGameElements(Game newGame) throws FileNotFoundException {
-        //create Game Box
-        GameBox gameBox = new GameBox();
-        newGame.setGameBox(gameBox);
-
-        //Create Deck of 13 cards
-        Deck deck = new Deck();
-        deck.setCardList(createCards());
-        newGame.setDeck(deck);
-
-        //Create Deck for the correctly guessed Cards
-        newGame.setCorrectlyGuessed(new Deck());
-
-        //Create Clue List
-        List<Clue> clues = new ArrayList<>();
-        newGame.setClues(clues);
-
-        return newGame;
-    }
-
     //add a user to an existing game
     public Game addUserToGame(Long id, Game game) throws Exception {
         Game gameById = getGameById(id);
+
+        if (gameById.getUserIds().contains(id)){
+            throw new PutRequestException403("The user has already joined the game!", HttpStatus.FORBIDDEN);
+        }
         gameById.addUserId(game.getCurrentUserId());
 
         Game savedGame = gameRepository.save(gameById);
@@ -276,6 +260,26 @@ public class GameService {
             return 0;
         }
         return currentUserIndex + 1;
+    }
+
+    private Game createGameElements(Game newGame) throws FileNotFoundException {
+        //create Game Box
+        GameBox gameBox = new GameBox();
+        newGame.setGameBox(gameBox);
+
+        //Create Deck of 13 cards
+        Deck deck = new Deck();
+        deck.setCardList(createCards());
+        newGame.setDeck(deck);
+
+        //Create Deck for the correctly guessed Cards
+        newGame.setCorrectlyGuessed(new Deck());
+
+        //Create Clue List
+        List<Clue> clues = new ArrayList<>();
+        newGame.setClues(clues);
+
+        return newGame;
     }
 
     //creates 13 random cards, each containing 5 random words
