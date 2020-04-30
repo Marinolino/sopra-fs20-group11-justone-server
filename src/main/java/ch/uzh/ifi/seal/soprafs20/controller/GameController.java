@@ -209,5 +209,12 @@ public class GameController {
 
         // convert internal representation of clue back to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+   }
+
+    @PutMapping("/guess/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GuessDTO setGuess(@PathVariable("id") long id,@RequestBody GuessDTO guessDTO) throws GetRequestException404 {
+        return gameService.correctGuessing(id,guessDTO);
     }
 }

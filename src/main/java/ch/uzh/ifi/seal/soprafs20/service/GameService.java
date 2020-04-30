@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
 import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
@@ -12,6 +13,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GuessDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -303,5 +305,24 @@ public class GameService {
             cardList.add(newCard);
         }
         return cardList;
+    }
+    //resets clues, moves active card to gameBox, changes active user
+    public GuessDTO correctGuessing(Long id, GuessDTO guessDTO){
+        Game gameById = getGameById(id);
+
+        if(gameById.getChosenWord().equalsIgnoreCase(guessDTO.getGuessWord())){
+            //move active card to Guessed Pile
+            gameById.getCorrectlyGuessed().addCard(gameById.getActiveCard());
+            guessDTO.setStatus(GuessStatus.CORRECT);
+        }else{
+            guessDTO.setStatus(GuessStatus.WRONG);
+
+                gameById.getGameBox().addCard(gameById.getCorrectlyGuessed().getTopCard());
+                gameById.getGameBox().addCard(gameById.getActiveCard());
+        }
+        gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return guessDTO;
     }
 }
