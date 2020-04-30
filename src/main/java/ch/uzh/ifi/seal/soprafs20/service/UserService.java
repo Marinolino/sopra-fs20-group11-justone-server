@@ -142,6 +142,8 @@ public class UserService {
         User userById = getUserById(id);
 
         userById.setStatus(UserStatus.ONLINE);
+        userById.setCorrectlyGuessed(0);
+        userById.setDuplicateClues(0);
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 

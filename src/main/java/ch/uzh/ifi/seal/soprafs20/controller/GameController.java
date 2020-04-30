@@ -215,7 +215,7 @@ public class GameController {
     @PostMapping("/guess/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GuessGetDTO setGuess(@PathVariable("id") long id,@RequestBody GuessPostDTO guessPostDTO) throws GetRequestException404 {
+    public GuessGetDTO setGuess(@PathVariable("id") long id,@RequestBody GuessPostDTO guessPostDTO) throws Exception {
         Guess guessInput = DTOMapper.INSTANCE.convertGuessPostDTOtoEntity(guessPostDTO);
 
         Guess guess = gameService.makeGuess(id, guessInput);

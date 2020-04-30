@@ -6,13 +6,13 @@ import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException400;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GuessPostDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +27,11 @@ import java.util.*;
 @Service
 @Transactional
 public class GameService {
+
+    public static final int MAX_POINTS = 2;
+    public static final int MIN_POINTS = 1;
+    public static final int TIME_CLUE = 10;
+    public static final int TIME_GUESS = 15;
 
     private final GameRepository gameRepository;
 
@@ -93,6 +98,8 @@ public class GameService {
         for (Card card : gameById.getCorrectlyGuessed().getCardList()){
             gameById.addScore(card.getScore());
         }
+
+        gameById = resetGameFields(gameById);
 
         Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
@@ -211,6 +218,15 @@ public class GameService {
         Clue checkedClue = ClueChecker.checkClue(clueInput, gameById);
 
         gameById.addClue(checkedClue);
+
+        //reward fast clues by giving more points
+        if (checkedClue.getTime() <= TIME_CLUE){
+            gameById.addScoreToCard(MAX_POINTS);
+        }
+        else {
+            gameById.addScoreToCard(MIN_POINTS);
+        }
+
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 
@@ -240,11 +256,24 @@ public class GameService {
         return gameById;
     }
 
-    public Guess makeGuess(Long id, Guess guessInput){
+    public Guess makeGuess(Long id, Guess guessInput) throws Exception{
         Game gameById = getGameById(id);
+
+        if (gameById.getGuess() != null){
+            throw new PostRequestException403("A guess has already been made this round!", HttpStatus.FORBIDDEN);
+        }
 
         //guess is correct
         if(gameById.getChosenWord().equalsIgnoreCase(guessInput.getGuess())){
+
+            //reward fast clues by giving more points
+            if (guessInput.getTime() <= TIME_GUESS){
+                gameById.addScoreToCard(MAX_POINTS);
+            }
+            else {
+                gameById.addScoreToCard(MIN_POINTS);
+            }
+
             //move active card to Guessed Pile
             gameById.addToCorrectlyGuessed(gameById.getActiveCard());
             guessInput.setGuessStatus(GuessStatus.CORRECT);

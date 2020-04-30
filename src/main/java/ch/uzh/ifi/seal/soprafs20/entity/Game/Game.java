@@ -287,6 +287,10 @@ public class Game implements Serializable {
         updateDeckSizeFromDeck();
     }
 
+    public void addScoreToCard(int score){
+        this.activeCard.addScore(score);
+    }
+
     public String getChosenWord() {
         return chosenWord;
     }

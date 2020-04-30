@@ -50,6 +50,10 @@ public class Card implements Serializable {
         this.score = score;
     }
 
+    public void addScore(int score){
+        this.score += score;
+    }
+
     public List<String> getMysteryWords(){
         return this.mysteryWords;
     }

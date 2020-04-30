@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.exceptions;
 
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.*;
 import org.slf4j.Logger;
@@ -51,6 +52,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity handleException(Exception ex) {
         log.error(String.format("Exception raised:%s", ex));
         return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = PostRequestException403.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handlePostException403(PostRequestException403 ex){
+        PostException postException = new PostException(ex.getMessage(), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(postException.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = PostRequestException409.class)
