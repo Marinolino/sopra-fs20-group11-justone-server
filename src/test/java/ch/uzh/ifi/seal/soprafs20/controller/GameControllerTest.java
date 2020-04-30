@@ -166,9 +166,9 @@ class GameControllerTest {
 
         given(gameService.getActiveCard(Mockito.any())).willReturn(testCard);
 
-        MockHttpServletRequestBuilder getRequest = get("/cards/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder putRequest = put("/cards/1").contentType(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(getRequest).andExpect(status().isOk())
+        mockMvc.perform(putRequest).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.words", hasSize(5)));
         ;
     }

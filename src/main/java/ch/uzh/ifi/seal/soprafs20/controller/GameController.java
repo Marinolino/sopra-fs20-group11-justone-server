@@ -121,6 +121,18 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CardGetDTO getActiveCard(@PathVariable("id") long id) throws Exception {
+        Game gameById = gameService.getGameById(id);
+
+        Card activeCard = gameById.getActiveCard();
+
+        //convert internal representation of card to API
+        return DTOMapper.INSTANCE.convertEntityToCardGetDTO(activeCard);
+    }
+
+    @PutMapping("/cards/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public CardGetDTO nextTurn(@PathVariable("id") long id) throws Exception {
 
         Card activeCard = gameService.getActiveCard(id);
 
