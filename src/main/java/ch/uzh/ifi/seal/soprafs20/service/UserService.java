@@ -28,6 +28,9 @@ import java.util.UUID;
 @Transactional
 public class UserService {
 
+    public static final int DUPLICATECLUE_MULTIPLIER = 1;
+    public static final int CORRECTGUESS_MULTIPLIER = 1;
+
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
@@ -180,8 +183,7 @@ public class UserService {
         //increase gamesPlayed by 1
         userById.addGames();
         //User receives penalty or bonus for correctly guessed words and duplicate clues
-        //TODO: finalize calculation
-        int updatedScore = score - userById.getDuplicateClues() + userById.getCorrectlyGuessed();
+        int updatedScore = score - userById.getDuplicateClues() * DUPLICATECLUE_MULTIPLIER + userById.getCorrectlyGuessed() * CORRECTGUESS_MULTIPLIER;
         userById.addScore(updatedScore);
 
         User updatedUser = userRepository.save(userById);
