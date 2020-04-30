@@ -320,9 +320,14 @@ public class GameService {
             guessDTO.setStatus(GuessStatus.CORRECT);
         }else{
             guessDTO.setStatus(GuessStatus.WRONG);
-
+            if(gameById.getGameBox().getCards().size()!=1){
+                Card topCard= gameById.getDeck().getTopCard();
+                gameById.getGameBox().addCard(gameById.getActiveCard());
+                gameById.getGameBox().addCard(topCard);
+            }else {
                 gameById.getGameBox().addCard(gameById.getCorrectlyGuessed().getTopCard());
                 gameById.getGameBox().addCard(gameById.getActiveCard());
+            }
         }
         gameRepository.save(gameById);
         gameRepository.flush();
