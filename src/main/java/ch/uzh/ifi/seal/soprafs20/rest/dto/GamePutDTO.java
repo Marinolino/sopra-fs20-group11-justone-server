@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;

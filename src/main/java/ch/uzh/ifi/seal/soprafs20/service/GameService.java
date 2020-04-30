@@ -8,12 +8,11 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException400;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GuessDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GuessPostDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +55,7 @@ public class GameService {
         createdGame.setChangeWord(true);
         createdGame.setScore(0);
         createdGame.setRound(0);
-        createdGame.setWordStatus(ChosenWordStatus.NONE);
+        createdGame.setWordStatus(ChosenWordStatus.NOCHOSENWORD);
         createdGame.addUserId(createdGame.getCurrentUserId());
 
         // saves the given entity but data is only persisted in the database once flush() is called
@@ -130,6 +129,11 @@ public class GameService {
     //fetch game by id from the repository and get the top card from the deck as active card
     public Card getActiveCard(Long id) throws Exception {
         Game gameById = getGameById(id);
+
+        if (gameById.getDeckSize() < 13){
+            gameById = resetGameFields(gameById);
+        }
+
         gameById.setActiveCardFromDeck();
         gameById.addRound();
 
@@ -224,35 +228,67 @@ public class GameService {
         return gameById;
     }
 
-    //resets clues, moves active card to gameBox, changes active user
     public Game skipGuessing(Long id){
         Game gameById = getGameById(id);
 
         //move active card to game box
         gameById.getGameBox().addCard(gameById.getActiveCard());
-        gameById.setActiveCard(null);
-
-        //delete current chosen word
-        gameById.setChosenWord(null);
-        gameById.setWordStatus(ChosenWordStatus.NONE);
-
-        //reset word counter
-        gameById.setWordCounter(0);
-
-        //delete all clues
-        gameById.setClues(null);
-
-        //pass the turn to the next user
-        int index = getUserIndex(gameById);
-        gameById.setCurrentUserId(gameById.getUserIds().get(index));
-
-        //reset this so users can reject a chosen word again
-        gameById.setChangeWord(true);
 
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 
         return gameById;
+    }
+
+    public Guess makeGuess(Long id, Guess guessInput){
+        Game gameById = getGameById(id);
+
+        //guess is correct
+        if(gameById.getChosenWord().equalsIgnoreCase(guessInput.getGuess())){
+            //move active card to Guessed Pile
+            gameById.addToCorrectlyGuessed(gameById.getActiveCard());
+            guessInput.setGuessStatus(GuessStatus.CORRECT);
+        }
+        //guess is wrong
+        else{
+            guessInput.setGuessStatus(GuessStatus.WRONG);
+            gameById.addCardToGameBox(gameById.getActiveCard());
+            gameById.addCardToGameBox(gameById.getTopCardFromDeck());
+            //final round
+            if (gameById.getDeckSize() == 1){
+                gameById.addCardToGameBox(gameById.getTopCardFromCorrectlyGuessed());
+            }
+        }
+        gameById.setGuess(guessInput);
+        gameById = gameRepository.save(gameById);
+        gameRepository.flush();
+
+        return guessInput;
+    }
+
+    private Game resetGameFields(Game gameInput){
+        gameInput.setActiveCard(null);
+
+        //delete current chosen word
+        gameInput.setChosenWord(null);
+        gameInput.setWordStatus(ChosenWordStatus.NOCHOSENWORD);
+
+        //reset word counter
+        gameInput.setWordCounter(0);
+
+        //delete all clues
+        gameInput.setClues(null);
+
+        //pass the turn to the next user
+        int index = getUserIndex(gameInput);
+        gameInput.setCurrentUserId(gameInput.getUserIds().get(index));
+
+        //reset this so users can reject a chosen word again
+        gameInput.setChangeWord(true);
+
+        gameInput.setGuess(null);
+
+        return gameInput;
     }
 
     //returns the index for the list of userIds, so that the new currentUserId can be set correctly
@@ -309,29 +345,5 @@ public class GameService {
             cardList.add(newCard);
         }
         return cardList;
-    }
-    //resets clues, moves active card to gameBox, changes active user
-    public GuessDTO correctGuessing(Long id, GuessDTO guessDTO){
-        Game gameById = getGameById(id);
-
-        if(gameById.getChosenWord().equalsIgnoreCase(guessDTO.getGuessWord())){
-            //move active card to Guessed Pile
-            gameById.getCorrectlyGuessed().addCard(gameById.getActiveCard());
-            guessDTO.setStatus(GuessStatus.CORRECT);
-        }else{
-            guessDTO.setStatus(GuessStatus.WRONG);
-            if(gameById.getGameBox().getCards().size()!=1){
-                Card topCard= gameById.getDeck().getTopCard();
-                gameById.getGameBox().addCard(gameById.getActiveCard());
-                gameById.getGameBox().addCard(topCard);
-            }else {
-                gameById.getGameBox().addCard(gameById.getCorrectlyGuessed().getTopCard());
-                gameById.getGameBox().addCard(gameById.getActiveCard());
-            }
-        }
-        gameRepository.save(gameById);
-        gameRepository.flush();
-
-        return guessDTO;
     }
 }

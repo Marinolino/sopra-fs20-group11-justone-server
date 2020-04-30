@@ -32,11 +32,18 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private boolean changeWord;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "guess_id", referencedColumnName = "id")
+    private Guess guess;
+
     @Column(nullable = false)
     private int score;
 
     @Column(nullable = false)
     private int round;
+
+    @Column(nullable = false)
+    private int deckSize;
 
     @Column(nullable = false)
     private Long currentUserId;
@@ -106,6 +113,18 @@ public class Game implements Serializable {
         this.normalMode = mode;
     }
 
+    public Guess getGuess(){
+        return guess;
+    }
+
+    public void setGuess(Guess guess){
+        this.guess = guess;
+        if (guess != null){
+            guess.setGame(this);
+        }
+
+    }
+
     public boolean getChangeWord() {
         return changeWord;
     }
@@ -138,6 +157,18 @@ public class Game implements Serializable {
         this.round += 1;
     }
 
+    public int getDeckSize() {
+        return deckSize;
+    }
+
+    public void setDeckSize(int deckSize) {
+        this.deckSize = deckSize;
+    }
+
+    public void updateDeckSizeFromDeck(){
+        this.deckSize = deck.deckSize();
+    }
+
     public Long getCurrentUserId() {
         return currentUserId;
     }
@@ -155,6 +186,10 @@ public class Game implements Serializable {
         gameBox.setGame(this);
     }
 
+    public void addCardToGameBox(Card card){
+        this.gameBox.addCard(card);
+    }
+
     public Deck getDeck() {
         return deck;
     }
@@ -162,6 +197,13 @@ public class Game implements Serializable {
     public void setDeck(Deck deck) {
         this.deck = deck;
         deck.setGame(this);
+        updateDeckSizeFromDeck();
+    }
+
+    public Card getTopCardFromDeck(){
+        Card card = this.deck.getTopCard();
+        updateDeckSizeFromDeck();
+        return card;
     }
 
     public Deck getCorrectlyGuessed() {
@@ -176,6 +218,10 @@ public class Game implements Serializable {
     //add one card at the top off the correctly guessed pile
     public void addToCorrectlyGuessed(Card card) {
         this.correctlyGuessed.addCard(card);
+    }
+
+    public Card getTopCardFromCorrectlyGuessed(){
+        return this.correctlyGuessed.getTopCard();
     }
 
     public List<Long> getUserIds() {
@@ -238,6 +284,7 @@ public class Game implements Serializable {
     public void setActiveCardFromDeck(){
         this.setActiveCard(this.deck.getTopCard());
         activeCard.setGame(this);
+        updateDeckSizeFromDeck();
     }
 
     public String getChosenWord() {

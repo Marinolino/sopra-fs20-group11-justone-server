@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
@@ -58,6 +59,10 @@ public interface DTOMapper {
     @Mapping(source = "time", target = "time")
     Clue convertCluePostDTOtoEntity(CluePostDTO cluePostDTO);
 
+    @Mapping(source = "guess", target = "guess")
+    @Mapping(source = "time", target = "time")
+    Guess convertGuessPostDTOtoEntity(GuessPostDTO guessPostDTO);
+
     default List<String> convertCluePutDTOtoList(CluePutDTO clueDeleteDTO){
         List<String> cluesToChange = new ArrayList<>();
         cluesToChange  = clueDeleteDTO.getCluesToChange();
@@ -71,6 +76,7 @@ public interface DTOMapper {
     @Mapping(source = "changeWord", target = "changeWord")
     @Mapping(source = "score", target = "score")
     @Mapping(source = "round", target = "round")
+    @Mapping(source = "deckSize", target = "deckSize")
     @Mapping(source = "chosenWord", target = "chosenWord")
     @Mapping(source = "wordStatus", target = "wordStatus")
     @Mapping(source = "currentUserId", target = "currentUserId")
@@ -81,6 +87,11 @@ public interface DTOMapper {
     @Mapping(source = "time", target = "time")
     @Mapping(source = "valid", target = "valid")
     ClueGetDTO convertEntityToClueGetDTO(Clue clue);
+
+    @Mapping(source = "guess", target = "guess")
+    @Mapping(source = "time", target = "time")
+    @Mapping(source = "guessStatus", target = "guessStatus")
+    GuessGetDTO convertEntityToGuessGetDTO(Guess guess);
 
     @Mapping(source = "chosenWord", target = "chosenWord")
     @Mapping(source = "wordStatus", target = "wordStatus")

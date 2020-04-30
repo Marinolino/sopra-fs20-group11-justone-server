@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -211,10 +212,14 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
    }
 
-    @PutMapping("/guess/{gameId}")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/guess/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GuessDTO setGuess(@PathVariable("id") long id,@RequestBody GuessDTO guessDTO) throws GetRequestException404 {
-        return gameService.correctGuessing(id,guessDTO);
+    public GuessGetDTO setGuess(@PathVariable("id") long id,@RequestBody GuessPostDTO guessPostDTO) throws GetRequestException404 {
+        Guess guessInput = DTOMapper.INSTANCE.convertGuessPostDTOtoEntity(guessPostDTO);
+
+        Guess guess = gameService.makeGuess(id, guessInput);
+
+        return DTOMapper.INSTANCE.convertEntityToGuessGetDTO(guess);
     }
 }

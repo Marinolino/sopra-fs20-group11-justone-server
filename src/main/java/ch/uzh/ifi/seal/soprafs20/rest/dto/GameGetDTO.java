@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
@@ -26,6 +27,8 @@ public class GameGetDTO {
     private int score;
 
     private int round;
+
+    private int deckSize;
 
     private String chosenWord;
 
@@ -89,6 +92,14 @@ public class GameGetDTO {
 
     public void setRound(int round) {
         this.round = round;
+    }
+
+    public int getDeckSize() {
+        return deckSize;
+    }
+
+    public void setDeckSize(int deckSize) {
+        this.deckSize = deckSize;
     }
 
     public String getChosenWord() {
