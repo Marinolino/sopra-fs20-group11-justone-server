@@ -212,6 +212,15 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
    }
 
+   @GetMapping("/guess/{id}")
+   @ResponseStatus(HttpStatus.OK)
+   @ResponseBody
+   public GuessGetDTO getGuess(@PathVariable("id") long id) throws Exception{
+        Guess guess = gameService.getGuess(id);
+
+        return DTOMapper.INSTANCE.convertEntityToGuessGetDTO(guess);
+    }
+
     @PostMapping("/guess/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody

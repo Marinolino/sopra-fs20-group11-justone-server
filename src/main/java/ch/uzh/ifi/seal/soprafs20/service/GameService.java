@@ -256,6 +256,18 @@ public class GameService {
         return gameById;
     }
 
+    public Guess getGuess(Long id){
+        Game gameById = getGameById(id);
+        Guess guess = gameById.getGuess();
+        if (guess == null){
+            guess = new Guess();
+            guess.setGame(null);
+            guess.setGuess(null);
+            guess.setGuessStatus(GuessStatus.NOGUESS);
+        }
+        return guess;
+    }
+
     public Guess makeGuess(Long id, Guess guessInput) throws Exception{
         Game gameById = getGameById(id);
 
