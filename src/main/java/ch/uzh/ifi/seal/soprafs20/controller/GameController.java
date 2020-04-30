@@ -217,7 +217,7 @@ public class GameController {
     @PutMapping("/skip/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO skipGuessing(@PathVariable("id") long id) throws GetRequestException404 {
+    public GameGetDTO skipGuessing(@PathVariable("id") long id) throws Exception {
         Game updatedGame = gameService.skipGuessing(id);
 
         // convert internal representation of clue back to API

@@ -3,6 +3,8 @@ package ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -269,7 +271,10 @@ public class Game implements Serializable {
         clue.setGame(this);
     }
 
-    public Card getActiveCard() {
+    public Card getActiveCard() throws Exception {
+        if (activeCard == null){
+            throw new GetRequestException404("You need to draw a card first!", HttpStatus.NOT_FOUND);
+        }
         return activeCard;
     }
 

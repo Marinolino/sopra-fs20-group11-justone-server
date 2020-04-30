@@ -244,7 +244,7 @@ public class GameService {
         return gameById;
     }
 
-    public Game skipGuessing(Long id){
+    public Game skipGuessing(Long id) throws Exception {
         Game gameById = getGameById(id);
 
         //move active card to game box
