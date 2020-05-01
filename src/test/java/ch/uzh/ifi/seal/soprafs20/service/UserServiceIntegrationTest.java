@@ -94,20 +94,22 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
+    @Transactional
     void leaveGame() {
         userService.createUser(testUser);
 
         assertNotNull(testUser.getId());
         Long userId = testUser.getId();
 
-        User gameUser = userService.joinGame(userId);
-        assertEquals(gameUser.getStatus(), UserStatus.INGAME);
+        userService.joinGame(userId);
+        assertEquals(testUser.getStatus(), UserStatus.INGAME);
 
-        User leaveGameUser = userService.leaveGame(userId);
-        assertEquals(leaveGameUser.getStatus(), UserStatus.ONLINE);
+        userService.leaveGame(userId);
+        assertEquals(testUser.getStatus(), UserStatus.ONLINE);
     }
 
     @Test
+    @Transactional
     void updateUserGameStats() {
         userService.createUser(testUser);
 
@@ -119,12 +121,13 @@ public class UserServiceIntegrationTest {
         userInput.setDuplicateClues(1);
         userInput.setCorrectlyGuessed(4);
 
-        User updatedUser = userService.updateUserGameStats(userId, userInput);
-        assertEquals(updatedUser.getDuplicateClues(), userInput.getDuplicateClues());
-        assertEquals(updatedUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
+        userService.updateUserGameStats(userId, userInput);
+        assertEquals(testUser.getDuplicateClues(), userInput.getDuplicateClues());
+        assertEquals(testUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
     }
 
     @Test
+    @Transactional
     void updateUserScore() {
         userService.createUser(testUser);
 
@@ -140,9 +143,37 @@ public class UserServiceIntegrationTest {
 
         userInput.setScore(6);
 
-        User updatedUser = userService.updateUserScore(userId, userInput);
-        assertEquals(updatedUser.getScore(), 9);
-        assertEquals(updatedUser.getDuplicateClues(), userInput.getDuplicateClues());
-        assertEquals(updatedUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
+        userService.updateUserScore(userId, userInput);
+        assertEquals(testUser.getScore(), 9);
+        assertEquals(testUser.getDuplicateClues(), userInput.getDuplicateClues());
+        assertEquals(testUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
+    }
+
+    @Test
+    @Transactional
+    void logIn() {
+        userService.createUser(testUser);
+
+        assertNotNull(testUser.getId());
+
+        userService.logIn(testUser);
+
+        assertNotNull(testUser.getToken());
+        assertEquals(testUser.getStatus(), UserStatus.ONLINE);
+    }
+
+    @Test
+    @Transactional
+    void logOut() {
+        userService.createUser(testUser);
+
+        assertNotNull(testUser.getId());
+
+        userService.logIn(testUser);
+        assertNotNull(testUser.getToken());
+        assertEquals(testUser.getStatus(), UserStatus.ONLINE);
+
+        userService.logOut(testUser.getId());
+        assertEquals(testUser.getStatus(), UserStatus.OFFLINE);
     }
 }
