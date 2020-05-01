@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class UserServiceIntegrationTest {
 
+    User testUser;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -32,6 +33,10 @@ public class UserServiceIntegrationTest {
 
     @BeforeEach
     public void setup() {
+        testUser = new User();
+        testUser.setName("testuser");
+        testUser.setUsername("testuser");
+        testUser.setPassword("testpwd");
         userRepository.deleteAll();
     }
 
@@ -74,5 +79,70 @@ public class UserServiceIntegrationTest {
         String exceptionMessage = String.format("There is already a user '%s'! Please try again!", testUser.getUsername());
         PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(testUser2), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void joinGame() throws Exception {
+        userService.createUser(testUser);
+
+        assertNotNull(testUser.getId());
+        Long userId = testUser.getId();
+
+        User gameUser = userService.joinGame(userId);
+        assertEquals(gameUser.getStatus(), UserStatus.INGAME);
+    }
+
+    @Test
+    void leaveGame() {
+        userService.createUser(testUser);
+
+        assertNotNull(testUser.getId());
+        Long userId = testUser.getId();
+
+        User gameUser = userService.joinGame(userId);
+        assertEquals(gameUser.getStatus(), UserStatus.INGAME);
+
+        User leaveGameUser = userService.leaveGame(userId);
+        assertEquals(leaveGameUser.getStatus(), UserStatus.ONLINE);
+    }
+
+    @Test
+    void updateUserGameStats() {
+        userService.createUser(testUser);
+
+        assertNotNull(testUser.getId());
+        Long userId = testUser.getId();
+
+        User userInput = new User();
+        userInput.setId(userId);
+        userInput.setDuplicateClues(1);
+        userInput.setCorrectlyGuessed(4);
+
+        User updatedUser = userService.updateUserGameStats(userId, userInput);
+        assertEquals(updatedUser.getDuplicateClues(), userInput.getDuplicateClues());
+        assertEquals(updatedUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
+    }
+
+    @Test
+    void updateUserScore() {
+        userService.createUser(testUser);
+
+        assertNotNull(testUser.getId());
+        Long userId = testUser.getId();
+
+        User userInput = new User();
+        userInput.setId(userId);
+        userInput.setDuplicateClues(1);
+        userInput.setCorrectlyGuessed(4);
+
+        userService.updateUserGameStats(userId, userInput);
+
+        userInput.setScore(6);
+
+        User updatedUser = userService.updateUserScore(userId, userInput);
+        assertEquals(updatedUser.getScore(), 9);
+        assertEquals(updatedUser.getDuplicateClues(), userInput.getDuplicateClues());
+        assertEquals(updatedUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
     }
 }
