@@ -35,11 +35,15 @@ public class GameService {
     public static final int TIME_GUESS = 15;
 
     private final GameRepository gameRepository;
+    private final GuessRepository guessRepository;
+    private final ClueRepository clueRepository;
 
     private final Logger log = LoggerFactory.getLogger(GameService.class);
 
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, GuessRepository guessRepository, ClueRepository clueRepository) {
         this.gameRepository = gameRepository;
+        this.guessRepository = guessRepository;
+        this.clueRepository = clueRepository;
     }
 
     public List<Game> getGames() {
@@ -60,7 +64,7 @@ public class GameService {
         createdGame.setStatus(GameStatus.CREATED);
         createdGame.setChangeWord(true);
         createdGame.setScore(0);
-        createdGame.setRound(0);
+        createdGame.setRound(1);
         createdGame.setWordStatus(ChosenWordStatus.NOCHOSENWORD);
         createdGame.addUserId(createdGame.getCurrentUserId());
 
@@ -328,7 +332,9 @@ public class GameService {
         gameInput.setWordCounter(0);
 
         //delete all clues
-        gameInput.setClues(null);
+        clueRepository.deleteAll();
+        gameInput.setClues(new ArrayList<>());
+
 
         //pass the turn to the next user
         int index = getUserIndex(gameInput);
@@ -337,6 +343,7 @@ public class GameService {
         //reset this so users can reject a chosen word again
         gameInput.setChangeWord(true);
 
+        guessRepository.deleteAll();
         gameInput.setGuess(null);
 
         return gameInput;
