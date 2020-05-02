@@ -83,7 +83,6 @@ public class GameController {
     public GameGetDTO finishGame(@PathVariable("id") long id) throws Exception {
         Game updatedGame = gameService.finishGame(id);
 
-        //convert internal representation of game to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
 
@@ -115,6 +114,15 @@ public class GameController {
 
         // convert internal representation of game to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(gameById);
+    }
+
+    @PutMapping("/games/reset/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO resetGameStats(@PathVariable("id") long id) throws Exception {
+        Game updatedGame = gameService.resetGameStats(id);
+
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
 
     @GetMapping("/cards/{id}")

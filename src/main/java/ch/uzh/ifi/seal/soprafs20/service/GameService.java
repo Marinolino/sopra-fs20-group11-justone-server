@@ -145,13 +145,19 @@ public class GameService {
         return savedGame;
     }
 
+    public Game resetGameStats(Long gameId){
+        Game gameById = getGameById(gameId);
+        Game updatedGame = resetGameFields(gameById);
+
+        Game savedGame = gameRepository.save(updatedGame);
+        gameRepository.flush();
+
+        return savedGame;
+    }
+
     //fetch game by id from the repository and get the top card from the deck as active card
     public Card getActiveCard(Long id) throws Exception {
         Game gameById = getGameById(id);
-
-        /*if (gameById.getDeckSize() < 13){
-            gameById = resetGameFields(gameById);
-        }*/
 
         gameById.setActiveCardFromDeck();
 
