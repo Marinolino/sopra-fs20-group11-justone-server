@@ -7,7 +7,9 @@ public class CluesGetDTO {
 
     private List<String> clues = new ArrayList<>();
 
-    private boolean allClues;
+    private boolean allAutomaticClues;
+
+    private boolean allManualClues;
 
     public List<String> getClues() {
         return clues;
@@ -21,12 +23,20 @@ public class CluesGetDTO {
         this.clues.add(clue);
     }
 
-    public boolean getAllClues(){
-        return allClues;
+    public boolean getAllAutomaticClues(){
+        return allAutomaticClues;
     }
 
-    public void setAllClues(boolean allClues){
-        this.allClues = allClues;
+    public void setAllAutomaticClues(boolean allAutomaticClues){
+        this.allAutomaticClues = allAutomaticClues;
+    }
+
+    public boolean getAllManualClues() {
+        return allManualClues;
+    }
+
+    public void setAllManualClues(boolean allManualClues) {
+        this.allManualClues = allManualClues;
     }
 }
 

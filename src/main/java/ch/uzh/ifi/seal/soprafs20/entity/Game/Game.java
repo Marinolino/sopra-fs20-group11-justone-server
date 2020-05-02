@@ -79,6 +79,9 @@ public class Game implements Serializable {
     @Column
     private int wordCounter;
 
+    @Column
+    private int manualClueCounter;
+
     @Column(nullable = false)
     @ElementCollection
     private List<Long> userIds = new ArrayList<>();
@@ -322,5 +325,17 @@ public class Game implements Serializable {
 
     public void addWordCounter(){
         wordCounter += 1;
+    }
+
+    public int getClueCounter(){
+        return manualClueCounter;
+    }
+
+    public void setManualClueCounter(int manualClueCounter){
+        this.manualClueCounter = manualClueCounter;
+    }
+
+    public void addManualClueCounter(){
+        manualClueCounter += 1;
     }
 }

@@ -145,6 +145,7 @@ class GameServiceIntegrationTest {
     @Test
     @Transactional
     public void addClueToGame_success() throws Exception {
+        testGame.addUserId((long)2);
         Clue newClue = new Clue();
         String clue = "TestClue";
 
@@ -160,6 +161,7 @@ class GameServiceIntegrationTest {
     @Test
     @Transactional
     public void addClueToGame_amountOfUsersIsEqualToClues() throws Exception {
+        testGame.addUserId((long)2);
         Clue newClue = new Clue();
         String clue = "TestClue";
         newClue.setClue(clue);
@@ -191,6 +193,7 @@ class GameServiceIntegrationTest {
     @Test
     @Transactional
     public void updateChosenWord_WordGetsAccepted() throws Exception {
+        testGame.addUserId((long)2);
         ChosenWordPutDTO chosenWordPutDTO = new ChosenWordPutDTO();
         chosenWordPutDTO.setStatus(true);
 
@@ -207,8 +210,12 @@ class GameServiceIntegrationTest {
         ChosenWordPutDTO chosenWordPutDTO = new ChosenWordPutDTO();
         chosenWordPutDTO.setStatus(true);
 
-        Long userId = (long)2;
-        gameService.addUserToGame(gameId, userId);
+        Long userId2 = (long)2;
+        gameService.addUserToGame(gameId, userId2);
+
+        Long userId3 = (long)3;
+        gameService.addUserToGame(gameId, userId3);
+
         String chosenWord = getFirstWordOnActiveCard();
         gameService.setChosenWord(gameId, chosenWord);
         Game updatedGame = gameService.updateChosenWord(gameId, chosenWordPutDTO);

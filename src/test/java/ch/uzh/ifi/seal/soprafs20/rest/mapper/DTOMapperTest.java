@@ -85,11 +85,16 @@ public class DTOMapperTest {
     public void getClue_fromGameToClueGetDTO_NotALlUsersHaveGivenClues(){
         Game testGame = new Game();
         Clue testClue1 = new Clue();
-        Long userId1 = (long) 1;
-        Long userId2 = (long) 2;
 
+        Long userId1 = (long) 1;
         testGame.addUserId(userId1);
+
+        Long userId2 = (long) 2;
         testGame.addUserId(userId2);
+
+        Long userId3 = (long) 3;
+        testGame.addUserId(userId3);
+
         testClue1.setClue("B");
         testClue1.setValid(ClueStatus.VALID);
         testGame.addClue(testClue1);
@@ -97,30 +102,26 @@ public class DTOMapperTest {
         CluesGetDTO cluesGetDTO = DTOMapper.INSTANCE.convertEntityToCluesGetDTO(testGame);
 
         assertEquals(cluesGetDTO.getClues().get(0), "B");
-        assertFalse(cluesGetDTO.getAllClues());
+        assertFalse(cluesGetDTO.getAllAutomaticClues());
     }
 
     @Test
     public void getClue_fromGameToClueGetDTO_ALlUsersHaveGivenClues(){
         Game testGame = new Game();
-        Clue testClue1 = new Clue();
-        Clue testClue2 = new Clue();
+        Clue testClue = new Clue();
         Long userId1 = (long) 1;
         Long userId2 = (long) 2;
 
         testGame.addUserId(userId1);
         testGame.addUserId(userId2);
-        testClue1.setClue("B");
-        testClue1.setValid(ClueStatus.VALID);
-        testClue2.setClue("C");
-        testClue2.setValid(ClueStatus.VALID);
-        testGame.addClue(testClue1);
-        testGame.addClue(testClue2);
+        testClue.setClue("B");
+        testClue.setValid(ClueStatus.VALID);
+        testGame.addClue(testClue);
+
 
         CluesGetDTO cluesGetDTO = DTOMapper.INSTANCE.convertEntityToCluesGetDTO(testGame);
 
         assertEquals(cluesGetDTO.getClues().get(0), "B");
-        assertEquals(cluesGetDTO.getClues().get(1), "C");
-        assertTrue(cluesGetDTO.getAllClues());
+        assertTrue(cluesGetDTO.getAllAutomaticClues());
     }
 }

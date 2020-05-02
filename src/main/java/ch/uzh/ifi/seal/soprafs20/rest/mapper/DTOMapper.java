@@ -107,11 +107,17 @@ public interface DTOMapper {
             }
         }
         //check if all users have given clues
-        if ((game.getUserIds().size()-1) == game.getClues().size()) {
-            cluesGetDTO.setAllClues(true);
+        if (game.getUserIds().size()-1 == game.getClues().size()) {
+            cluesGetDTO.setAllAutomaticClues(true);
         }
         else {
-            cluesGetDTO.setAllClues(false);
+            cluesGetDTO.setAllAutomaticClues(false);
+        }
+        if (game.getUserIds().size()-1 == game.getClueCounter()){
+            cluesGetDTO.setAllManualClues(true);
+        }
+        else {
+            cluesGetDTO.setAllManualClues(false);
         }
         return cluesGetDTO;
     }

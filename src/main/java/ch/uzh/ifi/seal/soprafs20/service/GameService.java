@@ -6,10 +6,8 @@ import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException400;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException403;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
@@ -156,7 +154,6 @@ public class GameService {
         }
 
         gameById.setActiveCardFromDeck();
-        gameById.addRound();
 
         Game savedGame = gameRepository.save(gameById);
         gameRepository.flush();
@@ -209,7 +206,7 @@ public class GameService {
             return gameById;
         }
         //word is accepted by all users
-        if (chosenWordPutDTO.getStatus() && gameById.getUserIds().size() == gameById.getWordCounter()){
+        if (chosenWordPutDTO.getStatus() && gameById.getUserIds().size() - 1 == gameById.getWordCounter()){
             gameById.setWordStatus(ChosenWordStatus.ACCEPTED);
             gameById = gameRepository.save(gameById);
             gameRepository.flush();
@@ -225,7 +222,7 @@ public class GameService {
     public Clue addClueToGame(Long id, Clue clueInput) throws Exception {
        Game gameById = getGameById(id);
 
-        if (gameById.getUserIds().size() == gameById.getClues().size()){
+        if (gameById.getUserIds().size() - 1 == gameById.getClues().size()){
             String message = "There are already as many clues as users! Therefore, this clue can't be added!";
             throw new PostRequestException409(message, HttpStatus.CONFLICT);
         }
@@ -250,11 +247,19 @@ public class GameService {
     public Game setCluesToInvalid(Long id, List<String> cluesToDelete){
         Game gameById = getGameById(id);
 
+        if (gameById.getUserIds().size() - 1 == gameById.getClueCounter()){
+            String message = "There are already as many checked clues as users!";
+            throw new PutRequestException409(message, HttpStatus.CONFLICT);
+        }
+
         for (String clue : cluesToDelete){
             gameById.setClueToInvalid(clue);
-            gameById = gameRepository.save(gameById);
-            gameRepository.flush();
         }
+
+        gameById.addManualClueCounter();
+        gameById = gameRepository.save(gameById);
+        gameRepository.flush();
+
         return gameById;
     }
 
@@ -268,6 +273,7 @@ public class GameService {
         guess.setGuess("Skipped");
         guess.setGuessStatus(GuessStatus.WRONG);
         gameById.setGuess(guess);
+        gameById.addRound();
 
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
@@ -320,6 +326,8 @@ public class GameService {
             }
         }
         gameById.setGuess(guessInput);
+        gameById.addRound();
+
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 
@@ -335,6 +343,9 @@ public class GameService {
 
         //reset word counter
         gameInput.setWordCounter(0);
+
+        //reset clue counter
+        gameInput.setManualClueCounter(0);
 
         //delete all clues
         clueRepository.deleteAll();
