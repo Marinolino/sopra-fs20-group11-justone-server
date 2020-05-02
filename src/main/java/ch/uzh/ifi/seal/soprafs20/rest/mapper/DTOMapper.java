@@ -107,7 +107,7 @@ public interface DTOMapper {
             }
         }
         //check if all users have given clues
-        if (game.getUserIds().size() == game.getClues().size()) {
+        if ((game.getUserIds().size()-1) == game.getClues().size()) {
             cluesGetDTO.setAllClues(true);
         }
         else {
