@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository("gameBoxRepository")
-public interface gameBoxRepository extends JpaRepository<GameBox, Long> {
+public interface GameBoxRepository extends JpaRepository<GameBox, Long> {
     Optional<GameBox> findById(Long id);
 }
