@@ -264,6 +264,11 @@ public class GameService {
         //move active card to game box
         gameById.getGameBox().addCard(gameById.getActiveCard());
 
+        Guess guess = new Guess();
+        guess.setGuess("Skipped");
+        guess.setGuessStatus(GuessStatus.WRONG);
+        gameById.setGuess(guess);
+
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 

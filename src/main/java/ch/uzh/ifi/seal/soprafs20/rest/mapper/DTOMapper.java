@@ -105,12 +105,13 @@ public interface DTOMapper {
             if (clue.getValid() == ClueStatus.VALID) {
                 cluesGetDTO.addAClue(clue.getClue());
             }
-            if (game.getUserIds().size() == game.getClues().size()) {
-                cluesGetDTO.setAllClues(true);
-            }
-            else {
-                cluesGetDTO.setAllClues(false);
-            }
+        }
+        //check if all users have given clues
+        if (game.getUserIds().size() == game.getClues().size()) {
+            cluesGetDTO.setAllClues(true);
+        }
+        else {
+            cluesGetDTO.setAllClues(false);
         }
         return cluesGetDTO;
     }
