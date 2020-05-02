@@ -66,6 +66,10 @@ public class Game implements Serializable {
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     private Card activeCard;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "game_id")
+    private List<Clue> clues = new ArrayList<Clue>();
+
     @Column
     private String chosenWord;
 
@@ -74,10 +78,6 @@ public class Game implements Serializable {
 
     @Column
     private int wordCounter;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "game_id")
-    private List<Clue> clues = new ArrayList<Clue>();
 
     @Column(nullable = false)
     @ElementCollection

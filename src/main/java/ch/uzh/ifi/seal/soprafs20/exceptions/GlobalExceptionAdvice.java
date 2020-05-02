@@ -103,6 +103,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(putException.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = PutRequestException409.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handlePutException409(PutRequestException409 ex){
+        PutException putException = new PutException(ex.getMessage(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(putException.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(value = GetRequestException400.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleGetException400(GetRequestException400 ex) {

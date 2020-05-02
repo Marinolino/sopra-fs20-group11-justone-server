@@ -46,7 +46,7 @@ public class GameController {
         Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
 
         // create game
-        Game updatedGame = gameService.addUserToGame(id, gameInput);
+        Game updatedGame = gameService.addUserToGame(id, gameInput.getCurrentUserId());
 
         // convert internal representation of game back to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
@@ -60,7 +60,7 @@ public class GameController {
         Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
 
         // create game
-        Game updatedGame = gameService.removeUserFromGame(id, gameInput);
+        Game updatedGame = gameService.removeUserFromGame(id, gameInput.getCurrentUserId());
 
         // convert internal representation of game back to API
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
@@ -69,7 +69,7 @@ public class GameController {
     @PutMapping("/games/start/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO startGame(@PathVariable("id") long id)  throws FileNotFoundException {
+    public GameGetDTO startGame(@PathVariable("id") long id) throws Exception {
         // start game
         Game startedGame = gameService.startGame(id);
 
@@ -80,7 +80,7 @@ public class GameController {
     @PutMapping("/games/finish/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO finishGame(@PathVariable("id") long id) {
+    public GameGetDTO finishGame(@PathVariable("id") long id) throws Exception {
         Game updatedGame = gameService.finishGame(id);
 
         //convert internal representation of game to API
