@@ -149,9 +149,9 @@ public class GameService {
     public Card getActiveCard(Long id) throws Exception {
         Game gameById = getGameById(id);
 
-        if (gameById.getDeckSize() < 13){
+        /*if (gameById.getDeckSize() < 13){
             gameById = resetGameFields(gameById);
-        }
+        }*/
 
         gameById.setActiveCardFromDeck();
 
