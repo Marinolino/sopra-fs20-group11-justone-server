@@ -1,9 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
 import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
@@ -17,8 +18,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
 
@@ -118,5 +118,36 @@ class GameServiceTest {
         PutRequestException409 exception = assertThrows(PutRequestException409.class, () -> gameService.updateChosenWord(gameId, chosenWordPutDTO), exceptionMessage);
 
         assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void getGuess_noGuessInGame(){
+        Mockito.when(gameRepository.findById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(testGame));
+
+        Guess testGuess = gameService.getGuess(gameId);
+
+        assertNull(testGuess.getGuess());
+        assertNull(testGuess.getGame());
+        assertEquals(0, testGuess.getTime());
+        assertEquals(GuessStatus.NOGUESS, testGuess.getGuessStatus());
+    }
+
+    @Test
+    public void getGuess_GuessInGame(){
+        Guess testGuess = new Guess();
+        testGuess.setGuess("TestGuess");
+        testGuess.setGame(testGame);
+        testGuess.setTime(10);
+        testGuess.setGuessStatus(GuessStatus.CORRECT);
+        testGame.setGuess(testGuess);
+
+        Mockito.when(gameRepository.findById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(testGame));
+
+        testGuess = gameService.getGuess(gameId);
+
+        assertEquals("TestGuess", testGuess.getGuess());
+        assertEquals(testGame, testGuess.getGame());
+        assertEquals(10, testGuess.getTime());
+        assertEquals(GuessStatus.CORRECT, testGuess.getGuessStatus());
     }
 }
