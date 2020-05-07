@@ -198,6 +198,27 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToClueGetDTO(checkedClue);
     }
 
+    @PostMapping("/clues/{id1}/{id2}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public ArrayList<ClueGetDTO> createClue(@PathVariable("id1") long id1, @PathVariable("id2") long id2,
+                                            @RequestBody ArrayList<CluePostDTO> cluePostDTOList) throws Exception {
+        // convert API clue to internal representation
+        Clue clueInput1 = DTOMapper.INSTANCE.convertCluePostDTOtoEntity(cluePostDTOList.get(0));
+        Clue clueInput2 = DTOMapper.INSTANCE.convertCluePostDTOtoEntity(cluePostDTOList.get(1));
+
+        // create clue
+        Clue checkedClue1 = gameService.addClueToGame(id1, clueInput1);
+        Clue checkedClue2 = gameService.addClueToGame(id2, clueInput2);
+
+        ArrayList<ClueGetDTO> checkedClueList = new ArrayList<>();
+        // convert internal representation of clue back to API
+        checkedClueList.add(DTOMapper.INSTANCE.convertEntityToClueGetDTO(checkedClue1));
+        checkedClueList.add(DTOMapper.INSTANCE.convertEntityToClueGetDTO(checkedClue2));
+
+        return checkedClueList;
+    }
+
     @GetMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
