@@ -1,15 +1,15 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.ClueChecker.ClueChecker;
+import ch.uzh.ifi.seal.soprafs20.cluechecker.ClueChecker;
 import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
+import ch.uzh.ifi.seal.soprafs20.entity.game.*;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException400;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException404;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException400;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
 import org.slf4j.Logger;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -51,7 +52,7 @@ public class GameService {
     public Game getGameById(Long id){
         Game gameById = gameRepository.findById(id).orElse(null);
         if (gameById == null){
-            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
+            throw new GetRequestException404("No game was found!");
         }
         return gameById;
     }
@@ -74,21 +75,16 @@ public class GameService {
         return savedGame;
     }
 
-    public Game startGame(Long id) throws Exception {
+    public Game startGame(Long id) throws PutRequestException409 {
         Game gameById = getGameById(id);
 
         if (gameById.getStatus() != GameStatus.CREATED){
-            throw new PutRequestException409("This game has already started or finished!", HttpStatus.CONFLICT);
+            throw new PutRequestException409("This game has already started or finished!");
         }
         gameById.setStatus(GameStatus.RUNNING);
 
         //check and set if it is a game with 3 players or more than 3 players
-        if (gameById.getUserIds().size() == 3){
-            gameById.setNormalMode(false);
-        }
-        else {
-            gameById.setNormalMode(true);
-        }
+        gameById.setNormalMode(gameById.getUserIds().size() != 3);
 
         // saves the given entity but data is only persisted in the database once flush() is called
         Game savedGame = gameRepository.save(gameById);
@@ -97,11 +93,12 @@ public class GameService {
         return savedGame;
     }
 
-    public Game finishGame(Long id) throws Exception {
+    public Game finishGame(Long id) throws PutRequestException409 {
         Game gameById = getGameById(id);
 
+
         if (gameById.getStatus() != GameStatus.RUNNING){
-            throw new PutRequestException409("This game is currently not running!", HttpStatus.CONFLICT);
+            throw new PutRequestException409("This game is currently not running!");
         }
 
         gameById.setStatus(GameStatus.FINISHED);
@@ -111,20 +108,20 @@ public class GameService {
             gameById.addScore(card.getScore());
         }
 
-        gameById = resetGameFields(gameById);
+        Game resetGame = resetGameFields(gameById);
 
-        Game savedGame = gameRepository.save(gameById);
+        Game savedGame = gameRepository.save(resetGame);
         gameRepository.flush();
 
         return savedGame;
     }
 
     //add a user to an existing game
-    public Game addUserToGame(Long gameId, Long userId) throws Exception {
+    public Game addUserToGame(Long gameId, Long userId) throws PutRequestException409 {
         Game gameById = getGameById(gameId);
 
         if (gameById.getUserIds().contains(userId)){
-            throw new PutRequestException409("The user has already joined the game!", HttpStatus.CONFLICT);
+            throw new PutRequestException409("The user has already joined the game!");
         }
         gameById.addUserId(userId);
 
@@ -135,7 +132,7 @@ public class GameService {
     }
 
     //remove a user from an existing game
-    public Game removeUserFromGame(Long gameId, Long userId) throws Exception {
+    public Game removeUserFromGame(Long gameId, Long userId) {
         Game gameById = getGameById(gameId);
         gameById.removeUserId(userId);
 
@@ -172,11 +169,11 @@ public class GameService {
         Game gameById = getGameById(id);
 
         if (gameById.getActiveCard()== null){
-            throw new PutRequestException404("This game contains no active card!", HttpStatus.NOT_FOUND);
+            throw new PutRequestException404("This game contains no active card!");
         }
 
         if (!gameById.getActiveCard().getMysteryWords().contains(chosenWord)){
-            throw new PutRequestException400(String.format("The word '%s' is not on the active card!", chosenWord), HttpStatus.BAD_REQUEST);
+            throw new PutRequestException400(String.format("The word '%s' is not on the active card!", chosenWord));
         }
 
         gameById.setChosenWord(chosenWord);
@@ -187,12 +184,12 @@ public class GameService {
         return gameById;
     }
 
-    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO) throws Exception {
+    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO) throws PutRequestException409 {
         Game gameById = getGameById(id);
 
         //check if during this turn, a word has already been rejected
         if (!gameById.getChangeWord()){
-            throw new PutRequestException409("You can only reject one word per turn!", HttpStatus.CONFLICT);
+            throw new PutRequestException409("You can only reject one word per turn!");
         }
 
         gameById.addWordCounter();
@@ -225,12 +222,12 @@ public class GameService {
     }
 
     //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
-    public Clue addClueToGame(Long id, Clue clueInput) throws Exception {
+    public Clue addClueToGame(Long id, Clue clueInput) throws PostRequestException409, IOException {
        Game gameById = getGameById(id);
 
         if (gameById.getUserIds().size() - 1 == gameById.getClues().size()){
             String message = "There are already as many clues as users! Therefore, this clue can't be added!";
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+            throw new PostRequestException409(message);
         }
         Clue checkedClue = ClueChecker.checkClue(clueInput, gameById);
 
@@ -244,7 +241,7 @@ public class GameService {
             gameById.addScoreToCard(MIN_POINTS);
         }
 
-        gameById = gameRepository.save(gameById);
+        gameRepository.save(gameById);
         gameRepository.flush();
 
         return checkedClue;
@@ -255,7 +252,7 @@ public class GameService {
 
         if (gameById.getUserIds().size() - 1 == gameById.getClueCounter()){
             String message = "There are already as many checked clues as users!";
-            throw new PutRequestException409(message, HttpStatus.CONFLICT);
+            throw new PutRequestException409(message);
         }
 
         for (String clue : cluesToDelete){
@@ -276,7 +273,7 @@ public class GameService {
         gameById.getGameBox().addCard(gameById.getActiveCard());
 
         Guess guess = new Guess();
-        guess.setGuess("Skipped");
+        guess.setGuessWord("Skipped");
         guess.setGuessStatus(GuessStatus.WRONG);
         gameById.setGuess(guess);
         gameById.addRound();
@@ -293,7 +290,7 @@ public class GameService {
         if (guess == null){
             guess = new Guess();
             guess.setGame(null);
-            guess.setGuess(null);
+            guess.setGuessWord(null);
             guess.setGuessStatus(GuessStatus.NOGUESS);
         }
         return guess;
@@ -303,11 +300,11 @@ public class GameService {
         Game gameById = getGameById(id);
 
         if (gameById.getGuess() != null){
-            throw new PostRequestException409("A guess has already been made this round!", HttpStatus.CONFLICT);
+            throw new PostRequestException409("A guess has already been made this round!");
         }
 
         //guess is correct
-        if(gameById.getChosenWord().equalsIgnoreCase(guessInput.getGuess())){
+        if(gameById.getChosenWord().equalsIgnoreCase(guessInput.getGuessWord())){
 
             //reward fast clues by giving more points
             if (guessInput.getTime() <= TIME_GUESS){
@@ -334,7 +331,7 @@ public class GameService {
         gameById.setGuess(guessInput);
         gameById.addRound();
 
-        gameById = gameRepository.save(gameById);
+        gameRepository.save(gameById);
         gameRepository.flush();
 
         return guessInput;

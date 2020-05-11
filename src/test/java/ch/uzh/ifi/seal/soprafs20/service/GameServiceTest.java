@@ -2,10 +2,10 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException409;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Guess;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -126,7 +126,7 @@ class GameServiceTest {
 
         Guess testGuess = gameService.getGuess(gameId);
 
-        assertNull(testGuess.getGuess());
+        assertNull(testGuess.getGuessWord());
         assertNull(testGuess.getGame());
         assertEquals(0, testGuess.getTime());
         assertEquals(GuessStatus.NOGUESS, testGuess.getGuessStatus());
@@ -135,7 +135,7 @@ class GameServiceTest {
     @Test
     public void getGuess_GuessInGame(){
         Guess testGuess = new Guess();
-        testGuess.setGuess("TestGuess");
+        testGuess.setGuessWord("TestGuess");
         testGuess.setGame(testGame);
         testGuess.setTime(10);
         testGuess.setGuessStatus(GuessStatus.CORRECT);
@@ -145,7 +145,7 @@ class GameServiceTest {
 
         testGuess = gameService.getGuess(gameId);
 
-        assertEquals("TestGuess", testGuess.getGuess());
+        assertEquals("TestGuess", testGuess.getGuessWord());
         assertEquals(testGame, testGuess.getGame());
         assertEquals(10, testGuess.getTime());
         assertEquals(GuessStatus.CORRECT, testGuess.getGuessStatus());

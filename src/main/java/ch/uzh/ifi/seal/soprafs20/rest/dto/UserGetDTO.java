@@ -2,8 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
-import javax.persistence.Column;
-
 public class UserGetDTO {
 
     private Long id;

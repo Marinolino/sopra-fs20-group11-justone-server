@@ -2,9 +2,9 @@ package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.junit.jupiter.api.Test;
@@ -95,13 +95,13 @@ public class DTOMapperTest {
         Long userId3 = (long) 3;
         testGame.addUserId(userId3);
 
-        testClue1.setClue("B");
+        testClue1.setClueWord("B");
         testClue1.setValid(ClueStatus.VALID);
         testGame.addClue(testClue1);
 
         CluesGetDTO cluesGetDTO = DTOMapper.INSTANCE.convertEntityToCluesGetDTO(testGame);
 
-        assertEquals(cluesGetDTO.getClues().get(0), "B");
+        assertEquals("B", cluesGetDTO.getClues().get(0));
         assertFalse(cluesGetDTO.getAllAutomaticClues());
     }
 
@@ -114,14 +114,14 @@ public class DTOMapperTest {
 
         testGame.addUserId(userId1);
         testGame.addUserId(userId2);
-        testClue.setClue("B");
+        testClue.setClueWord("B");
         testClue.setValid(ClueStatus.VALID);
         testGame.addClue(testClue);
 
 
         CluesGetDTO cluesGetDTO = DTOMapper.INSTANCE.convertEntityToCluesGetDTO(testGame);
 
-        assertEquals(cluesGetDTO.getClues().get(0), "B");
+        assertEquals("B", cluesGetDTO.getClues().get(0));
         assertTrue(cluesGetDTO.getAllAutomaticClues());
     }
 }

@@ -1,12 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException400;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
@@ -50,7 +45,7 @@ public class UserController {
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO) throws PostRequestException409 {
+    public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO) throws Exception {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
@@ -64,12 +59,12 @@ public class UserController {
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO getUserById(@PathVariable("id") Long id) throws GetRequestException404 {
+    public UserGetDTO getUserById(@PathVariable("id") Long id) throws Exception {
         // get user
         User userById = userService.getUserById(id);
 
         if (userById == null){
-            throw new GetRequestException404("No user was found!", HttpStatus.NOT_FOUND);
+            throw new GetRequestException404("No user was found!");
         }
 
         // convert internal representation of user back to API
@@ -79,7 +74,7 @@ public class UserController {
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public UserGetDTO updateUserById(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws GetRequestException400, GetRequestException404 {
+    public UserGetDTO updateUserById(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
@@ -93,7 +88,7 @@ public class UserController {
     @PutMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO logIn(@RequestBody UserPutDTO userPutDTO) throws PutRequestException204, PutRequestException401 {
+    public UserGetDTO logIn(@RequestBody UserPutDTO userPutDTO) {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         User userOutput = userService.logIn(userInput);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
@@ -102,7 +97,7 @@ public class UserController {
     @PutMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public UserGetDTO logOut(@RequestBody UserPutDTO userPutDTO) throws GetRequestException409 {
+    public UserGetDTO logOut(@RequestBody UserPutDTO userPutDTO) {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         User userOutput = userService.logOut(userInput.getId());
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
@@ -111,7 +106,7 @@ public class UserController {
     @PutMapping("/users/join/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO joinGame(@PathVariable("id") Long id) throws GetRequestException409 {
+    public UserGetDTO joinGame(@PathVariable("id") Long id) {
         User userOutput = userService.joinGame(id);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
@@ -119,7 +114,7 @@ public class UserController {
     @PutMapping("/users/leave/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO leaveGame(@PathVariable("id") Long id) throws GetRequestException409 {
+    public UserGetDTO leaveGame(@PathVariable("id") Long id) {
         User userOutput = userService.leaveGame(id);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
     }
@@ -127,7 +122,7 @@ public class UserController {
     @PutMapping("/users/gamestats/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO updateUserGameStats(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws PutRequestException204, PutRequestException401 {
+    public UserGetDTO updateUserGameStats(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         User userOutput = userService.updateUserGameStats(id, userInput);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);
@@ -136,7 +131,7 @@ public class UserController {
     @PutMapping("/users/score/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO updateUserScore(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) throws PutRequestException204, PutRequestException401 {
+    public UserGetDTO updateUserScore(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         User userOutput = userService.updateUserScore(id, userInput);
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userOutput);

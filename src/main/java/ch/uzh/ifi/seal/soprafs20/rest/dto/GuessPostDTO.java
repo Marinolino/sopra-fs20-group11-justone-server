@@ -1,19 +1,17 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
-
 public class GuessPostDTO {
 
-    private String guess;
+    private String guessWord;
 
     private int time;
 
-    public String getGuess() {
-        return guess;
+    public String getGuessWord() {
+        return guessWord;
     }
 
-    public void setGuess(String guess) {
-        this.guess = guess;
+    public void setGuessWord(String guessWord) {
+        this.guessWord = guessWord;
     }
 
     public int getTime() {

@@ -2,11 +2,9 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.*;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.game.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
-import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -223,10 +219,10 @@ class GameControllerTest {
     @Test
     public void createClue_validClue() throws Exception {
         CluePostDTO cluePostDTO = new CluePostDTO();
-        cluePostDTO.setClue("TestClue");
+        cluePostDTO.setClueWord("TestClue");
         cluePostDTO.setTime(10);
         Clue testClue = new Clue();
-        testClue.setClue("TestClue");
+        testClue.setClueWord("TestClue");
         testClue.setValid(ClueStatus.VALID);
         testClue.setTime(10);
 
@@ -237,7 +233,7 @@ class GameControllerTest {
                 .content(asJsonString(cluePostDTO));
 
         mockMvc.perform(postRequest).andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.clue", is(cluePostDTO.getClue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clueWord", is(cluePostDTO.getClueWord())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.time", is(cluePostDTO.getTime())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.valid", is(ClueStatus.VALID.toString())));
     }
@@ -256,13 +252,13 @@ class GameControllerTest {
         List<Clue> clues = new ArrayList<>();
 
         Clue testClue1 = new Clue();
-        testClue1.setClue("TestClue");
+        testClue1.setClueWord("TestClue");
         testClue1.setValid(ClueStatus.VALID);
         testClue1.setTime(10);
         clues.add(testClue1);
 
         Clue testClue2 = new Clue();
-        testClue2.setClue("AnotherTestClue");
+        testClue2.setClueWord("AnotherTestClue");
         testClue2.setValid(ClueStatus.DUPLICATE);
         testClue2.setTime(5);
         clues.add(testClue2);
@@ -276,7 +272,7 @@ class GameControllerTest {
 
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.clues", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(testClue1.getClue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.clues[0]", is(testClue1.getClueWord())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.allAutomaticClues", is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.allManualClues", is(false)));
     }
@@ -289,13 +285,13 @@ class GameControllerTest {
         List<Clue> clues = new ArrayList<>();
 
         Clue testClue1 = new Clue();
-        testClue1.setClue("TestClue");
+        testClue1.setClueWord("TestClue");
         testClue1.setValid(ClueStatus.INVALID);
         testClue1.setTime(10);
         clues.add(testClue1);
 
         Clue testClue2 = new Clue();
-        testClue2.setClue("AnotherTestClue");
+        testClue2.setClueWord("AnotherTestClue");
         testClue2.setValid(ClueStatus.INVALID);
         testClue2.setTime(5);
         clues.add(testClue2);

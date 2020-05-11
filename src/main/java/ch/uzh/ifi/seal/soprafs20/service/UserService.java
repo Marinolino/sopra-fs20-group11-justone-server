@@ -2,11 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException204;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.PUT.PutRequestException401;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException204;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException401;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +44,11 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User getUserById(Long id) throws GetRequestException404 {
+    public User getUserById(Long id) {
         User userById = userRepository.findById(id).orElse(null);
 
         if (userById == null){
-            throw new GetRequestException409("No user found in repository!", HttpStatus.NOT_FOUND);
+            throw new GetRequestException409("No user found in repository!");
         }
 
         return userById;
@@ -75,25 +75,24 @@ public class UserService {
         newUser = userRepository.save(newUser);
         userRepository.flush();
 
-        log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
 
     //checks if the user exists and if the password is correct
-    public User logIn(User userToCheck) throws  PutRequestException204, PutRequestException401 {
+    public User logIn(User userToCheck) {
         User userByUsername = findByUsername(userToCheck.getUsername());
 
         if(userByUsername == null){
             String message = String.format("There is no registered user '%s'! Please try again!", userToCheck.getUsername());
-            throw new PutRequestException401(message, HttpStatus.UNAUTHORIZED);
+            throw new PutRequestException401(message);
         }
         if(!userByUsername.getPassword().equals(userToCheck.getPassword())){
             String message = "The password is incorrect! Please try again!";
-            throw new PutRequestException401(message, HttpStatus.UNAUTHORIZED);
+            throw new PutRequestException401(message);
         }
         if(userByUsername.getStatus() == UserStatus.ONLINE){
             String message = String.format("The user '%s' is already logged in!", userToCheck.getUsername());
-            throw new PutRequestException204(message, HttpStatus.NO_CONTENT);
+            throw new PutRequestException204(message);
         }
         userByUsername.setToken(UUID.randomUUID().toString());
         userByUsername.setStatus(UserStatus.ONLINE);
@@ -110,7 +109,7 @@ public class UserService {
         return user;
     }
 
-    public User updateUser(Long id, User user) throws GetRequestException404, PostRequestException409 {
+    public User updateUser(Long id, User user) {
 
         checkIfInputIsValid(user);
         checkIfUserExists(user);
@@ -126,7 +125,6 @@ public class UserService {
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
-        log.debug("Updated Information for User: {}", user);
         return updatedUser;
     }
 
@@ -137,7 +135,6 @@ public class UserService {
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
-        log.debug("Updated Information for User: {}", userById);
         return updatedUser;
     }
 
@@ -150,7 +147,6 @@ public class UserService {
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
-        log.debug("Updated Information for User: {}", userById);
         return updatedUser;
     }
 
@@ -171,7 +167,6 @@ public class UserService {
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
-        log.debug("Updated Information for User: {}", userById);
         return updatedUser;
     }
 
@@ -189,7 +184,6 @@ public class UserService {
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
 
-        log.debug("Updated Information for User: {}", userById);
         return updatedUser;
     }
 
@@ -208,13 +202,13 @@ public class UserService {
             User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
             if (userByUsername != null) {
                 String message = String.format("There is already a user '%s'! Please try again!", userByUsername.getUsername());
-                throw new PostRequestException409(message, HttpStatus.CONFLICT);
+                throw new PostRequestException409(message);
             }
         } else {
             User userByUsername = userRepository.findByUsernameAndIdNot(userToBeCreated.getUsername(), userToBeCreated.getId());
             if (userByUsername != null) {
                 String message = String.format("There is already a user '%s'! Please try again!", userByUsername.getUsername());
-                throw new PostRequestException409(message, HttpStatus.CONFLICT);
+                throw new PostRequestException409(message);
             }
         }
     }
@@ -231,15 +225,15 @@ public class UserService {
 
         if (userToBeCreated.getName() != null && userToBeCreated.getName().contains(" ")) {
             String message = "The field 'NAME' must not contain any whitespaces! Therefore, the user could not be created!";
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+            throw new PostRequestException409(message);
         }
         if (userToBeCreated.getUsername() != null && userToBeCreated.getUsername().contains(" ")) {
             String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+            throw new PostRequestException409(message);
         }
         if (userToBeCreated.getPassword() != null && userToBeCreated.getPassword().contains(" ")) {
             String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
-            throw new PostRequestException409(message, HttpStatus.CONFLICT);
+            throw new PostRequestException409(message);
         }
     }
 }

@@ -3,17 +3,17 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Guess;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -31,6 +31,7 @@ class GameServiceIntegrationTest {
     Game createdGame;
     Long gameId;
 
+    @Qualifier("gameRepository")
     @Autowired
     private GameRepository gameRepository;
 
@@ -52,15 +53,15 @@ class GameServiceIntegrationTest {
         gameRepository.deleteAll();
         List<Game> games = gameService.getGames();
 
-        assertEquals(games.size(), 0);
+        assertEquals(0, games.size());
     }
 
     @Test
-    public void createGame_success() throws Exception {
-        assertEquals(createdGame.getScore(), 0);
-        assertEquals(createdGame.getRound(), 1);
-        assertEquals(createdGame.getStatus(), GameStatus.CREATED);
-        assertEquals(createdGame.getUserIds().size(), 1);
+    public void createGame_success() {
+        assertEquals(0, createdGame.getScore());
+        assertEquals(1, createdGame.getRound());
+        assertEquals(GameStatus.CREATED, createdGame.getStatus());
+        assertEquals(1, createdGame.getUserIds().size());
         assertNull(createdGame.getChosenWord());
     }
 
@@ -76,12 +77,12 @@ class GameServiceIntegrationTest {
 
         updatedGame = gameService.startGame(gameId);
 
-        assertEquals(updatedGame.getStatus(), GameStatus.RUNNING);
+        assertEquals(GameStatus.RUNNING, updatedGame.getStatus());
         assertTrue(updatedGame.getNormalMode());
     }
 
     @Test
-    public void startGame_threeUsers() throws Exception {
+    public void startGame_threeUsers() {
         Long userId2 = (long)2;
         Long userId3 = (long)3;
 
@@ -91,31 +92,31 @@ class GameServiceIntegrationTest {
 
         updatedGame = gameService.startGame(gameId);
 
-        assertEquals(updatedGame.getStatus(), GameStatus.RUNNING);
+        assertEquals(GameStatus.RUNNING, updatedGame.getStatus());
         assertFalse(updatedGame.getNormalMode());
     }
 
     @Test
-    public void addUserToGame_success() throws Exception {
+    public void addUserToGame_success() {
         Long userId1 = (long)(1);
         Long userId2 = (long)(2);
         Game updatedGame = gameService.addUserToGame(createdGame.getId(), userId2);
 
-        assertEquals(updatedGame.getUserIds().size(), 2);
-        assertEquals(updatedGame.getUserIds().get(0), userId1);
-        assertEquals(updatedGame.getUserIds().get(1), userId2);
+        assertEquals(2, updatedGame.getUserIds().size());
+        assertEquals(userId1, updatedGame.getUserIds().get(0));
+        assertEquals(userId2, updatedGame.getUserIds().get(1));
     }
 
     @Test
-    public void removeUserFromGame_success() throws Exception {
+    public void removeUserFromGame_success() {
         Long userId1 = (long)(1);
         Long userId2 = (long)(2);
         Game updatedGame = gameService.addUserToGame(gameId, userId2);
 
         updatedGame = gameService.removeUserFromGame(gameId, userId1);
 
-        assertEquals(updatedGame.getUserIds().size(), 1);
-        assertEquals(updatedGame.getUserIds().get(0), userId2);
+        assertEquals(1, updatedGame.getUserIds().size());
+        assertEquals(userId2, updatedGame.getUserIds().get(0));
     }
 
 
@@ -133,13 +134,8 @@ class GameServiceIntegrationTest {
         String chosenWord = getFirstWordOnActiveCard();
         Game updatedGame = gameService.setChosenWord(gameId, chosenWord);
 
-        assertEquals(updatedGame.getChosenWord(), chosenWord);
-        assertEquals(updatedGame.getWordStatus(), ChosenWordStatus.SELECTED);
-    }
-
-    @Test
-    public void getActiveCard_success() throws Exception {
-        gameService.getActiveCard(gameId);
+        assertEquals(chosenWord, updatedGame.getChosenWord());
+        assertEquals(ChosenWordStatus.SELECTED, updatedGame.getWordStatus());
     }
 
     @Test
@@ -149,13 +145,13 @@ class GameServiceIntegrationTest {
         Clue newClue = new Clue();
         String clue = "TestClue";
 
-        newClue.setClue(clue);
+        newClue.setClueWord(clue);
         String chosenWord = getFirstWordOnActiveCard();
         gameService.setChosenWord(gameId, chosenWord);
         Clue testClue = gameService.addClueToGame(gameId, newClue);
 
-        assertEquals(testClue.getClue(), clue);
-        assertEquals(testClue.getValid(), ClueStatus.VALID);
+        assertEquals(clue, testClue.getClueWord());
+        assertEquals(ClueStatus.VALID, testClue.getValid());
     }
 
     @Test
@@ -164,7 +160,7 @@ class GameServiceIntegrationTest {
         testGame.addUserId((long)2);
         Clue newClue = new Clue();
         String clue = "TestClue";
-        newClue.setClue(clue);
+        newClue.setClueWord(clue);
 
         String chosenWord = getFirstWordOnActiveCard();
         gameService.setChosenWord(gameId, chosenWord);
@@ -249,12 +245,12 @@ class GameServiceIntegrationTest {
         gameService.updateChosenWord(gameId, chosenWordPutDTO);
 
         Clue clue = new Clue();
-        clue.setClue("123");
+        clue.setClueWord("123");
         clue.setTime(5);
         gameService.addClueToGame(gameId, clue);
 
         Guess guess = new Guess();
-        guess.setGuess(chosenWord);
+        guess.setGuessWord(chosenWord);
         guess.setTime(5);
         gameService.makeGuess(gameId, guess);
 

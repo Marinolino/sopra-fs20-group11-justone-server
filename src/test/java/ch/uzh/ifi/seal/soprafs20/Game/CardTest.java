@@ -1,7 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -32,9 +32,9 @@ class CardTest {
 
     @Test
     public void getId(){
-        assertNotEquals(testCard.getId(), 10);
+        assertNotEquals(10, testCard.getId());
         testCard.setId((long) 10);
-        assertEquals(testCard.getId(), 10);
+        assertEquals(10, testCard.getId());
     }
 
     @Test

@@ -1,17 +1,16 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.GET.GetRequestException404;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Guess;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class GameController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameGetDTO createGame(@RequestBody GamePostDTO gamePostDTO) throws FileNotFoundException {
+    public GameGetDTO createGame(@RequestBody GamePostDTO gamePostDTO) throws Exception{
         // convert API game to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gamePostDTO);
 
@@ -102,14 +101,14 @@ public class GameController {
     @GetMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO getGameById(@PathVariable("id") long id) throws GetRequestException404 {
+    public GameGetDTO getGameById(@PathVariable("id") long id) {
 
         //look for game in database
         Game gameById = gameService.getGameById(id);
 
         //check if a game was found
         if (gameById == null){
-            throw new GetRequestException404("No game was found!", HttpStatus.NOT_FOUND);
+            throw new GetRequestException404("No game was found!");
         }
 
         // convert internal representation of game to API
@@ -119,7 +118,7 @@ public class GameController {
     @PutMapping("/games/reset/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO resetGameStats(@PathVariable("id") long id) throws Exception {
+    public GameGetDTO resetGameStats(@PathVariable("id") long id) {
         Game updatedGame = gameService.resetGameStats(id);
 
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
@@ -151,7 +150,7 @@ public class GameController {
     @GetMapping("/chosenword/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ChosenWordGetDTO getChosenWord(@PathVariable("id") long id) throws Exception {
+    public ChosenWordGetDTO getChosenWord(@PathVariable("id") long id) {
         //set the chosen word for the specified game
         Game updatedGame = gameService.getGameById(id);
 
@@ -232,7 +231,7 @@ public class GameController {
     @PutMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CluesGetDTO setCluesToInvalid(@PathVariable("id") long id, @RequestBody CluePutDTO cluePutDTO) throws GetRequestException404 {
+    public CluesGetDTO setCluesToInvalid(@PathVariable("id") long id, @RequestBody CluePutDTO cluePutDTO) {
         // convert API clue to internal representation
         List<String> cluesToChange = DTOMapper.INSTANCE.convertCluePutDTOtoList(cluePutDTO);
 
@@ -256,7 +255,7 @@ public class GameController {
    @GetMapping("/guess/{id}")
    @ResponseStatus(HttpStatus.OK)
    @ResponseBody
-   public GuessGetDTO getGuess(@PathVariable("id") long id) throws Exception{
+   public GuessGetDTO getGuess(@PathVariable("id") long id) {
         Guess guess = gameService.getGuess(id);
 
         return DTOMapper.INSTANCE.convertEntityToGuessGetDTO(guess);

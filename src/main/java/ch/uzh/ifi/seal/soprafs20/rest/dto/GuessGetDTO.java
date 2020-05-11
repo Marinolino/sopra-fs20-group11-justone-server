@@ -2,22 +2,20 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 
-import javax.persistence.Column;
-
 public class GuessGetDTO {
 
-    private String guess;
+    private String guessWord;
 
     private GuessStatus guessStatus;
 
     private int time;
 
-    public String getGuess(){
-        return guess;
+    public String getGuessWord(){
+        return guessWord;
     }
 
-    public void setGuess(String guess){
-        this.guess = guess;
+    public void setGuessWord(String guessWord){
+        this.guessWord = guessWord;
     }
 
     public GuessStatus getGuessStatus() {

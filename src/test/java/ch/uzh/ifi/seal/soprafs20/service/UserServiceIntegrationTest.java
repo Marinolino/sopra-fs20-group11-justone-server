@@ -2,11 +2,12 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -25,6 +26,7 @@ public class UserServiceIntegrationTest {
 
     User testUser;
 
+    @Qualifier("userRepository")
     @Autowired
     private UserRepository userRepository;
 
@@ -90,7 +92,7 @@ public class UserServiceIntegrationTest {
         Long userId = testUser.getId();
 
         User gameUser = userService.joinGame(userId);
-        assertEquals(gameUser.getStatus(), UserStatus.INGAME);
+        assertEquals(UserStatus.INGAME, gameUser.getStatus());
     }
 
     @Test
@@ -102,10 +104,10 @@ public class UserServiceIntegrationTest {
         Long userId = testUser.getId();
 
         userService.joinGame(userId);
-        assertEquals(testUser.getStatus(), UserStatus.INGAME);
+        assertEquals(UserStatus.INGAME, testUser.getStatus());
 
         userService.leaveGame(userId);
-        assertEquals(testUser.getStatus(), UserStatus.ONLINE);
+        assertEquals(UserStatus.ONLINE, testUser.getStatus());
     }
 
     @Test
@@ -144,9 +146,9 @@ public class UserServiceIntegrationTest {
         userInput.setScore(6);
 
         userService.updateUserScore(userId, userInput);
-        assertEquals(testUser.getScore(), 9);
-        assertEquals(testUser.getDuplicateClues(), userInput.getDuplicateClues());
-        assertEquals(testUser.getCorrectlyGuessed(), userInput.getCorrectlyGuessed());
+        assertEquals(9, testUser.getScore());
+        assertEquals(userInput.getDuplicateClues(), testUser.getDuplicateClues());
+        assertEquals(userInput.getCorrectlyGuessed(), testUser.getCorrectlyGuessed());
     }
 
     @Test
@@ -159,7 +161,7 @@ public class UserServiceIntegrationTest {
         userService.logIn(testUser);
 
         assertNotNull(testUser.getToken());
-        assertEquals(testUser.getStatus(), UserStatus.ONLINE);
+        assertEquals(UserStatus.ONLINE, testUser.getStatus());
     }
 
     @Test
@@ -171,9 +173,9 @@ public class UserServiceIntegrationTest {
 
         userService.logIn(testUser);
         assertNotNull(testUser.getToken());
-        assertEquals(testUser.getStatus(), UserStatus.ONLINE);
+        assertEquals(UserStatus.ONLINE, testUser.getStatus());
 
         userService.logOut(testUser.getId());
-        assertEquals(testUser.getStatus(), UserStatus.OFFLINE);
+        assertEquals(UserStatus.OFFLINE, testUser.getStatus());
     }
 }

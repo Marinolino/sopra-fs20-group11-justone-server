@@ -1,6 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Clue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,17 +19,17 @@ class ClueTest {
     public void setClue(){
         String clueWord = "TestClue";
 
-        testClue.setClue(clueWord);
+        testClue.setClueWord(clueWord);
 
-        assertEquals(testClue.getClue(), clueWord);
+        assertEquals(testClue.getClueWord(), clueWord);
     }
 
     @Test
     public void setId(){
-       assertNotEquals(testClue.getId(), 2);
+       assertNotEquals(2, testClue.getId());
 
         testClue.setId((long)2);
 
-        assertEquals(testClue.getId(), 2);
+        assertEquals(2, testClue.getId());
     }
 }

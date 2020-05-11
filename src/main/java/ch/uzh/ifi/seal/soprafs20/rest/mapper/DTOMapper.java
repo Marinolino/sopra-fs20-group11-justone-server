@@ -1,10 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Clue;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Guess;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Clue;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
@@ -55,16 +55,16 @@ public interface DTOMapper {
     @Mapping(source = "currentUserId", target = "currentUserId")
     Game convertGamePutDTOtoEntity(GamePutDTO gamePutDTO);
 
-    @Mapping(source = "clue", target = "clue")
+    @Mapping(source = "clueWord", target = "clueWord")
     @Mapping(source = "time", target = "time")
     Clue convertCluePostDTOtoEntity(CluePostDTO cluePostDTO);
 
-    @Mapping(source = "guess", target = "guess")
+    @Mapping(source = "guessWord", target = "guessWord")
     @Mapping(source = "time", target = "time")
     Guess convertGuessPostDTOtoEntity(GuessPostDTO guessPostDTO);
 
     default List<String> convertCluePutDTOtoList(CluePutDTO clueDeleteDTO){
-        List<String> cluesToChange = new ArrayList<>();
+        List<String> cluesToChange;
         cluesToChange  = clueDeleteDTO.getCluesToChange();
         return cluesToChange ;
     }
@@ -83,12 +83,12 @@ public interface DTOMapper {
     @Mapping(source = "userIds", target = "userIds")
     GameGetDTO convertEntityToGameGetDTO(Game game);
 
-    @Mapping(source = "clue", target = "clue")
+    @Mapping(source = "clueWord", target = "clueWord")
     @Mapping(source = "time", target = "time")
     @Mapping(source = "valid", target = "valid")
     ClueGetDTO convertEntityToClueGetDTO(Clue clue);
 
-    @Mapping(source = "guess", target = "guess")
+    @Mapping(source = "guessWord", target = "guessWord")
     @Mapping(source = "time", target = "time")
     @Mapping(source = "guessStatus", target = "guessStatus")
     GuessGetDTO convertEntityToGuessGetDTO(Guess guess);
@@ -103,22 +103,12 @@ public interface DTOMapper {
         //add all valid clues to the list
         for (Clue clue : game.getClues()) {
             if (clue.getValid() == ClueStatus.VALID) {
-                cluesGetDTO.addAClue(clue.getClue());
+                cluesGetDTO.addAClue(clue.getClueWord());
             }
         }
         //check if all users have given clues
-        if (game.getUserIds().size()-1 == game.getClues().size()) {
-            cluesGetDTO.setAllAutomaticClues(true);
-        }
-        else {
-            cluesGetDTO.setAllAutomaticClues(false);
-        }
-        if (game.getUserIds().size()-1 == game.getClueCounter()){
-            cluesGetDTO.setAllManualClues(true);
-        }
-        else {
-            cluesGetDTO.setAllManualClues(false);
-        }
+        cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size());
+        cluesGetDTO.setAllManualClues(game.getUserIds().size() - 1 == game.getClueCounter());
         return cluesGetDTO;
     }
 

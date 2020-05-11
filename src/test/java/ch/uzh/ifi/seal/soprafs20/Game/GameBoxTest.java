@@ -1,7 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.GameBox;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.GameBox;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ class GameBoxTest {
     public void newBoxIsEmpty(){
         List<Card> cards = testBox.getCards();
 
-        assertEquals(cards.size(), 0);
+        assertEquals(0, cards.size());
     }
 
 
@@ -55,12 +55,12 @@ class GameBoxTest {
         testBox.addCard(testCard1);
         List<Card> cards = testBox.getCards();
 
-        assertEquals(cards.size(), 1);
+        assertEquals(1, cards.size());
     }
 
     @Test
     public void setCards(){
-        List<Card> cards = new ArrayList<Card>();
+        List<Card> cards = new ArrayList<>();
         cards.add(testCard1);
         cards.add(testCard2);
         testBox.setCards(cards);
@@ -70,8 +70,8 @@ class GameBoxTest {
 
     @Test
     public void getId(){
-        assertNotEquals(testBox.getId(), 8);
+        assertNotEquals(8, testBox.getId());
         testBox.setId((long) 8);
-        assertEquals(testBox.getId(), 8);
+        assertEquals(8, testBox.getId());
     }
 }

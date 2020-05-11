@@ -2,7 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.API.POST.PostRequestException409;
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,8 +53,8 @@ public class UserServiceTest {
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertNotNull(createdUser.getToken());
         assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
-        assertEquals(createdUser.getGamesPlayed(), 0);
-        assertEquals(createdUser.getScore(), 0);
+        assertEquals(0, createdUser.getGamesPlayed());
+        assertEquals(0, createdUser.getScore());
     }
 
     @Test

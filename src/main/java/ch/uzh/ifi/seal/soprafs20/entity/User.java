@@ -1,7 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Game;
 
 import javax.persistence.*;
 import java.io.Serializable;

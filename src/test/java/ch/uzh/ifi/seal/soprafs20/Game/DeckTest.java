@@ -1,7 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.Game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game.Deck;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Deck;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class DeckTest {
     public void addACard() {
         testDeck.addCard(testCard);
 
-        assertEquals(testDeck.deckSize(), 1);
+        assertEquals(1, testDeck.deckSize());
     }
 
     @Test
@@ -39,15 +39,15 @@ class DeckTest {
         testDeck.addCard(testCard);
 
         assertEquals(testDeck.getTopCard(), testCard );
-        assertEquals(testDeck.deckSize(), 0);
+        assertEquals(0, testDeck.deckSize());
     }
 
     @Test
     public void setId(){
-        assertNotEquals(testDeck.getId(), 2);
+        assertNotEquals(2, testDeck.getId());
 
         testDeck.setId((long)2);
 
-        assertEquals(testDeck.getId(), 2);
+        assertEquals(2, testDeck.getId());
     }
 }

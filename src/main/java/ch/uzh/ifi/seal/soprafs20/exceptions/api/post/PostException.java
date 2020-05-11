@@ -1,0 +1,11 @@
+package ch.uzh.ifi.seal.soprafs20.exceptions.api.post;
+
+import ch.uzh.ifi.seal.soprafs20.exceptions.api.ApiException;
+import org.springframework.http.HttpStatus;
+
+public class PostException extends ApiException {
+
+        public PostException(String message, HttpStatus statusCode){
+            super(message, statusCode);
+        }
+}
