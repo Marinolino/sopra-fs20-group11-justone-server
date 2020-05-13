@@ -265,6 +265,14 @@ class GameServiceIntegrationTest {
         assertNull(finishedGame.getGuess());
     }
 
+    @Test
+    @Transactional
+    public void resetGameStats_success() throws Exception{
+        Game updatedGame = gameService.resetGameStats(gameId);
+
+        assertEquals(ChosenWordStatus.NOCHOSENWORD, updatedGame.getWordStatus());
+    }
+
     private String getFirstWordOnActiveCard() throws Exception {
         Card activeCard = gameService.getActiveCard(gameId);
         return activeCard.getMysteryWords().get(0);
