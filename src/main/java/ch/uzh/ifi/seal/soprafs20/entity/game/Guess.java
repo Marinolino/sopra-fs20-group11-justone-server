@@ -28,6 +28,14 @@ public class Guess implements Serializable {
     @OneToOne(mappedBy = "guess")
     private Game game;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getGuessWord(){
         return guessWord;
     }

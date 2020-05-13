@@ -319,6 +319,34 @@ class GameControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
     }
 
+    @Test
+    public void getGuess_success() throws Exception {
+        Guess guess = new Guess();
+        guess.setGuessWord("myguess");
+        given(gameService.getGuess(Mockito.any())).willReturn(guess);
+
+        MockHttpServletRequestBuilder getRequest = get("/guess/1").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.guessWord", is(guess.getGuessWord())));
+    }
+
+    @Test
+    public void makeGuess_success() throws Exception {
+        Guess guess = new Guess();
+        guess.setId(1l);
+        guess.setGuessWord("myguess");
+
+        given(gameService.makeGuess(Mockito.any(), Mockito.any())).willReturn(guess);
+
+        MockHttpServletRequestBuilder postRequest = post("/guess/1")
+                .content(asJsonString(guess))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(postRequest).andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.guessWord", is(guess.getGuessWord())));
+    }
+
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed
      * Input will look like this: {"name": "Test User", "username": "testUsername"}
