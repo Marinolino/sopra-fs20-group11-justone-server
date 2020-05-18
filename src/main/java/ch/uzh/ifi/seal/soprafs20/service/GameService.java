@@ -15,7 +15,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -178,6 +177,7 @@ public class GameService {
 
         gameById.setChosenWord(chosenWord);
         gameById.setWordStatus(ChosenWordStatus.SELECTED);
+        gameById.setChosenWordCounter(0);
         gameById = gameRepository.save(gameById);
         gameRepository.flush();
 
@@ -191,26 +191,42 @@ public class GameService {
         if (!gameById.getChangeWord()){
             throw new PutRequestException409("You can only reject one word per turn!");
         }
+        //check if the current word has been rejected by every user
+        if (gameById.getUserIds().size() - 1 == gameById.getChosenWordCounter()){
+            throw new PutRequestException409("The chosen word has already been checked by every user!");
+        }
 
         gameById.addWordCounter();
 
         //word is already rejected
         if (gameById.getWordStatus() == ChosenWordStatus.REJECTED){
+            //current user is the last user to reject or accept
+            if (gameById.getUserIds().size() - 1 == gameById.getChosenWordCounter()){
+                gameById.setWordStatus(ChosenWordStatus.REJECTEDBYALL);
+                gameById.setChangeWord(false);
+            }
             gameById = gameRepository.save(gameById);
             gameRepository.flush();
             return gameById;
         }
-        //word get's rejected
+        //word get's rejected by current user
         if (!chosenWordPutDTO.getStatus()){
-            gameById.setWordStatus(ChosenWordStatus.REJECTED);
-            gameById.setChangeWord(false);
+            //current user is the last user to reject
+            if (gameById.getUserIds().size() - 1 == gameById.getChosenWordCounter()){
+                gameById.setWordStatus(ChosenWordStatus.REJECTEDBYALL);
+                gameById.setChangeWord(false);
+            }
+            else {
+                gameById.setWordStatus(ChosenWordStatus.REJECTED);
+            }
             gameById = gameRepository.save(gameById);
             gameRepository.flush();
             return gameById;
         }
         //word is accepted by all users
-        if (chosenWordPutDTO.getStatus() && gameById.getUserIds().size() - 1 == gameById.getWordCounter()){
+        if (chosenWordPutDTO.getStatus() && gameById.getUserIds().size() - 1 == gameById.getChosenWordCounter()){
             gameById.setWordStatus(ChosenWordStatus.ACCEPTED);
+            gameById.setChangeWord(false);
             gameById = gameRepository.save(gameById);
             gameRepository.flush();
             return gameById;
@@ -345,7 +361,7 @@ public class GameService {
         gameInput.setWordStatus(ChosenWordStatus.NOCHOSENWORD);
 
         //reset word counter
-        gameInput.setWordCounter(0);
+        gameInput.setChosenWordCounter(0);
 
         //reset clue counter
         gameInput.setManualClueCounter(0);

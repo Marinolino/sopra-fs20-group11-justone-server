@@ -4,7 +4,6 @@ import ch.uzh.ifi.seal.soprafs20.constant.ChosenWordStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException404;
-import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -77,7 +76,7 @@ public class Game implements Serializable {
     private ChosenWordStatus wordStatus;
 
     @Column
-    private int wordCounter;
+    private int chosenWordCounter;
 
     @Column
     private int manualClueCounter;
@@ -315,16 +314,16 @@ public class Game implements Serializable {
         this.wordStatus = wordStatus;
     }
 
-    public int getWordCounter(){
-        return wordCounter;
+    public int getChosenWordCounter(){
+        return chosenWordCounter;
     }
 
-    public void setWordCounter(int wordCounter){
-        this.wordCounter = wordCounter;
+    public void setChosenWordCounter(int wordCounter){
+        this.chosenWordCounter = wordCounter;
     }
 
     public void addWordCounter(){
-        wordCounter += 1;
+        chosenWordCounter += 1;
     }
 
     public int getClueCounter(){

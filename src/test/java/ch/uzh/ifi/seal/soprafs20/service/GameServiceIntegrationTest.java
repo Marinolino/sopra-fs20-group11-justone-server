@@ -175,6 +175,7 @@ class GameServiceIntegrationTest {
     @Test
     @Transactional
     public void updateChosenWord_WordGetsRejected() throws Exception {
+        testGame.addUserId((long)2);
         ChosenWordPutDTO chosenWordPutDTO = new ChosenWordPutDTO();
         chosenWordPutDTO.setStatus(false);
 
@@ -182,7 +183,7 @@ class GameServiceIntegrationTest {
         gameService.setChosenWord(gameId, chosenWord);
         Game updatedGame = gameService.updateChosenWord(gameId, chosenWordPutDTO);
 
-        assertEquals(ChosenWordStatus.REJECTED, updatedGame.getWordStatus());
+        assertEquals(ChosenWordStatus.REJECTEDBYALL, updatedGame.getWordStatus());
     }
 
 
@@ -259,7 +260,7 @@ class GameServiceIntegrationTest {
         assertEquals(GameStatus.FINISHED, finishedGame.getStatus());
         assertNull(finishedGame.getChosenWord());
         assertEquals(ChosenWordStatus.NOCHOSENWORD, finishedGame.getWordStatus());
-        assertEquals(0, finishedGame.getWordCounter());
+        assertEquals(0, finishedGame.getChosenWordCounter());
         assertTrue(finishedGame.getChangeWord());
         assertEquals(0, finishedGame.getClues().size());
         assertNull(finishedGame.getGuess());
