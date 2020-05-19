@@ -10,7 +10,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -118,6 +117,7 @@ public interface DTOMapper {
         for (String mysteryWord : card.getMysteryWords()){
             cardGetDTO.addAWord(mysteryWord);
         }
+        cardGetDTO.setScore(card.getScore());
         return cardGetDTO;
     }
 }

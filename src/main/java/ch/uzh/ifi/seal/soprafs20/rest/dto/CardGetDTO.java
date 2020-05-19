@@ -7,6 +7,8 @@ public class CardGetDTO {
 
     private List<String> words = new ArrayList<>();
 
+    private int score;
+
     public List<String> getWords(){
         return this.words;
     }
@@ -17,5 +19,13 @@ public class CardGetDTO {
 
     public void addAWord(String word){
         this.words.add(word);
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+
+    public void setScore(int score){
+        this.score = score;
     }
 }
