@@ -344,9 +344,12 @@ public class GameService {
         else{
             guessInput.setGuessStatus(GuessStatus.WRONG);
             gameById.addCardToGameBox(gameById.getActiveCard());
-            gameById.addCardToGameBox(gameById.getTopCardFromDeck());
+            //not final round
+            if (gameById.getDeckSize() > 0){
+                gameById.addCardToGameBox(gameById.getTopCardFromDeck());
+            }
             //final round
-            if (gameById.getDeckSize() == 1){
+            else {
                 gameById.addCardToGameBox(gameById.getTopCardFromCorrectlyGuessed());
             }
         }
