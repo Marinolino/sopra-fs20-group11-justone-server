@@ -248,9 +248,12 @@ public class GameService {
         Clue checkedClue = ClueChecker.checkClue(clueInput, gameById);
 
         gameById.addClue(checkedClue);
-
+        //user ran out off time while giving a clue
+        if (checkedClue.getTime() == -1){
+            gameById.addScoreToCard(0);
+        }
         //reward fast clues by giving more points
-        if (checkedClue.getTime() <= TIME_CLUE){
+        else if (checkedClue.getTime() <= TIME_CLUE){
             gameById.addScoreToCard(MAX_POINTS);
         }
         else {
@@ -321,9 +324,12 @@ public class GameService {
 
         //guess is correct
         if(gameById.getChosenWord().equalsIgnoreCase(guessInput.getGuessWord())){
-
+            //user ran out off time while guessing
+            if (guessInput.getTime() == -1){
+                gameById.addScoreToCard(0);
+            }
             //reward fast clues by giving more points
-            if (guessInput.getTime() <= TIME_GUESS){
+            else if (guessInput.getTime() <= TIME_GUESS){
                 gameById.addScoreToCard(MAX_POINTS);
             }
             else {
