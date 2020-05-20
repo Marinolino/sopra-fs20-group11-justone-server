@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException404;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException204;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -222,16 +220,29 @@ public class UserService {
      * @see User
      */
     public void checkIfInputIsValid(User userToBeCreated) {
-
-        if (userToBeCreated.getName() != null && userToBeCreated.getName().contains(" ")) {
+        String name = userToBeCreated.getName();
+        if (name == null || (name.length() < 6 || name.length() > 20)) {
+            String message = "The field 'NAME' must not contain 6 to 20 characters! Therefore, the user could not be created!";
+            throw new PostRequestException409(message);
+        } else if (userToBeCreated.getName().contains(" ")) {
             String message = "The field 'NAME' must not contain any whitespaces! Therefore, the user could not be created!";
             throw new PostRequestException409(message);
         }
-        if (userToBeCreated.getUsername() != null && userToBeCreated.getUsername().contains(" ")) {
+
+        String username = userToBeCreated.getUsername();
+        if (username == null || (username.length() < 6 || username.length() > 20)) {
+            String message = "The field 'USERNAME' must not contain 6 to 20 characters! Therefore, the user could not be created!";
+            throw new PostRequestException409(message);
+        } else if (username.contains(" ")) {
             String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
             throw new PostRequestException409(message);
         }
-        if (userToBeCreated.getPassword() != null && userToBeCreated.getPassword().contains(" ")) {
+
+        String password = userToBeCreated.getPassword();
+        if (password == null || (password.length() < 6 || password.length() > 20)) {
+            String message = "The field 'PASSWORD' must not contain 6 to 20 characters! Therefore, the user could not be created!";
+            throw new PostRequestException409(message);
+        } else if (password.contains(" ")) {
             String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
             throw new PostRequestException409(message);
         }
