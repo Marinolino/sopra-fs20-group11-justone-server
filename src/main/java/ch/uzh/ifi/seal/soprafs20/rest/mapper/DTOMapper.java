@@ -106,8 +106,13 @@ public interface DTOMapper {
             }
         }
         //check if all users have given clues
-        cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size());
+        if(!game.getNormalMode()){
+            cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size()/2);
+        }else {
+            cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size());
+        }
         cluesGetDTO.setAllManualClues(game.getUserIds().size() - 1 == game.getClueCounter());
+
         return cluesGetDTO;
     }
 

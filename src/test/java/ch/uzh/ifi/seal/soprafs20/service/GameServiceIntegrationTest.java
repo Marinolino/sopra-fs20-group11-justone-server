@@ -158,6 +158,7 @@ class GameServiceIntegrationTest {
     @Transactional
     public void addClueToGame_amountOfUsersIsEqualToClues() throws Exception {
         testGame.addUserId((long)2);
+        testGame.setNormalMode(true);
         Clue newClue = new Clue();
         String clue = "TestClue";
         newClue.setClueWord(clue);

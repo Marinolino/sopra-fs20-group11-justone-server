@@ -249,6 +249,8 @@ class GameControllerTest {
         Long userId3 = (long)3;
         testGame.addUserId(userId3);
 
+        testGame.setNormalMode(true);
+
         List<Clue> clues = new ArrayList<>();
 
         Clue testClue1 = new Clue();

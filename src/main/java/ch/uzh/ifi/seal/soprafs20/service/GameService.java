@@ -241,6 +241,12 @@ public class GameService {
     public Clue addClueToGame(Long id, Clue clueInput) throws PostRequestException409, IOException {
        Game gameById = getGameById(id);
 
+        if(!gameById.getNormalMode()){
+            if (gameById.getUserIds().size() - 1 == gameById.getClueCounter()/2){
+                String message = "There are already enough clues! Therefore, this clue can't be added!";
+                throw new PutRequestException409(message);
+            }
+        }else
         if (gameById.getUserIds().size() - 1 == gameById.getClues().size()){
             String message = "There are already as many clues as users! Therefore, this clue can't be added!";
             throw new PostRequestException409(message);
@@ -270,7 +276,7 @@ public class GameService {
         Game gameById = getGameById(id);
 
         if (gameById.getUserIds().size() - 1 == gameById.getClueCounter()){
-            String message = "There are already as many checked clues as users!";
+            String message = "Everyone checked the clues already!";
             throw new PutRequestException409(message);
         }
 

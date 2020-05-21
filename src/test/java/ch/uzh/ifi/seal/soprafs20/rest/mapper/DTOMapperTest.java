@@ -108,6 +108,7 @@ public class DTOMapperTest {
     @Test
     public void getClue_fromGameToClueGetDTO_ALlUsersHaveGivenClues(){
         Game testGame = new Game();
+        testGame.setNormalMode(true);
         Clue testClue = new Clue();
         Long userId1 = (long) 1;
         Long userId2 = (long) 2;
