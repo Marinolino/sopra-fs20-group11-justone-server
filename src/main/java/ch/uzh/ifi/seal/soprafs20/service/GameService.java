@@ -101,12 +101,6 @@ public class GameService {
         }
 
         gameById.setStatus(GameStatus.FINISHED);
-
-        //count all the total amount of points gained by all users
-        for (Card card : gameById.getCorrectlyGuessed().getCardList()){
-            gameById.addScore(card.getScore());
-        }
-
         Game resetGame = resetGameFields(gameById);
 
         Game savedGame = gameRepository.save(resetGame);
@@ -355,6 +349,11 @@ public class GameService {
         }
         gameById.setGuess(guessInput);
         gameById.addRound();
+
+        //count all the total amount of points gained by all users
+        for (Card card : gameById.getCorrectlyGuessed().getCardList()){
+            gameById.addScore(card.getScore());
+        }
 
         gameRepository.save(gameById);
         gameRepository.flush();
