@@ -98,21 +98,22 @@ public interface DTOMapper {
 
     default CluesGetDTO convertEntityToCluesGetDTO(Game game) {
         CluesGetDTO cluesGetDTO = new CluesGetDTO();
-
         //add all valid clues to the list
         for (Clue clue : game.getClues()) {
             if (clue.getValid() == ClueStatus.VALID) {
                 cluesGetDTO.addAClue(clue.getClueWord());
             }
         }
-        //check if all users have given clues
+        //game with 3 users
         if(!game.getNormalMode()){
-            cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size()/2);
-        }else {
-            cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size());
+            cluesGetDTO.setAllAutomaticClues(2*(game.getUserIds().size() - 1) == game.getClues().size());
+            cluesGetDTO.setAllManualClues(2*(game.getUserIds().size() - 1) == game.getClueCounter());
         }
-        cluesGetDTO.setAllManualClues(game.getUserIds().size() - 1 == game.getClueCounter());
-
+        //game with more than 3 users
+        else {
+            cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size());
+            cluesGetDTO.setAllManualClues(game.getUserIds().size() - 1 == game.getClueCounter());
+        }
         return cluesGetDTO;
     }
 

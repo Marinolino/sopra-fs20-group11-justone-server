@@ -147,8 +147,8 @@ public class UserServiceIntegrationTest {
 
         userService.updateUserScore(userId, userInput);
         assertEquals(9, testUser.getScore());
-        assertEquals(userInput.getDuplicateClues(), testUser.getDuplicateClues());
-        assertEquals(userInput.getCorrectlyGuessed(), testUser.getCorrectlyGuessed());
+        assertEquals(0, testUser.getDuplicateClues());
+        assertEquals(0, testUser.getCorrectlyGuessed());
     }
 
     @Test
