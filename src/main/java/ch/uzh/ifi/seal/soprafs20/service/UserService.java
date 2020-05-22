@@ -178,6 +178,8 @@ public class UserService {
         //User receives penalty or bonus for correctly guessed words and duplicate clues
         int updatedScore = score - userById.getDuplicateClues() * DUPLICATECLUE_MULTIPLIER + userById.getCorrectlyGuessed() * CORRECTGUESS_MULTIPLIER;
         userById.addScore(updatedScore);
+        userById.setCorrectlyGuessed(0);
+        userById.setDuplicateClues(0);
 
         User updatedUser = userRepository.save(userById);
         userRepository.flush();
