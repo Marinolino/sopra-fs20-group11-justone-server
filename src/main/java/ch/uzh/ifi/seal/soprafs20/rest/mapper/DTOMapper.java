@@ -106,7 +106,7 @@ public interface DTOMapper {
         }
         //game with 3 users
         if(!game.getNormalMode()){
-            cluesGetDTO.setAllAutomaticClues(2*(game.getUserIds().size() - 1) == game.getClues().size());
+            cluesGetDTO.setAllAutomaticClues(4 == game.getClues().size());
         }
         //game with more than 3 users
         else {
@@ -116,7 +116,6 @@ public interface DTOMapper {
 
         return cluesGetDTO;
     }
-
 
     default CardGetDTO convertEntityToCardGetDTO(Card card){
         CardGetDTO cardGetDTO = new CardGetDTO();
