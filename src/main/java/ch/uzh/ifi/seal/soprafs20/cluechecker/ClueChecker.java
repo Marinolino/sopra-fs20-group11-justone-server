@@ -79,8 +79,7 @@ public final class ClueChecker {
     }
     //
     private static boolean checkIfClueOrWordSubstring(String newClue, String chosenWord){
-        //remove all whitespaces
-        if (chosenWord.contains(newClue) || newClue.contains(chosenWord)) {
+        if (chosenWord.toLowerCase().contains(newClue.toLowerCase()) || newClue.toLowerCase().contains(chosenWord.toLowerCase())) {
             return true;
         }
         else {

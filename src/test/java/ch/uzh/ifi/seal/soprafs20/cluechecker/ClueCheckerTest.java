@@ -86,7 +86,7 @@ class ClueCheckerTest {
     @Test
     public void chosenWordContainsClue() throws IOException {
         testGame.setChosenWord("hazelnut");
-        testClue.setClueWord("nut");
+        testClue.setClueWord("Nut");
         Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
         assertEquals(ClueStatus.INVALID, checkedClue.getValid());
     }
