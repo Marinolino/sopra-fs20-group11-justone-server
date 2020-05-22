@@ -82,4 +82,36 @@ class ClueCheckerTest {
         Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
         assertEquals(ClueStatus.INVALID, checkedClue.getValid());
     }
+
+    @Test
+    public void chosenWordContainsClue() throws IOException {
+        testGame.setChosenWord("hazelnut");
+        testClue.setClueWord("nut");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(ClueStatus.INVALID, checkedClue.getValid());
+    }
+
+    @Test
+    public void clueContainsChosenWord() throws IOException {
+        testGame.setChosenWord("nut");
+        testClue.setClueWord("hazelnut");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(ClueStatus.INVALID, checkedClue.getValid());
+    }
+
+    @Test
+    public void clueNotContained() throws IOException {
+        testGame.setChosenWord("nutella");
+        testClue.setClueWord("hazelnut");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(ClueStatus.VALID, checkedClue.getValid());
+    }
+
+    @Test
+    public void ChosenWordNotContained() throws IOException {
+        testGame.setChosenWord("hazelnut");
+        testClue.setClueWord("nutella");
+        Clue checkedClue = ClueChecker.checkClue(testClue, testGame);
+        assertEquals(ClueStatus.VALID, checkedClue.getValid());
+    }
 }

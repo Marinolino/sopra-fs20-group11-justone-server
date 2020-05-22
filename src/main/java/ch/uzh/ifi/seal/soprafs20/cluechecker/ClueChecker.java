@@ -42,6 +42,11 @@ public final class ClueChecker {
             clueInput.setValid(ClueStatus.INVALID);
             return clueInput;
         }
+        //check if clue is contained in chosenWord or vice versa
+        if (checkIfClueOrWordSubstring(clueInput.getClueWord(), game.getChosenWord())) {
+            clueInput.setValid((ClueStatus.INVALID));
+            return clueInput;
+        }
         //create list of homophones
         String str = ClueChecker.makeRequest(game.getChosenWord());
         ArrayList<String> wordList = ClueChecker.makeList(str);
@@ -71,6 +76,16 @@ public final class ClueChecker {
 
         //changes both strings to lowercase and compares them
         return newClue.equalsIgnoreCase(existingClue);
+    }
+    //
+    private static boolean checkIfClueOrWordSubstring(String newClue, String chosenWord){
+        //remove all whitespaces
+        if (chosenWord.contains(newClue) || newClue.contains(chosenWord)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     private static String makeRequest(String chosenWord) throws IOException {
