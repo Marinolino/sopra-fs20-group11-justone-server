@@ -22,7 +22,7 @@ public final class ClueChecker {
         List<String> stringClues = new ArrayList<>();
 
         //check if the clue input is valid
-        if (clueInput.getClueWord() == null || clueInput.getClueWord().isBlank() || clueInput.getClueWord().contains(" ")) {
+        if (clueInput.getClueWord() == null || clueInput.getClueWord().isBlank() || clueInput.getClueWord().contains(" ") || clueInput.getClueWord().equals("OVERTIMED")) {
             clueInput.setValid(ClueStatus.INVALID);
             return clueInput;
         }
