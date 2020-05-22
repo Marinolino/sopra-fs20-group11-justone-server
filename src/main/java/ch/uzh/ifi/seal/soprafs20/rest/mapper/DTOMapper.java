@@ -107,13 +107,13 @@ public interface DTOMapper {
         //game with 3 users
         if(!game.getNormalMode()){
             cluesGetDTO.setAllAutomaticClues(2*(game.getUserIds().size() - 1) == game.getClues().size());
-            cluesGetDTO.setAllManualClues(2*(game.getUserIds().size() - 1) == game.getClueCounter());
         }
         //game with more than 3 users
         else {
             cluesGetDTO.setAllAutomaticClues(game.getUserIds().size() - 1 == game.getClues().size());
-            cluesGetDTO.setAllManualClues(game.getUserIds().size() - 1 == game.getClueCounter());
         }
+        cluesGetDTO.setAllManualClues(game.getUserIds().size() - 1 == game.getClueCounter());
+
         return cluesGetDTO;
     }
 
