@@ -87,7 +87,7 @@ public class UserService {
 
         if(userByUsername.getStatus() == UserStatus.ONLINE){
             String message = String.format("The user '%s' is already logged in!", userToCheck.getUsername());
-            throw new PutRequestException204(message);
+            throw new PutRequestException401(message);
         }
 
         if(!userByUsername.getPassword().equals(userToCheck.getPassword())){
