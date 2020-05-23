@@ -112,7 +112,7 @@ public class UserService {
 
     public User updateUser(Long id, User user) {
 
-        checkIfInputIsValid(user);
+        checkIfInputIsValidForUpdate(user);
         checkIfUserExists(user);
         User userById = getUserById(id);
 
@@ -242,7 +242,6 @@ public class UserService {
             String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
             throw new PostRequestException409(message);
         }
-
         String password = userToBeCreated.getPassword();
         if (password == null || password.length() > 20) {
             String message = "The field 'PASSWORD' must contain between 1 and 20 characters! Therefore, the user could not be created!";
@@ -250,6 +249,32 @@ public class UserService {
         } else if (password.contains(" ")) {
             String message = "The field 'PASSWORD' must not contain any whitespaces! Therefore, the user could not be created!";
             throw new PostRequestException409(message);
+        }
+    }
+
+    public void checkIfInputIsValidForUpdate(User userToBeCreated) {
+        String name = userToBeCreated.getName();
+        if (name != null) {
+            if (name.length() > 20) {
+                String message = "The field 'NAME' must contain between 1 and 20 characters! Therefore, the user could not be created!";
+                throw new PostRequestException409(message);
+            }
+            else if (userToBeCreated.getName().contains(" ")) {
+                String message = "The field 'NAME' must not contain any whitespaces! Therefore, the user could not be created!";
+                throw new PostRequestException409(message);
+            }
+        }
+
+        String username = userToBeCreated.getUsername();
+        if (username != null) {
+            if (username.length() > 20) {
+                String message = "The field 'USERNAME' must contain between 1 and 20 characters! Therefore, the user could not be created!";
+                throw new PostRequestException409(message);
+            }
+            else if (username.contains(" ")) {
+                String message = "The field 'USERNAME' must not contain any whitespaces! Therefore, the user could not be created!";
+                throw new PostRequestException409(message);
+            }
         }
     }
 }
