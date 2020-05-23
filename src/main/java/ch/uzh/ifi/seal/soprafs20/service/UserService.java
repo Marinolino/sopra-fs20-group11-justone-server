@@ -84,14 +84,17 @@ public class UserService {
             String message = String.format("There is no registered user '%s'! Please try again!", userToCheck.getUsername());
             throw new PutRequestException401(message);
         }
-        if(!userByUsername.getPassword().equals(userToCheck.getPassword())){
-            String message = "The password is incorrect! Please try again!";
-            throw new PutRequestException401(message);
-        }
+
         if(userByUsername.getStatus() == UserStatus.ONLINE){
             String message = String.format("The user '%s' is already logged in!", userToCheck.getUsername());
             throw new PutRequestException204(message);
         }
+
+        if(!userByUsername.getPassword().equals(userToCheck.getPassword())){
+            String message = "The password is incorrect! Please try again!";
+            throw new PutRequestException401(message);
+        }
+
         userByUsername.setToken(UUID.randomUUID().toString());
         userByUsername.setStatus(UserStatus.ONLINE);
         userByUsername = userRepository.save(userByUsername);
