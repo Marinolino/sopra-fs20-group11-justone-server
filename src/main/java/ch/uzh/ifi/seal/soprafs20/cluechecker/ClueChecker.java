@@ -17,7 +17,7 @@ public final class ClueChecker {
     private ClueChecker(){
     }
 
-    public static synchronized Clue checkClue(Clue clueInput, Game game) throws IOException {
+    public static Clue checkClue(Clue clueInput, Game game) throws IOException {
 
         List<String> stringClues = new ArrayList<>();
 

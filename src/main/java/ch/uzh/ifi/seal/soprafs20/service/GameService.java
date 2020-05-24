@@ -38,6 +38,7 @@ public class GameService {
 
     private final Logger log = LoggerFactory.getLogger(GameService.class);
 
+
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository, GuessRepository guessRepository, @Qualifier("clueRepository") ClueRepository clueRepository) {
         this.gameRepository = gameRepository;
         this.guessRepository = guessRepository;
@@ -232,38 +233,38 @@ public class GameService {
     }
 
     //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
-    public Clue addClueToGame(Long id, Clue clueInput) throws IOException {
-       Game gameById = getGameById(id);
+    public synchronized Clue addClueToGame(Long id, Clue clueInput) throws IOException {
+        Game gameById = getGameById(id);
 
-       //game with 3 users
-       if(!gameById.getNormalMode() && 2 * (gameById.getUserIds().size() - 1) == gameById.getClueCounter()){
-           String message = "There are already as many clues as users! Therefore, this clue can't be added!";
-           throw new PutRequestException409(message);
-       }
-       //game with more than 3 users
-       else if (gameById.getNormalMode() && gameById.getUserIds().size() - 1 == gameById.getClues().size()){
-           String message = "There are already as many clues as users! Therefore, this clue can't be added!";
-           throw new PostRequestException409(message);
-       }
+        //game with 3 users
+        if(!gameById.getNormalMode() && 2 * (gameById.getUserIds().size() - 1) == gameById.getClueCounter()){
+            String message = "There are already as many clues as users! Therefore, this clue can't be added!";
+            throw new PutRequestException409(message);
+        }
+        //game with more than 3 users
+        else if (gameById.getNormalMode() && gameById.getUserIds().size() - 1 == gameById.getClues().size()){
+            String message = "There are already as many clues as users! Therefore, this clue can't be added!";
+            throw new PostRequestException409(message);
+        }
 
-       Clue checkedClue = ClueChecker.checkClue(clueInput, gameById);
-       gameById.addClue(checkedClue);
+        Clue checkedClue = ClueChecker.checkClue(clueInput, gameById);
+        gameById.addClue(checkedClue);
 
-       //user ran out off time while giving a clue
-       if (checkedClue.getTime() == -1){
-           gameById.addScoreToCard(0);
-       }
-       //reward fast clues by giving more points
-       else if (checkedClue.getTime() <= TIME_CLUE){
-           gameById.addScoreToCard(MAX_POINTS);
-       }
-       else {
-           gameById.addScoreToCard(MIN_POINTS);
-       }
+        //user ran out off time while giving a clue
+        if (checkedClue.getTime() == -1){
+            gameById.addScoreToCard(0);
+        }
+        //reward fast clues by giving more points
+        else if (checkedClue.getTime() <= TIME_CLUE){
+            gameById.addScoreToCard(MAX_POINTS);
+        }
+        else {
+            gameById.addScoreToCard(MIN_POINTS);
+        }
 
-       gameRepository.save(gameById);
-       gameRepository.flush();
-       return checkedClue;
+        gameRepository.save(gameById);
+        gameRepository.flush();
+        return checkedClue;
     }
 
     public Game setCluesToInvalid(Long id, List<String> cluesToDelete){
