@@ -102,7 +102,7 @@ do the following:
 
 ## Roadmap
 
-- Our parser currently only checks for homophones, a possible improvement could be to search for more categories, e.g. better word stem, or to use additional API's to get more words.
+- Our parser currently checks for homophones, plurals, and if a clue is contained in the chosenWord or vice versa. A possible improvement could be to search for more categories, e.g. word stem, or to use additional API's to get more words.
 
 ## Authors and Acknowledgement
 
