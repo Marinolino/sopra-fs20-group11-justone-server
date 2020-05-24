@@ -1,5 +1,15 @@
 # SoPra RESTful Service Template FS20
 
+## Introduction
+
+
+
+## Technologies
+
+- We used Datamuse.com as an external API to get homophones, in order to censor invalid clues.
+
+
+
 ## Getting started with Spring Boot
 
 -   Documentation: https://docs.spring.io/spring-boot/docs/current/reference/html/index.html
