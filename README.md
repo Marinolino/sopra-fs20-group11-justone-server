@@ -8,6 +8,18 @@
 
 - We used Datamuse.com as an external API to get homophones, in order to censor invalid clues.
 
+## High-Level Components
+
+## Launch & Deployment
+
+## Roadmap
+
+- Our parser currently only checks for homophones, a possible improvement could be to search for more categories, e.g. word stem, or to use additional API's to get more words.
+
+## Authors and Acknowledgement
+
+## License
+
 
 
 ## Getting started with Spring Boot
