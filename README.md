@@ -103,6 +103,7 @@ do the following:
 ## Roadmap
 
 - Our parser currently checks for homophones, plurals, and if a clue is contained in the chosenWord or vice versa. A possible improvement could be to search for more categories, e.g. word stem, or to use additional API's to get more words.
+- Maybe the User and Game class could be tighter coupled together, so that the game can for example change a user's points directly.
 
 ## Authors and Acknowledgement
 Marino Schneider, Md Rezuanual Haque, Michael Brülisauer, Patrick Reich, Vichhay Ok, Venusan Velrajah
