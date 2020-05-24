@@ -20,7 +20,7 @@ The game “Just One” is developed in accordance with the game’s rules, as a
 - We used Datamuse.com as an external API to get homophones, in order to censor invalid clues.
 
 ## High-Level Components
-- User: Contains all inforamtion about a user like username and score.
+- User: Contains all information about a user like username and score.
 - Game: Contains all information about a game like realtions to other entities like cards and clues, or the the state of the game.
 - Both User and Game have their own controller and service class.
 - ClueChecker: Checks the validity of clues, with the use of the external datamuse API. This class gets called by the Gameservice class.
