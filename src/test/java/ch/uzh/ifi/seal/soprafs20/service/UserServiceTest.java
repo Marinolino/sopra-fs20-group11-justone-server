@@ -125,8 +125,43 @@ public class UserServiceTest {
     }
 
     @Test
-    public void updateUser_validInputs_success() {
+    public void nameToLong_throwsException() {
+        User emptyUser = new User();
+        emptyUser.setName("IamAVeryVeryLongTestName");
+        emptyUser.setUsername("Test");
+        emptyUser.setPassword("Test");
+        String exceptionMessage = "The field 'NAME' must contain between 1 and 20 characters! Therefore, the user could not be created!";
 
+        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(emptyUser), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void userNameToLong_throwsException() {
+        User emptyUser = new User();
+        emptyUser.setName("Test");
+        emptyUser.setUsername("IamAVeryLongTestUserName");
+        emptyUser.setPassword("Test");
+        String exceptionMessage = "The field 'USERNAME' must contain between 1 and 20 characters! Therefore, the user could not be created!";
+
+        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(emptyUser), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void passwordToLong_throwsException() {
+        User emptyUser = new User();
+        emptyUser.setName("Test");
+        emptyUser.setUsername("Test");
+        emptyUser.setPassword("IamAVeryLongTestPassword");
+        String exceptionMessage = "The field 'PASSWORD' must contain between 1 and 20 characters! Therefore, the user could not be created!";
+
+        PostRequestException409 exception = assertThrows(PostRequestException409.class, () -> userService.createUser(emptyUser), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void updateUser_validInputs_success() {
         User testUpdateUser = new User();
         testUpdateUser.setId(1L);
         testUpdateUser.setName("testName");
@@ -148,7 +183,6 @@ public class UserServiceTest {
         assertEquals(testUpdateUser.getId(), updatedUser.getId());
         assertEquals(testUpdateUser.getName(), updatedUser.getName());
         assertEquals(testUpdateUser.getUsername(), updatedUser.getUsername());
-
     }
 
 }

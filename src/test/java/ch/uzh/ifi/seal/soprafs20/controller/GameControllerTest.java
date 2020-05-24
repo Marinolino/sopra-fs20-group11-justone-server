@@ -143,12 +143,43 @@ class GameControllerTest {
 
         MockHttpServletRequestBuilder putRequest = put("/games/finish/1").contentType(MediaType.APPLICATION_JSON);
 
+        mockMvc.perform(putRequest).andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void resetGameStats() throws Exception {
+        given(gameService.finishGame(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder putRequest = put("/games/reset/1").contentType(MediaType.APPLICATION_JSON);
+
         mockMvc.perform(putRequest).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
     }
 
     @Test
-    public void getActiveCard_success() throws Exception{
+    public void getActiveCard_GET_success() throws Exception{
+        List<String> wordList = new ArrayList<>();
+        Card testCard = new Card();
+
+        wordList.add("Test1");
+        wordList.add("Test2");
+        wordList.add("Test3");
+        wordList.add("Test4");
+        wordList.add("Test5");
+        testCard.setMysteryWords(wordList);
+        testGame.setActiveCard(testCard);
+
+        given(gameService.getGameById(Mockito.any())).willReturn(testGame);
+
+        MockHttpServletRequestBuilder getRequest = get("/cards/1").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.words", hasSize(5)));
+    }
+
+    @Test
+    public void getActiveCard_PUT_success() throws Exception{
         List<String> wordList = new ArrayList<>();
         Card testCard = new Card();
 
@@ -165,7 +196,6 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.words", hasSize(5)));
-        ;
     }
 
 
@@ -235,6 +265,40 @@ class GameControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.clueWord", is(cluePostDTO.getClueWord())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.time", is(cluePostDTO.getTime())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.valid", is(ClueStatus.VALID.toString())));
+    }
+
+    @Test
+    public void createClues_validClues() throws Exception {
+        CluePostDTO cluePostDTO1 = new CluePostDTO();
+        cluePostDTO1.setClueWord("TestClue1");
+        cluePostDTO1.setTime(10);
+        Clue testClue1 = new Clue();
+        testClue1.setClueWord("TestClue1");
+        testClue1.setValid(ClueStatus.VALID);
+        testClue1.setTime(10);
+
+        CluePostDTO cluePostDTO2 = new CluePostDTO();
+        cluePostDTO2.setClueWord("TestClue2");
+        cluePostDTO2.setTime(10);
+        Clue testClue2 = new Clue();
+        testClue2.setClueWord("TestClue2");
+        testClue2.setValid(ClueStatus.VALID);
+        testClue2.setTime(10);
+
+        ArrayList<CluePostDTO> clues = new ArrayList<>();
+        clues.add(cluePostDTO1);
+        clues.add(cluePostDTO2);
+
+        given(gameService.addClueToGame(Mockito.any(), Mockito.any())).willReturn(testClue1);
+
+        MockHttpServletRequestBuilder postRequest = post("/clues/1/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(clues));
+
+        mockMvc.perform(postRequest).andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].clueWord", is(cluePostDTO1.getClueWord())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].time", is(cluePostDTO1.getTime())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].valid", is(ClueStatus.VALID.toString())));
     }
 
     @Test

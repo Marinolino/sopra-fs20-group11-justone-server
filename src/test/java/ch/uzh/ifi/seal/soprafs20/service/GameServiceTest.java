@@ -1,13 +1,16 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ClueStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.GuessStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.game.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.game.Clue;
 import ch.uzh.ifi.seal.soprafs20.entity.game.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.game.Guess;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException409;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.ChosenWordPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.CluePutDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,6 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -149,5 +153,18 @@ class GameServiceTest {
         assertEquals(testGame, testGuess.getGame());
         assertEquals(10, testGuess.getTime());
         assertEquals(GuessStatus.CORRECT, testGuess.getGuessStatus());
+    }
+
+    @Test
+    public void setCluesToInvalid_ToManyVotes(){
+        Long userId1 = 1L;
+        testGame.addUserId(userId1);
+        List<String> clues = new ArrayList<>();
+        Mockito.when(gameRepository.findById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(testGame));
+
+        String exceptionMessage = "Everyone checked the clues already!";
+        PutRequestException409 exception = assertThrows(PutRequestException409.class, () -> gameService.setCluesToInvalid(gameId, clues), exceptionMessage);
+
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 }

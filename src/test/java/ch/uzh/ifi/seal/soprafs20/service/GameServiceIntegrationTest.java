@@ -19,6 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -219,6 +220,27 @@ class GameServiceIntegrationTest {
         Game updatedGame = gameService.updateChosenWord(gameId, chosenWordPutDTO);
 
         assertEquals(ChosenWordStatus.SELECTED, updatedGame.getWordStatus());
+    }
+
+    @Test
+    @Transactional
+    public void setCluesToInvalid_success() throws Exception {
+        Long userId2 = 2L;
+        gameService.addUserToGame(gameId, userId2);
+
+        String chosenWord = getFirstWordOnActiveCard();
+        gameService.setChosenWord(gameId, chosenWord);
+
+        Clue clue = new Clue();
+        clue.setClueWord("TestClue");
+        gameService.addClueToGame(gameId, clue);
+
+        List<String> invalidClues = new ArrayList<>();
+        invalidClues.add("TestClue");
+
+        Game game = gameService.setCluesToInvalid(gameId, invalidClues);
+
+        assertEquals(ClueStatus.INVALID, game.getClues().get(0).getValid());
     }
 
     @Test
