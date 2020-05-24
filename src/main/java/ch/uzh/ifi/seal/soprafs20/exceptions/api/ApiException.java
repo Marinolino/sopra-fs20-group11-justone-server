@@ -14,6 +14,7 @@ public class ApiException extends RuntimeException {
         this.httpStatus = httpStatus;
     }
 
+    @Override
     public String getMessage(){
         return this.message;
     }

@@ -153,8 +153,7 @@ class GameControllerTest {
 
         MockHttpServletRequestBuilder putRequest = put("/games/reset/1").contentType(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(putRequest).andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testGame.getId().intValue())));
+        mockMvc.perform(putRequest).andExpect(status().isOk());
     }
 
     @Test

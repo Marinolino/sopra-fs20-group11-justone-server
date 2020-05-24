@@ -79,12 +79,7 @@ public final class ClueChecker {
     }
     //
     private static boolean checkIfClueOrWordSubstring(String newClue, String chosenWord){
-        if (chosenWord.toLowerCase().contains(newClue.toLowerCase()) || newClue.toLowerCase().contains(chosenWord.toLowerCase())) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return chosenWord.toLowerCase().contains(newClue.toLowerCase()) || newClue.toLowerCase().contains(chosenWord.toLowerCase());
     }
 
     private static String makeRequest(String chosenWord) throws IOException {

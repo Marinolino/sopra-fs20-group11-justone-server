@@ -273,7 +273,7 @@ public class Game implements Serializable {
         clue.setGame(this);
     }
 
-    public Card getActiveCard() throws GetRequestException404 {
+    public Card getActiveCard() {
         if (activeCard == null){
             throw new GetRequestException404("You need to draw a card first!");
         }

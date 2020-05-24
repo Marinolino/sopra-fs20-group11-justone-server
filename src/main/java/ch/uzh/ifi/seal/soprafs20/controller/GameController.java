@@ -11,6 +11,7 @@ import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class GameController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameGetDTO createGame(@RequestBody GamePostDTO gamePostDTO) throws Exception{
+    public GameGetDTO createGame(@RequestBody GamePostDTO gamePostDTO) throws FileNotFoundException {
         // convert API game to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gamePostDTO);
 
@@ -40,7 +41,7 @@ public class GameController {
     @PutMapping("/games/join/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO addUserToGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) throws Exception {
+    public GameGetDTO addUserToGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) {
         // convert API game to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
 
@@ -54,7 +55,7 @@ public class GameController {
     @PutMapping("/games/leave/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO removeUserFromGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) throws Exception {
+    public GameGetDTO removeUserFromGame(@PathVariable("id") long id, @RequestBody GamePutDTO gamePutDTO) {
         // convert API game to internal representation
         Game gameInput = DTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
 
@@ -68,7 +69,7 @@ public class GameController {
     @PutMapping("/games/start/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO startGame(@PathVariable("id") long id) throws Exception {
+    public GameGetDTO startGame(@PathVariable("id") long id) {
         // start game
         Game startedGame = gameService.startGame(id);
 
@@ -79,7 +80,7 @@ public class GameController {
     @PutMapping("/games/finish/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO finishGame(@PathVariable("id") long id) throws Exception {
+    public GameGetDTO finishGame(@PathVariable("id") long id) {
         Game updatedGame = gameService.finishGame(id);
 
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
@@ -127,7 +128,7 @@ public class GameController {
     @GetMapping("/cards/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CardGetDTO getActiveCard(@PathVariable("id") long id) throws Exception {
+    public CardGetDTO getActiveCard(@PathVariable("id") long id) {
         Game gameById = gameService.getGameById(id);
 
         Card activeCard = gameById.getActiveCard();
@@ -175,7 +176,7 @@ public class GameController {
     @PutMapping("/chosenword/update/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ChosenWordGetDTO updateChosenWord(@PathVariable("id") long id, @RequestBody ChosenWordPutDTO chosenWordPutDTO) throws Exception {
+    public ChosenWordGetDTO updateChosenWord(@PathVariable("id") long id, @RequestBody ChosenWordPutDTO chosenWordPutDTO) {
         //set the chosen word for the specified game
         Game updatedGame = gameService.updateChosenWord(id, chosenWordPutDTO);
 
@@ -200,7 +201,7 @@ public class GameController {
     @PostMapping("/clues/{id1}/{id2}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ArrayList<ClueGetDTO> createClue(@PathVariable("id1") long id1, @PathVariable("id2") long id2,
+    public List<ClueGetDTO> createClue(@PathVariable("id1") long id1, @PathVariable("id2") long id2,
                                             @RequestBody ArrayList<CluePostDTO> cluePostDTOList) throws Exception {
         // convert API clue to internal representation
         Clue clueInput1 = DTOMapper.INSTANCE.convertCluePostDTOtoEntity(cluePostDTOList.get(0));
@@ -210,7 +211,7 @@ public class GameController {
         Clue checkedClue1 = gameService.addClueToGame(id1, clueInput1);
         Clue checkedClue2 = gameService.addClueToGame(id2, clueInput2);
 
-        ArrayList<ClueGetDTO> checkedClueList = new ArrayList<>();
+        List<ClueGetDTO> checkedClueList = new ArrayList<>();
         // convert internal representation of clue back to API
         checkedClueList.add(DTOMapper.INSTANCE.convertEntityToClueGetDTO(checkedClue1));
         checkedClueList.add(DTOMapper.INSTANCE.convertEntityToClueGetDTO(checkedClue2));
@@ -221,7 +222,7 @@ public class GameController {
     @GetMapping("/clues/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CluesGetDTO getAllClues(@PathVariable("id") long id) throws GetRequestException404 {
+    public CluesGetDTO getAllClues(@PathVariable("id") long id) {
         Game gameById = gameService.getGameById(id);
 
         // convert internal representation of clue back to API

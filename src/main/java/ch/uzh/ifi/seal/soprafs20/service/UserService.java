@@ -4,7 +4,6 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.get.GetRequestException409;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.post.PostRequestException409;
-import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException204;
 import ch.uzh.ifi.seal.soprafs20.exceptions.api.put.PutRequestException401;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
@@ -28,8 +27,6 @@ public class UserService {
 
     public static final int DUPLICATECLUE_MULTIPLIER = 1;
     public static final int CORRECTGUESS_MULTIPLIER = 1;
-
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
 

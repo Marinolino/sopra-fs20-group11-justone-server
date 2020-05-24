@@ -74,7 +74,7 @@ public class GameService {
         return savedGame;
     }
 
-    public Game startGame(Long id) throws PutRequestException409 {
+    public Game startGame(Long id) {
         Game gameById = getGameById(id);
 
         if (gameById.getStatus() != GameStatus.CREATED){
@@ -92,7 +92,7 @@ public class GameService {
         return savedGame;
     }
 
-    public Game finishGame(Long id) throws PutRequestException409 {
+    public Game finishGame(Long id) {
         Game gameById = getGameById(id);
 
 
@@ -110,7 +110,7 @@ public class GameService {
     }
 
     //add a user to an existing game
-    public Game addUserToGame(Long gameId, Long userId) throws PutRequestException409 {
+    public Game addUserToGame(Long gameId, Long userId) {
         Game gameById = getGameById(gameId);
 
         if (gameById.getUserIds().contains(userId)){
@@ -146,7 +146,7 @@ public class GameService {
     }
 
     //fetch game by id from the repository and get the top card from the deck as active card
-    public Card getActiveCard(Long id) throws Exception {
+    public Card getActiveCard(Long id) {
         Game gameById = getGameById(id);
 
         gameById.setActiveCardFromDeck();
@@ -178,7 +178,7 @@ public class GameService {
         return gameById;
     }
 
-    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO) throws PutRequestException409 {
+    public Game updateChosenWord(Long id, ChosenWordPutDTO chosenWordPutDTO) {
         Game gameById = getGameById(id);
 
         //check if during this turn, a word has already been rejected
@@ -232,7 +232,7 @@ public class GameService {
     }
 
     //checks a clue with the parser, sets the clue as valid or invalid and adds it to the games clue list
-    public Clue addClueToGame(Long id, Clue clueInput) throws PostRequestException409, IOException {
+    public Clue addClueToGame(Long id, Clue clueInput) throws IOException {
        Game gameById = getGameById(id);
 
        //game with 3 users
@@ -285,7 +285,7 @@ public class GameService {
         return gameById;
     }
 
-    public Game skipGuessing(Long id) throws Exception {
+    public Game skipGuessing(Long id) {
         Game gameById = getGameById(id);
 
         //move active card to game box
@@ -315,7 +315,7 @@ public class GameService {
         return guess;
     }
 
-    public Guess makeGuess(Long id, Guess guessInput) throws Exception{
+    public Guess makeGuess(Long id, Guess guessInput) {
         Game gameById = getGameById(id);
 
         if (gameById.getGuess() != null){
