@@ -107,6 +107,8 @@ do the following:
 
 ## Authors and Acknowledgement
 Marino Schneider, Md Rezuanual Haque, Michael Brülisauer, Patrick Reich, Vichhay Ok, Venusan Velrajah
+
+Supervisor: Alina Marti
 ## License
 MIT License
 
